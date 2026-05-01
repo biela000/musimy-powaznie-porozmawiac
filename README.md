@@ -1,1 +1,3 @@
 # musimy-powaznie-porozmawiac
+
+Jest dziwnie spokojny niedzielny wieczór. Właśnie wróciłeś ze swojego codziennego spaceru po miejscowości Bajtogród. Dobija już godzina 23. Nagle słychać niepokojący, coraz głośniejszy, wprawiający w absolutny paraliż dźwięk. Z przerażaniem powoli zdajesz sobie sprawę, że dźwięk ten dochodzi z Twojej lewej kieszeni. To Twój gorący już od dzwonienia najnowszy model BajtPhone'a. Podnosisz go do ucha i słyszysz słowa, które powaliłyby na kolana nawet samego Bajta Bajtsona: "Musimy poważnie porozmawiać". Szybko zdajesz sobie sprawę, że nie pozostaje Ci nic innego. Nie ma już odwrotu. Musisz stanąć do walki.
