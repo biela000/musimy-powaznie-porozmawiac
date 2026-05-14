@@ -1,6 +1,7 @@
 module com.jtjmpm.desktop {
     requires javafx.controls;
     requires javafx.fxml;
+    requires Java.WebSocket;
 
     requires org.kordamp.bootstrapfx.core;
 
