@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.material)
     implementation("org.java-websocket:Java-WebSocket:1.6.0")
+    implementation("com.google.code.gson:gson:2.11.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)

@@ -24,7 +24,7 @@ public class GameHandler {
         try {
             client = new WebSocketClient(new URI(url)) {
                 @Override
-                public void onOpen(ServerHandshake handshakedata) {
+                public void onOpen(ServerHandshake handshake) {
 
                 }
 
