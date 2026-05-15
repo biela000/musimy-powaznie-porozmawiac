@@ -7,4 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
+    <LinearLayout
+        android:id="@+id/gameContainer"
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/drawButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Draw" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
