@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mobile">
         <activity
-            android:name=".MainActivity"
+            android:name=".GameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
