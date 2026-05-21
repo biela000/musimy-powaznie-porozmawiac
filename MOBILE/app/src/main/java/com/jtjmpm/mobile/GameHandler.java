@@ -40,7 +40,6 @@ public class GameHandler {
 
                 @Override
                 public void onError(Exception ex) {
-
                 }
             };
         } catch (URISyntaxException e) {
