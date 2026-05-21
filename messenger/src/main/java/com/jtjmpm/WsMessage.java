@@ -1,3 +1,5 @@
+package com.jtjmpm;
+
 public class WsMessage {
     public final String type;
 

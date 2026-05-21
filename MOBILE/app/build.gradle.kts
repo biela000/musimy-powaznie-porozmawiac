@@ -62,4 +62,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
+    implementation("com.jtjmpm:messenger:1.0-SNAPSHOT")
 }
