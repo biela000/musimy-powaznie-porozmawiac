@@ -18,14 +18,16 @@ public class GameHandler {
         return instance;
     }
 
-    public void connect(String url) {
+    public void connect(String url, Runnable onConnected, Runnable onError) {
         if (client != null && client.isOpen()) return;
 
         try {
             client = new WebSocketClient(new URI(url)) {
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-
+                    if (onConnected != null) {
+                        onConnected.run();
+                    }
                 }
 
                 @Override
@@ -40,6 +42,9 @@ public class GameHandler {
 
                 @Override
                 public void onError(Exception ex) {
+                    if (onError != null) {
+                        onError.run();
+                    }
                 }
             };
         } catch (URISyntaxException e) {

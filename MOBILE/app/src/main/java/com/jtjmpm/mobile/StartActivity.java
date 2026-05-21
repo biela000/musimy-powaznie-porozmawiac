@@ -1,5 +1,6 @@
 package com.jtjmpm.mobile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -49,10 +50,23 @@ public class StartActivity extends AppCompatActivity {
             return;
         }
 
-        gameHandler.connect(socketServerUrl);
+        gameHandler.connect(socketServerUrl, this::goToGameActivity, this::handleConnectionError);
     }
 
     private boolean isIPAddressValid(String url) {
         return url.matches(IP_ADDRESS_REGEX);
+    }
+
+    private void goToGameActivity() {
+        runOnUiThread(() -> {
+            Intent intent = new Intent(StartActivity.this, GameActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void handleConnectionError() {
+        runOnUiThread(() -> {
+            IPAddressInput.setError("There was problem connecting to this IP");
+        });
     }
 }
