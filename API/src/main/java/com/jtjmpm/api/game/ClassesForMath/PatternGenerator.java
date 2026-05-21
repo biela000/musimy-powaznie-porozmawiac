@@ -35,7 +35,7 @@ public class PatternGenerator {
 
     public static List<Point2D> createTriangle(int pointsCount) {
         List<Point2D> rawTriangle = new ArrayList<>();
-        
+
         rawTriangle.add(new Point2D(0, 1));
         rawTriangle.add(new Point2D(-0.866, -0.5));
         rawTriangle.add(new Point2D(0.866, -0.5));
@@ -45,4 +45,4 @@ public class PatternGenerator {
 }
 
 
-// chwilowo tylko okrag, potem sie pomysli o reszcie
+// chwilowo tylko okrag, osemka i trojkat
