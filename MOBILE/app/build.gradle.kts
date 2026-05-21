@@ -1,3 +1,15 @@
+import java.util.Properties;
+
+val localProperties = Properties();
+val localPropertiesFile = rootProject.file("local.properties");
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { stream ->
+        localProperties.load(stream)
+    }
+}
+
+val websocketUrl: String = localProperties.getProperty("WEBSOCKET_URL") ?: "ws://localhost:8080/game";
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -18,6 +30,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "WEBSOCKET_URL", "\"$websocketUrl\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -40,6 +57,8 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
+    implementation("org.java-websocket:Java-WebSocket:1.6.0")
+    implementation("com.google.code.gson:gson:2.11.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
