@@ -28,7 +28,8 @@
             android:layout_height="48dp"
             android:ems="10"
             android:inputType="text"
-            android:text="IP address" />
+            android:text="IP address"
+            />
 
         <Button
             android:id="@+id/connectButton"
