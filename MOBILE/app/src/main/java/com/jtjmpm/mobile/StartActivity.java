@@ -62,7 +62,6 @@ public class StartActivity extends AppCompatActivity {
         Log.d("DEV", "STILL WORKING");
         runOnUiThread(() -> {
             Intent intent = new Intent(StartActivity.this, GameActivity.class);
-            startActivity(intent);
         });
     }
 
