@@ -24,7 +24,7 @@ public class HelloApplication extends Application {
         });
 
         FXMLLoader fxmlLoader = new FXMLLoader(
-                HelloApplication.class.getResource("/com/jtjmpm/desktop/lobby-view.fxml")
+                HelloApplication.class.getResource("lobby-view.fxml")
         );
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Game");
