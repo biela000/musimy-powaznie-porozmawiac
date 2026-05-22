@@ -1,10 +1,10 @@
-package com.jtjmpm.api.game.ClassesForMath;
+package com.jtjmpm.api.game;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jtjmpm.api.game.ClassesForMath.ShapeNormalizer.pathLength;
+import static com.jtjmpm.api.game.ShapeNormalizer.pathLength;
 
 public class GestureEvaluator {
     public static double evaluateScore(List<Point2D> pattern, List<Point2D> gesture, double k, double windowPercent) {

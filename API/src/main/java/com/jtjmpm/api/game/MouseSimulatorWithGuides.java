@@ -1,14 +1,13 @@
-package com.jtjmpm.api.game.ClassesForMath;
+package com.jtjmpm.api.game;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static com.jtjmpm.api.game.ClassesForMath.GestureEvaluator.evaluateScoreBiDirectional;
+import static com.jtjmpm.api.game.GestureEvaluator.evaluateScoreBiDirectional;
 
 public class MouseSimulatorWithGuides extends JFrame {
 
@@ -19,7 +18,7 @@ public class MouseSimulatorWithGuides extends JFrame {
     private final int POINTS = 64;
     private final int TRIM = 3;
     private final double K = 3.5;
-    private final double WINDOW = 0.15;
+    private final double WINDOW = 0.20;
 
     private JPanel canvas;
 

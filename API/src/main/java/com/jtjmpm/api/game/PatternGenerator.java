@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game.ClassesForMath;
+package com.jtjmpm.api.game;
 
 import java.util.ArrayList;
 import java.util.List;
