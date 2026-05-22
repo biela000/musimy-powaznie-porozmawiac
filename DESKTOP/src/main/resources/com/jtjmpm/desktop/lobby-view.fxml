@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="16" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.jtjmpm.desktop.controller.LobbyController"
+      prefWidth="360" prefHeight="300">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+    <Label text="Lobby Name:"/>
+    <TextField fx:id="lobbyNameInput" promptText="Enter lobby name"/>
+
+    <Button text="Create Lobby" onAction="#onCreateLobby" maxWidth="Infinity"/>
+    <Button text="Join Lobby"   onAction="#onJoinLobby"   maxWidth="Infinity"/>
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: red;"/>
+</VBox>
