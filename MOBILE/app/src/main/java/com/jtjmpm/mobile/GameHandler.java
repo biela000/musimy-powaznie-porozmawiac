@@ -1,5 +1,7 @@
 package com.jtjmpm.mobile;
 
+import android.util.Log;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -20,9 +22,10 @@ public class GameHandler {
 
     public void connect(String url, Runnable onConnected, Runnable onError) {
         if (client != null && client.isOpen()) return;
+        Log.d("DEV", "ws://" + url);
 
         try {
-            client = new WebSocketClient(new URI(url)) {
+            client = new WebSocketClient(new URI("ws://" + url)) {
                 @Override
                 public void onOpen(ServerHandshake handshake) {
                     if (onConnected != null) {
@@ -37,7 +40,7 @@ public class GameHandler {
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-
+                    Log.d("DEV", "AKSJBCAKJSBCAKJBCA");
                 }
 
                 @Override
@@ -47,6 +50,8 @@ public class GameHandler {
                     }
                 }
             };
+
+            client.connect();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
