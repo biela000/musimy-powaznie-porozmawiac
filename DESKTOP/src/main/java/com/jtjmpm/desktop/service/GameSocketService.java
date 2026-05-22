@@ -61,6 +61,9 @@ public class GameSocketService extends WebSocketServer {
 
     private void handlePlayerMove(PlayerMoveMessage move) {
         System.out.println("Received " + move.move.size() + " rotation samples");
+        for (int i = 0; i < move.move.size(); i++) {
+            System.out.println(move.move.get(i).x + " " + move.move.get(i).y + " " + move.move.get(i).z);
+        }
     }
 
     public boolean hasClient() {
