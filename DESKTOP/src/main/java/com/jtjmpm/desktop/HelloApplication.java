@@ -1,5 +1,6 @@
 package com.jtjmpm.desktop;
 
+import com.jtjmpm.desktop.service.ApiSocketClient;
 import com.jtjmpm.desktop.service.GameSocketService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,20 +11,30 @@ import java.io.IOException;
 
 public class HelloApplication extends Application {
     private GameSocketService server;
+
     @Override
     public void start(Stage stage) throws IOException {
         server = new GameSocketService(8080);
         server.start();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        // Currently just using localhost but should be changed
+        // to an env variable later :)
+        ApiSocketClient.getInstance().connect("ws://127.0.0.1:3000", () -> {
+            System.out.println("API connection established");
+        });
+
+        FXMLLoader fxmlLoader = new FXMLLoader(
+                HelloApplication.class.getResource("/com/jtjmpm/desktop/lobby-view.fxml")
+        );
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle("Game");
         stage.setScene(scene);
         stage.show();
 
         stage.setOnCloseRequest(e -> {
             try {
                 server.stop();
+                ApiSocketClient.getInstance().close();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
