@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.game.game_logic;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.game.game_logic;
 
 public class Point2D {
     double x;

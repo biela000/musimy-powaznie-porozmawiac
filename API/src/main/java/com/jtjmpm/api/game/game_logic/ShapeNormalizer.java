@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.game.game_logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +86,7 @@ public class ShapeNormalizer {
         return newPoints;
     }
 
-    public static double pathLength(List<Point2D> points) {
+    private static double pathLength(List<Point2D> points) {
         double d = 0.0;
         for (int i = 1; i < points.size(); i++) {
             d += points.get(i - 1).distanceTo(points.get(i));

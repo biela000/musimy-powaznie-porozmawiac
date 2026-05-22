@@ -1,13 +1,13 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.game.game_logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jtjmpm.api.game.ShapeNormalizer.pathLength;
+import static com.jtjmpm.api.game.game_logic.ShapeNormalizer.pathLength;
 
 public class GestureEvaluator {
-    public static double evaluateScore(List<Point2D> pattern, List<Point2D> gesture, double k, double windowPercent) {
+    private static double evaluateScore(List<Point2D> pattern, List<Point2D> gesture, double k, double windowPercent) {
         if (pattern == null || gesture == null || pattern.isEmpty() || gesture.isEmpty()) {
             return 0.0;
         }
