@@ -7,14 +7,21 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component
 public class GameHandler extends TextWebSocketHandler {
+    private final ConcurrentHashMap<String, WebSocketSession> codeToWSS = new ConcurrentHashMap<>();
+    private final GameStateStore store;
+
     @Autowired
-    private GameStateStore store;
+    public GameHandler(GameStateStore store) { //Constructor so its possible to create a new GameHandler for testing
+        this.store=store;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-
+        System.out.println("Connected, session ID: " + session.getId());
     }
 
     @Override
@@ -24,6 +31,13 @@ public class GameHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        System.out.println("Connection closed, session ID: " + session.getId());
+        store.removeSession(session.getId());
+    }
 
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+        System.err.println("Connection failed, session ID: " + session.getId() + exception.getMessage());
+        store.removeSession(session.getId());
     }
 }
