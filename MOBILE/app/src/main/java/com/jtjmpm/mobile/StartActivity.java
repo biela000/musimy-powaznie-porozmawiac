@@ -2,6 +2,7 @@ package com.jtjmpm.mobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class StartActivity extends AppCompatActivity {
-    private final static String IP_ADDRESS_REGEX = "^(((?!25?[6-9])[12]\\d|[1-9])?\\d\\.?\\b){4}$";
+    private final static String IP_ADDRESS_REGEX = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\\d{1,5}\\b";
     private EditText IPAddressInput;
     private Button connectButton;
 
@@ -58,6 +59,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void goToGameActivity() {
+        Log.d("DEV", "STILL WORKING");
         runOnUiThread(() -> {
             Intent intent = new Intent(StartActivity.this, GameActivity.class);
             startActivity(intent);
