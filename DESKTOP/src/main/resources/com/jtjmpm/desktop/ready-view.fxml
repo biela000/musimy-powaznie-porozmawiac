@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="16" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.jtjmpm.desktop.controller.ReadyController"
+      prefWidth="360" prefHeight="200">
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+    <Label fx:id="lobbyLabel" text="Waiting for players..."/>
+    <Button text="Ready!" onAction="#onReady" maxWidth="Infinity"/>
+</VBox>
