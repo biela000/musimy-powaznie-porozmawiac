@@ -5,8 +5,11 @@ import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.scene.control.Label;
 
-import java.awt.*;
+import java.io.IOException;
 
 public class LobbyController {
     @FXML private TextField lobbyNameInput;
@@ -42,6 +45,15 @@ public class LobbyController {
             );
 
             Scene scene = new Scene(loader.load());
+
+            ReadyController controller = loader.getController();
+            controller.setLobbyName(lobbyName);
+
+            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Failed to load next screen");
         }
     }
 }
