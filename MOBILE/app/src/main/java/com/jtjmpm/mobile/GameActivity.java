@@ -87,7 +87,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             playerMove.add(new ControllerRotation(
                     eventValues[0],
                     eventValues[1],
-                    eventValues[2]
+                    eventValues[2],
+                    eventValues[3]
             ));
         }
     }
