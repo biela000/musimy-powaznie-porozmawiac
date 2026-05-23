@@ -1,10 +1,7 @@
 package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
-import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.LobbyMessage;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.*;
 import com.jtjmpm.api.game.game_logic.GestureToScore;
 import com.jtjmpm.api.game.game_logic.PatternGenerator;
 import com.jtjmpm.api.game.game_logic.Point2D;
