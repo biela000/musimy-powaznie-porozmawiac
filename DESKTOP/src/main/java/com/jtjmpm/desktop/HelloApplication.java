@@ -19,6 +19,7 @@ public class HelloApplication extends Application {
 
         // Currently just using localhost but should be changed
         // to an env variable later :)
+        //"ws://127.0.0.1:3000" local host
         ApiSocketClient.getInstance().connect("ws://127.0.0.1:3000", () -> {
             System.out.println("API connection established");
         });
