@@ -1,5 +1,7 @@
 package com.jtjmpm.api.game;
 
+import com.jtjmpm.GameState;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,15 +12,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameStateStore {
     private final ConcurrentHashMap<String, String> sessionToLobby = new ConcurrentHashMap<>(); //Stores lobby ids for sessions
     private final ConcurrentHashMap<String, GameState> lobbies = new ConcurrentHashMap<>(); //Stores GameStates for lobbies
+    private final ResourcePatternResolver resourcePatternResolver;
+
+    public GameStateStore(ResourcePatternResolver resourcePatternResolver) {
+        this.resourcePatternResolver = resourcePatternResolver;
+    }
 
 
     //HANDLING LOBBIES
 
-    public void createLobby(String lobbyID, String sessionID){
+    public boolean createLobby(String lobbyID, String sessionID){
         GameState newState = new GameState(sessionID);
 
+        if(lobbies.containsKey(lobbyID)) return false;
         lobbies.put(lobbyID, newState);
         sessionToLobby.put(sessionID, lobbyID);
+        return true;
     }
 
     public boolean connectToLobby(String lobbyID, String sessionID) {
@@ -91,5 +100,9 @@ public class GameStateStore {
             if (state.getPlayer2Id() != null) ids.add(state.getPlayer2Id());
         }
         return ids;
+    }
+
+    public GameState getPlayersLobby(String sessionID){
+        return lobbies.get(getLobbyIdForPlayer(sessionID));
     }
 }
