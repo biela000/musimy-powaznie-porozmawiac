@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm;
 
 public class GameState {
     private final String player1Id; // Host
@@ -28,8 +28,8 @@ public class GameState {
     }
 
     public synchronized boolean setPlayerReady(String playerId) {
-        if (playerId.equals(player1Id)) player1Ready = true;
-        if (playerId.equals(player2Id)) player2Ready = true;
+        if (playerId.equals(player1Id)) player1Ready = !player1Ready;
+        if (playerId.equals(player2Id)) player2Ready = !player2Ready;
 
         // Returns true if both players are ready and the game can be started
         if (player1Ready && player2Ready && !isGameStarted) {
