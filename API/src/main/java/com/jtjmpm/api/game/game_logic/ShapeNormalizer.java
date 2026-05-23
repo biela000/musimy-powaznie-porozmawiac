@@ -17,6 +17,14 @@ public class ShapeNormalizer {
     }
 
     private static List<Point2D> normalize(List<Point2D> points) {
+        if (points == null || points.isEmpty()) {
+            return points;
+        }
+
+        Point2D startPoint = points.get(0);
+        double anchorX = startPoint.x;
+        double anchorY = startPoint.y;
+
         double minX = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
@@ -29,17 +37,13 @@ public class ShapeNormalizer {
             if (p.y > maxY) maxY = p.y;
         }
 
-        double centerX = (minX + maxX) / 2.0;
-        double centerY = (minY + maxY) / 2.0;
-
-        double scale = Math.max(maxX - minX, maxY - minY) / 2.0;
-
+        double scale = Math.max(maxX - minX, maxY - minY);
         if (scale == 0) scale = 1.0;
 
         List<Point2D> normalizedPoints = new ArrayList<>();
         for (Point2D p : points) {
-            double newX = (p.x - centerX) / scale;
-            double newY = (p.y - centerY) / scale;
+            double newX = (p.x - anchorX) / scale;
+            double newY = (p.y - anchorY) / scale;
             normalizedPoints.add(new Point2D(newX, newY));
         }
 
@@ -86,7 +90,7 @@ public class ShapeNormalizer {
         return newPoints;
     }
 
-    private static double pathLength(List<Point2D> points) {
+    public static double pathLength(List<Point2D> points) {
         double d = 0.0;
         for (int i = 1; i < points.size(); i++) {
             d += points.get(i - 1).distanceTo(points.get(i));
