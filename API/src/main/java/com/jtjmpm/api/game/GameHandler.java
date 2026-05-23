@@ -113,7 +113,7 @@ public class GameHandler extends WebSocketServer {
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
             }else{
-                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + "already exists...");
+                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
                 String jsonResponse = gson.toJson(errorMessage);
                 conn.send(jsonResponse);
             }
@@ -129,12 +129,15 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Joining a lobby: " + lobbyName + " " + sessionId + " is joining a lobby");
 
         try{
-            store.connectToLobby(lobbyName, sessionId);
-
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
-            String jsonResponse = gson.toJson(responseMessage);
-            conn.send(jsonResponse);
-
+            if(store.connectToLobby(lobbyName, sessionId)){
+                GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+                String jsonResponse = gson.toJson(responseMessage);
+                conn.send(jsonResponse);
+            }else{
+                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
+                String jsonResponse = gson.toJson(errorMessage);
+                conn.send(jsonResponse);
+            }
         } catch (Exception e) {
             System.err.println("Error while creating lobby from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
