@@ -41,7 +41,7 @@ public class ReadyController {
 
     @FXML
     private void onReady() {
-        ApiSocketClient.getInstance().send(new ReadyMessage(true));
+        ApiSocketClient.getInstance().send(new ReadyMessage());
         System.out.println("USER_READY sent");
     }
 }
