@@ -25,6 +25,22 @@ public class LobbyController {
         sendLobbyMessage("JOIN_LOBBY");
     }
 
+    @FXML
+    private void onPlaySolo() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/jtjmpm/desktop/solo-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Failed to load Solo Mode screen");
+        }
+    }
+
     private void sendLobbyMessage(String type) {
         String name = lobbyNameInput.getText().trim();
         if (name.isEmpty()) {
