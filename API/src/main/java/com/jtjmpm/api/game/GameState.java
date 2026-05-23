@@ -49,6 +49,18 @@ public class GameState {
 
     //GETTERS
 
+    public boolean isGameOver() {
+        return player1Hp <= 0 || player2Hp <= 0;
+    }
+
+    public String getWinnerId() {
+        if (player1Hp <= 0) return player2Id;
+        if (player2Hp <= 0) return player1Id;
+        return null;
+    }
+
+    //SIMPLE GETTERS
+
     public String getPlayer1Id() { return player1Id; }
     public String getPlayer2Id() { return player2Id; }
     public int getPlayer1Hp() { return player1Hp; }

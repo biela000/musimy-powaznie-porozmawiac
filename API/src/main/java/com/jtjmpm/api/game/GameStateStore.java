@@ -2,6 +2,8 @@ package com.jtjmpm.api.game;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -9,24 +11,85 @@ public class GameStateStore {
     private final ConcurrentHashMap<String, String> sessionToLobby = new ConcurrentHashMap<>(); //Stores lobby ids for sessions
     private final ConcurrentHashMap<String, GameState> lobbies = new ConcurrentHashMap<>(); //Stores GameStates for lobbies
 
-    /*
-    public GameState getOrCreate(String battleId) {
-        return battles.computeIfAbsent(battleId, id -> new GameState(id));
-    }
-    */
-
 
     //HANDLING LOBBIES
 
-    public void CreateLobby(String LobbyID, String sessionID){
+    public void createLobby(String lobbyID, String sessionID){
+        GameState newState = new GameState(sessionID);
 
+        lobbies.put(lobbyID, newState);
+        sessionToLobby.put(sessionID, lobbyID);
     }
 
-    public void ConnectToLobby(String LobbyID, String sessionID) {
-
+    public boolean connectToLobby(String lobbyID, String sessionID) {
+        GameState state = lobbies.get(lobbyID);
+        if (state != null) {
+            //joined is false if the lobby is full and player failed to join
+            boolean joined = state.addPlayer2(sessionID);
+            if (joined) {
+                sessionToLobby.put(sessionID, lobbyID);
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void removeSession(String hostID) {
+    public void removeSession(String sessionID) {
+        String lobbyId = sessionToLobby.remove(sessionID);
 
+        //If any of the players disconnects from the lobby we close it (might have to change this logic later)
+        if (lobbyId != null) {
+            GameState state = lobbies.get(lobbyId);
+
+            if (state != null) {
+                String p1 = state.getPlayer1Id();
+                String p2 = state.getPlayer2Id();
+
+                if (p1 != null) sessionToLobby.remove(p1);
+                if (p2 != null) sessionToLobby.remove(p2);
+
+                lobbies.remove(lobbyId);
+            }
+        }
+    }
+
+    //GAMEPLAY LOGIC
+
+    public boolean setPlayerReady(String sessionID) {
+        String lobbyId = sessionToLobby.get(sessionID);
+        if (lobbyId != null) {
+            GameState state = lobbies.get(lobbyId);
+            if (state != null) {
+                //returns true if both players are ready
+                return state.setPlayerReady(sessionID);
+            }
+        }
+        return false;
+    }
+
+    public GameState applyDamage(String lobbyId, String targetSessionId, int damageAmount) {
+        GameState state = lobbies.get(lobbyId);
+        if (state != null) {
+            state.applyDamage(targetSessionId, damageAmount);
+            return state;
+        }
+        return null;
+    }
+
+    //GETTERS
+
+    public String getLobbyIdForPlayer(String sessionID) {
+        return sessionToLobby.get(sessionID);
+    }
+
+    public List<String> getPlayersIdsInLobby(String lobbyId) {
+        List<String> ids = new ArrayList<>();
+        GameState state = lobbies.get(lobbyId);
+
+        if (state != null) {
+            if (state.getPlayer1Id() != null) ids.add(state.getPlayer1Id());
+            if (state.getPlayer2Id() != null) ids.add(state.getPlayer2Id());
+        }
+        return ids;
     }
 }
