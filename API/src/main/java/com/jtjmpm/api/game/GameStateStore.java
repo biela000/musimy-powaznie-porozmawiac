@@ -21,12 +21,13 @@ public class GameStateStore {
 
     //HANDLING LOBBIES
 
-    public void createLobby(String lobbyID, String sessionID){
+    public boolean createLobby(String lobbyID, String sessionID){
         GameState newState = new GameState(sessionID);
 
-        if(lobbies.containsKey(lobbyID)) return;
+        if(lobbies.containsKey(lobbyID)) return false;
         lobbies.put(lobbyID, newState);
         sessionToLobby.put(sessionID, lobbyID);
+        return true;
     }
 
     public boolean connectToLobby(String lobbyID, String sessionID) {
