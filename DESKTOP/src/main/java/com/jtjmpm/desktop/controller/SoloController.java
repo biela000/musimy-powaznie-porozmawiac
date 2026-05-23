@@ -37,25 +37,47 @@ public class SoloController {
 
         clearCanvas();
 
+        List<Point2D> points = message.points;
+
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+
+        for (Point2D p : points) {
+            if (p.getX() < minX) minX = p.getX();
+            if (p.getX() > maxX) maxX = p.getX();
+            if (p.getY() < minY) minY = p.getY();
+            if (p.getY() > maxY) maxY = p.getY();
+        }
+
+        double shapeWidth = maxX - minX;
+        double shapeHeight = maxY - minY;
+
+        if (shapeWidth == 0) shapeWidth = 1;
+        if (shapeHeight == 0) shapeHeight = 1;
+
+        double padding = 40.0;
+        double canvasW = gestureCanvas.getWidth() - 2 * padding;
+        double canvasH = gestureCanvas.getHeight() - 2 * padding;
+
+        double scale = Math.min(canvasW / shapeWidth, canvasH / shapeHeight);
+
+        double offsetX = padding + (canvasW - (shapeWidth * scale)) / 2.0;
+        double offsetY = padding + (canvasH - (shapeHeight * scale)) / 2.0;
+
         gc.setStroke(Color.CHARTREUSE);
-        gc.setLineWidth(4.0);
+        gc.setLineWidth(6.0);
         gc.setLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
         gc.setLineJoin(javafx.scene.shape.StrokeLineJoin.ROUND);
 
-        double canvasWidth = gestureCanvas.getWidth();
-        double canvasHeight = gestureCanvas.getHeight();
-
-        List<Point2D> points = message.points;
-
         gc.beginPath();
 
-        double firstX = points.getFirst().getX() * canvasWidth;
-        double firstY = points.getFirst().getY() * canvasHeight;
+        double firstX = (points.get(0).getX() - minX) * scale + offsetX;
+        double firstY = (points.get(0).getY() - minY) * scale + offsetY;
         gc.moveTo(firstX, firstY);
 
         for (int i = 1; i < points.size(); i++) {
-            double x = points.get(i).getX() * canvasWidth;
-            double y = points.get(i).getY() * canvasHeight;
+            double x = (points.get(i).getX() - minX) * scale + offsetX;
+            double y = (points.get(i).getY() - minY) * scale + offsetY;
             gc.lineTo(x, y);
         }
 
