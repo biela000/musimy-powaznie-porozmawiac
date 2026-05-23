@@ -1,8 +1,9 @@
 package com.jtjmpm.desktop.controller;
 
-import com.jtjmpm.Point2D;
-import com.jtjmpm.ShapeMessage;
+import com.google.gson.Gson;
+import com.jtjmpm.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,16 +22,32 @@ public class GameController {
 
     private GraphicsContext gc;
 
+    private final Gson gson = new Gson();
+
     @FXML
     public void initialize() {
         gc = gestureCanvas.getGraphicsContext2D();
         clearCanvas();
 
-        ApiSocketClient.getInstance().setOnShapeReceived(this::drawGesture);
+        ApiSocketClient.getInstance().setOnMessageCallback(this::handleApiMessage);
+    }
+
+    private void handleApiMessage(String message) {
+        WsMessage base = gson.fromJson(message, WsMessage.class);
+
+        switch (base.type) {
+            case "MOVE_RESULT":
+                drawGesture(gson.fromJson(message, MoveResultMessage.class));
+                break;
+            case "GAME_STATUS_UPDATE":
+                break;
+            default:
+                System.out.println("Unknown message type: " + base.type);
+        }
     }
 
 
-    private void drawGesture(ShapeMessage message) {
+    private void drawGesture(MoveResultMessage message) {
         if (message == null || message.points == null || message.points.isEmpty()) {
             return;
         }
@@ -91,8 +108,6 @@ public class GameController {
     @FXML
     private void onBackToMenu() {
         try {
-            ApiSocketClient.getInstance().setOnShapeReceived(null);
-
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/jtjmpm/desktop/lobby-view.fxml")
             );

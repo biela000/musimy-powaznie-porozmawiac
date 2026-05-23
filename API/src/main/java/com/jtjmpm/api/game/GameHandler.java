@@ -160,11 +160,6 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handlePlayerMove(WebSocket conn, List<ControllerRotation> move) {
-        // TODO
-        // Dodajecie klase MoveResultMessage
-        // Obliczacie to co macie tutaj
-        // Wynik przesylacie komenda:
-        // conn.send(MoveResultMessage);
         String sessionId = getSessionId(conn);
         System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
 
@@ -172,26 +167,14 @@ public class GameHandler extends WebSocketServer {
             RotationVectorParser parser = new RotationVectorParser();
             List<Point2D> normalPoints = parser.processBatch(move);
             List<Point2D> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
-
-            ShapeMessage shapeMessage = new ShapeMessage(normalizedPoints);
-
-            String jsonResponse = gson.toJson(shapeMessage);
-            conn.send(jsonResponse);
-            /*List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+            List<Point2D> circlePattern = PatternGenerator.createCircle(64);
 
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
-            double accuracyScore = GestureToScore.getScore(trianglePattern, move);
-
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
-            MoveResultMessage resultMessage = new MoveResultMessage(accuracyScore);
-
+            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore);
             String jsonResponse = gson.toJson(resultMessage);
-            conn.send(jsonResponse);*/
-
-            //TODO
-            //Update game state
-
+            conn.send(jsonResponse);
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
