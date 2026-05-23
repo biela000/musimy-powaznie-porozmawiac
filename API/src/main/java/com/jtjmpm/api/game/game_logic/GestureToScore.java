@@ -1,10 +1,6 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.game.game_logic;
 
 import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.api.game.game_logic.GestureEvaluator;
-import com.jtjmpm.api.game.game_logic.Point2D;
-import com.jtjmpm.api.game.game_logic.RotationVectorParser;
-import com.jtjmpm.api.game.game_logic.ShapeNormalizer;
 
 import java.util.List;
 
