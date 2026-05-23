@@ -1,10 +1,7 @@
 package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
-import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.LobbyMessage;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.*;
 import com.jtjmpm.api.game.game_logic.GestureToScore;
 import com.jtjmpm.api.game.game_logic.PatternGenerator;
 import com.jtjmpm.api.game.game_logic.Point2D;
@@ -111,12 +108,11 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
 
         try {
-            List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+            List<Point2D> trianglePattern = PatternGenerator.createTriangle(64);
 
-            double accuracyScore = GestureToScore.getScore(circlePattern, move);
+            double accuracyScore = GestureToScore.getScore(trianglePattern, move);
 
-            System.out.println("Acurracy for session: " + sessionId + " equals: " + accuracyScore);
-
+            System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
             MoveResultMessage resultMessage = new MoveResultMessage(accuracyScore);
 
             String jsonResponse = gson.toJson(resultMessage);
