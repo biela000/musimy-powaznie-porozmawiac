@@ -2,22 +2,31 @@ package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
 import com.jtjmpm.WsMessage;
+import com.jtjmpm.ShapeMessage;
+import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 public class ApiSocketClient {
     private static ApiSocketClient instance;
     private WebSocketClient client;
     private final Gson gson = new Gson();
 
+    private Consumer<ShapeMessage> onShapeReceived;
+
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();
         }
         return instance;
+    }
+
+    public void setOnShapeReceived(Consumer<ShapeMessage> callback) {
+        this.onShapeReceived = callback;
     }
 
     public void connect(String url, Runnable onConnected) {
@@ -57,7 +66,10 @@ public class ApiSocketClient {
                 }
 
                 private void handleShape(String message){
-
+                    ShapeMessage shapeMsg = gson.fromJson(message, ShapeMessage.class);
+                    if (onShapeReceived != null && shapeMsg != null) {
+                        Platform.runLater(() -> onShapeReceived.accept(shapeMsg));
+                    }
                 }
 
                 private void handleMoveResult(String message){
