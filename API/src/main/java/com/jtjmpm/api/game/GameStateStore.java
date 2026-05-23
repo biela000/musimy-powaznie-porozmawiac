@@ -1,5 +1,6 @@
 package com.jtjmpm.api.game;
 
+import com.jtjmpm.GameState;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
