@@ -100,8 +100,7 @@ public class GameStateStore {
         return ids;
     }
 
-    public boolean getPlayerReady(String sessionID){
-        String lobbyID = sessionToLobby.get(sessionID);
-        return lobbies.get(lobbyID).getPlayerReady(sessionID);
+    public GameState getPlayersLobby(String sessionID){
+        return lobbies.get(getLobbyIdForPlayer(sessionID));
     }
 }

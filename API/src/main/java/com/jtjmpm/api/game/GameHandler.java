@@ -90,10 +90,8 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
         try{
-            store.setPlayerReady(sessionId);
-
-            ReadyMessage readyMessage = new ReadyMessage(store.getPlayerReady(sessionId));
-            String jsonResponse = gson.toJson(readyMessage);
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+            String jsonResponse = gson.toJson(responseMessage);
             conn.send(jsonResponse);
 
         } catch (Exception e) {
