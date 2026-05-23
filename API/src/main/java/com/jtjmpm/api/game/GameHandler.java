@@ -77,6 +77,9 @@ public class GameHandler extends WebSocketServer {
                 case "LEAVE_LOBBY":
                     handleLeaveLobby(conn);
                     break;
+                case "TOGGLE_READY":
+                    handlePlayerReady(conn);
+                    break;
                 default:
                     System.out.println("Unknown message type: " + message.type);
             }
@@ -85,19 +88,16 @@ public class GameHandler extends WebSocketServer {
         }
     }
 
-    // HELPER FUNCTIONS FOR HANDLING MESSAGES
-
     private void handlePlayerReady(WebSocket conn){
         String sessionId = getSessionId(conn);
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
-        try{
+        try {
             store.setPlayerReady(sessionId);
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
             String jsonResponse = gson.toJson(responseMessage);
             conn.send(jsonResponse);
-
         } catch (Exception e) {
             System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
