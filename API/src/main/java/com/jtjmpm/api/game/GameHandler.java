@@ -5,6 +5,9 @@ import com.jtjmpm.ControllerRotation;
 import com.jtjmpm.LobbyMessage;
 import com.jtjmpm.PlayerMoveMessage;
 import com.jtjmpm.WsMessage;
+import com.jtjmpm.api.game.game_logic.GestureToScore;
+import com.jtjmpm.api.game.game_logic.PatternGenerator;
+import com.jtjmpm.api.game.game_logic.Point2D;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -104,6 +107,28 @@ public class GameHandler extends WebSocketServer {
         // Obliczacie to co macie tutaj
         // Wynik przesylacie komenda:
         // conn.send(MoveResultMessage);
+        String sessionId = getSessionId(conn);
+        System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
+
+        try {
+            List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+
+            double accuracyScore = GestureToScore.getScore(circlePattern, move);
+
+            System.out.println("Acurracy for session: " + sessionId + " equals: " + accuracyScore);
+
+            MoveResultMessage resultMessage = new MoveResultMessage(accuracyScore);
+
+            String jsonResponse = gson.toJson(resultMessage);
+            conn.send(jsonResponse);
+
+            //TODO
+            //Update game state
+
+        } catch (Exception e) {
+            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handleLeaveLobby(WebSocket conn) {
