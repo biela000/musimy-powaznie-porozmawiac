@@ -48,7 +48,7 @@ public class ApiSocketClient {
                 catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            });
+            }).start();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

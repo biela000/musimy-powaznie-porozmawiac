@@ -64,6 +64,7 @@ public class GameSocketService extends WebSocketServer {
         for (int i = 0; i < move.move.size(); i++) {
             System.out.println(move.move.get(i).x + " " + move.move.get(i).y + " " + move.move.get(i).z + " " + move.move.get(i).scalar);
         }
+        ApiSocketClient.getInstance().send(move);
     }
 
     public boolean hasClient() {
