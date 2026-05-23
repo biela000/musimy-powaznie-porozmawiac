@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.WsMessage;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -31,6 +32,15 @@ public class ApiSocketClient {
                 @Override
                 public void onMessage(String message) {
                     System.out.println("API message: " + message);
+
+                    WsMessage parsedMessage = gson.fromJson(message, WsMessage.class);
+
+                    switch (parsedMessage.type) {
+                        case "LOBBY_JOINED":
+                            break;
+                        default:
+                            System.out.println("Unknown message type: " + parsedMessage.type);
+                    }
                 }
 
                 @Override
