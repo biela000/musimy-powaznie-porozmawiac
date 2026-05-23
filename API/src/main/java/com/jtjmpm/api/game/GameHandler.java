@@ -1,10 +1,14 @@
 package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
-import com.jtjmpm.*;
+import com.jtjmpm.ControllerRotation;
+import com.jtjmpm.LobbyMessage;
+import com.jtjmpm.PlayerMoveMessage;
+import com.jtjmpm.WsMessage;
+import com.jtjmpm.Point2D;
+import com.jtjmpm.MoveResultMessage;
 import com.jtjmpm.api.game.game_logic.GestureToScore;
 import com.jtjmpm.api.game.game_logic.PatternGenerator;
-import com.jtjmpm.api.game.game_logic.Point2D;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
