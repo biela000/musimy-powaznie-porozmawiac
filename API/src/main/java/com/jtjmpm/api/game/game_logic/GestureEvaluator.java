@@ -1,5 +1,6 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
