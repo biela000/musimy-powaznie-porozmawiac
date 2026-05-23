@@ -86,11 +86,20 @@ public class GameHandler extends WebSocketServer {
     // HELPER FUNCTIONS FOR HANDLING MESSAGES
 
     private void handlePlayerReady(WebSocket conn){
-        String sessionID = getSessionId(conn);
-        store.setPlayerReady(sessionID);
-        ReadyMessage readyMessage = new ReadyMessage(store.getPlayerReady(sessionID));
-        String jsonResponse = gson.toJson(readyMessage);
-        conn.send(jsonResponse);
+        String sessionId = getSessionId(conn);
+        System.out.println("Toggling ready state of session: " + sessionId + " ...");
+
+        try{
+            store.setPlayerReady(sessionId);
+
+            ReadyMessage readyMessage = new ReadyMessage(store.getPlayerReady(sessionId));
+            String jsonResponse = gson.toJson(readyMessage);
+            conn.send(jsonResponse);
+
+        } catch (Exception e) {
+            System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
