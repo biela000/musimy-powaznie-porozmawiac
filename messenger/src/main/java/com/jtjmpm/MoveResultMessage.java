@@ -1,9 +1,9 @@
 package com.jtjmpm;
 
 public class MoveResultMessage extends WsMessage {
-    public float accuracy;
+    public double accuracy;
 
-    public MoveResultMessage(float accuracy) {
+    public MoveResultMessage(double accuracy) {
         super("MOVE_RESULT");
         this.accuracy = accuracy;
     }
