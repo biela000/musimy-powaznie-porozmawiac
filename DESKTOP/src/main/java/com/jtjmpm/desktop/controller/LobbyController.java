@@ -1,7 +1,10 @@
 package com.jtjmpm.desktop.controller;
 
+import com.google.gson.Gson;
 import com.jtjmpm.LobbyMessage;
+import com.jtjmpm.WsMessage;
 import com.jtjmpm.desktop.service.ApiSocketClient;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +17,23 @@ import java.io.IOException;
 public class LobbyController {
     @FXML private TextField lobbyNameInput;
     @FXML private Label statusLabel;
+
+    private final Gson gson = new Gson();
+
+    @FXML
+    public void initialize() {
+        ApiSocketClient.getInstance().setOnMessageCallback(this::handleApiMessage);
+    }
+
+    private void handleApiMessage(String message) {
+        WsMessage base = gson.fromJson(message, WsMessage.class);
+
+        if ("LOBBY_JOINED".equals(base.type)) {
+            Platform.runLater(() -> {
+                navigateToReady(lobbyNameInput.getText().trim());
+            });
+        }
+    }
 
     @FXML
     private void onCreateLobby() {
@@ -35,7 +55,6 @@ public class LobbyController {
         ApiSocketClient.getInstance().send(
                 new LobbyMessage(type, name)
         );
-        navigateToReady(name);
     }
 
     private void navigateToReady(String lobbyName) {

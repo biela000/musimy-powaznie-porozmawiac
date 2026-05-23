@@ -7,17 +7,23 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 public class ApiSocketClient {
     private static ApiSocketClient instance;
     private WebSocketClient client;
     private final Gson gson = new Gson();
+    private Consumer<String> onMessageCallback;
 
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();
         }
         return instance;
+    }
+
+    public void setOnMessageCallback(Consumer<String> callback) {
+        this.onMessageCallback = callback;
     }
 
     public void connect(String url, Runnable onConnected) {
@@ -33,13 +39,8 @@ public class ApiSocketClient {
                 public void onMessage(String message) {
                     System.out.println("API message: " + message);
 
-                    WsMessage parsedMessage = gson.fromJson(message, WsMessage.class);
-
-                    switch (parsedMessage.type) {
-                        case "LOBBY_JOINED":
-                            break;
-                        default:
-                            System.out.println("Unknown message type: " + parsedMessage.type);
+                    if (onMessageCallback != null) {
+                        onMessageCallback.accept(message);
                     }
                 }
 
