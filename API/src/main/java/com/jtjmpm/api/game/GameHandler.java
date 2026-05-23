@@ -89,7 +89,8 @@ public class GameHandler extends WebSocketServer {
         String sessionID = getSessionId(conn);
         store.setPlayerReady(sessionID);
         ReadyMessage readyMessage = new ReadyMessage(store.getPlayerReady(sessionID));
-        conn.send(readyMessage);
+        String jsonResponse = gson.toJson(readyMessage);
+        conn.send(jsonResponse);
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
