@@ -1,5 +1,7 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +24,8 @@ public class ShapeNormalizer {
         }
 
         Point2D startPoint = points.get(0);
-        double anchorX = startPoint.x;
-        double anchorY = startPoint.y;
+        double anchorX = startPoint.getX();
+        double anchorY = startPoint.getY();
 
         double minX = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
@@ -31,10 +33,10 @@ public class ShapeNormalizer {
         double maxY = -Double.MAX_VALUE;
 
         for (Point2D p : points) {
-            if (p.x < minX) minX = p.x;
-            if (p.x > maxX) maxX = p.x;
-            if (p.y < minY) minY = p.y;
-            if (p.y > maxY) maxY = p.y;
+            if (p.getX() < minX) minX = p.getX();
+            if (p.getX() > maxX) maxX = p.getX();
+            if (p.getY() < minY) minY = p.getY();
+            if (p.getY() > maxY) maxY = p.getY();
         }
 
         double scale = Math.max(maxX - minX, maxY - minY);
@@ -42,8 +44,8 @@ public class ShapeNormalizer {
 
         List<Point2D> normalizedPoints = new ArrayList<>();
         for (Point2D p : points) {
-            double newX = (p.x - anchorX) / scale;
-            double newY = (p.y - anchorY) / scale;
+            double newX = (p.getX() - anchorX) / scale;
+            double newY = (p.getY() - anchorY) / scale;
             normalizedPoints.add(new Point2D(newX, newY));
         }
 
@@ -70,8 +72,8 @@ public class ShapeNormalizer {
             double d = p1.distanceTo(p2);
 
             if (D + d >= interval) {
-                double qx = p1.x + ((interval - D) / d) * (p2.x - p1.x);
-                double qy = p1.y + ((interval - D) / d) * (p2.y - p1.y);
+                double qx = p1.getX() + ((interval - D) / d) * (p2.getX() - p1.getX());
+                double qy = p1.getY() + ((interval - D) / d) * (p2.getY() - p1.getY());
                 Point2D q = new Point2D(qx, qy);
 
                 newPoints.add(q);

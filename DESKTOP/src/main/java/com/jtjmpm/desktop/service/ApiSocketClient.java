@@ -1,22 +1,31 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.WsMessage;
+import com.jtjmpm.ShapeMessage;
+import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Consumer;
 
 public class ApiSocketClient {
     private static ApiSocketClient instance;
     private WebSocketClient client;
     private final Gson gson = new Gson();
+    private Consumer<String> onMessageCallback;
 
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();
         }
         return instance;
+    }
+
+    public void setOnMessageCallback(Consumer<String> callback) {
+        this.onMessageCallback = callback;
     }
 
     public void connect(String url, Runnable onConnected) {
@@ -31,6 +40,11 @@ public class ApiSocketClient {
                 @Override
                 public void onMessage(String message) {
                     System.out.println("API message: " + message);
+
+                    if (onMessageCallback != null) {
+                        onMessageCallback.accept(message);
+                    }
+                    System.out.println("API message received");
                 }
 
                 @Override

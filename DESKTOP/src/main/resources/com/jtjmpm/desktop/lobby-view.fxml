@@ -13,6 +13,7 @@
 
     <Button text="Create Lobby" onAction="#onCreateLobby" maxWidth="Infinity"/>
     <Button text="Join Lobby"   onAction="#onJoinLobby"   maxWidth="Infinity"/>
+    <Button text="Play Solo"    onAction="#onPlaySolo"    maxWidth="Infinity"/>
 
     <Label fx:id="statusLabel" style="-fx-text-fill: red;"/>
 </VBox>

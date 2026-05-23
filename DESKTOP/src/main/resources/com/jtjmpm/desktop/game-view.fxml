@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.jtjmpm.desktop.controller.GameController"
+            prefHeight="600.0" prefWidth="800.0"
+            style="-fx-background-color: #222222;">
+
+    <top>
+        <VBox alignment="CENTER" spacing="10.0">
+            <padding>
+                <Insets top="20" bottom="10" left="10" right="10"/>
+            </padding>
+            <Label text="Player moves visualization"
+                   style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Label text="Make a gesture"
+                   style="-fx-font-size: 14px; -fx-text-fill: #aaaaaa;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" maxWidth="540.0" maxHeight="440.0" style="-fx-border-color: #444444; -fx-border-width: 2px; -fx-background-color: #111111;">
+            <padding>
+                <Insets top="10" bottom="10" left="10" right="10"/>
+            </padding>
+            <Canvas fx:id="gestureCanvas" width="500.0" height="400.0" />
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox alignment="CENTER">
+            <padding>
+                <Insets bottom="20" top="10"/>
+            </padding>
+            <Button text="Return to Menu" onAction="#onBackToMenu"
+                    style="-fx-font-size: 14px; -fx-padding: 8px 20px;"/>
+        </VBox>
+    </bottom>
+</BorderPane>

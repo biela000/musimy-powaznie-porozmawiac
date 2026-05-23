@@ -5,9 +5,13 @@
 
 <VBox alignment="CENTER" spacing="16" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.jtjmpm.desktop.controller.ReadyController"
-      prefWidth="360" prefHeight="200">
+      prefWidth="360" prefHeight="260">
     <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 
     <Label fx:id="lobbyLabel" text="Waiting for players..."/>
+
+    <Label fx:id="player1StatusLabel" text="Player 1: Not ready"/>
+    <Label fx:id="player2StatusLabel" text="Player 2: Not ready"/>
+
     <Button text="Ready!" onAction="#onReady" maxWidth="Infinity"/>
 </VBox>

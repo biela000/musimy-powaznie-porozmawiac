@@ -1,5 +1,6 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.Point2D;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -70,10 +71,10 @@ public class MouseSimulatorWithGuides extends JFrame {
                     for (int i = 1; i < pattern.size(); i++) {
                         Point2D p1 = pattern.get(i - 1);
                         Point2D p2 = pattern.get(i);
-                        int x1 = centerX + (int)(p1.x * radius);
-                        int y1 = centerY - (int)(p1.y * radius);
-                        int x2 = centerX + (int)(p2.x * radius);
-                        int y2 = centerY - (int)(p2.y * radius);
+                        int x1 = centerX + (int)(p1.getX() * radius);
+                        int y1 = centerY - (int)(p1.getY() * radius);
+                        int x2 = centerX + (int)(p2.getX() * radius);
+                        int y2 = centerY - (int)(p2.getY() * radius);
                         g2d.drawLine(x1, y1, x2, y2);
                     }
                 }
@@ -82,16 +83,16 @@ public class MouseSimulatorWithGuides extends JFrame {
                 g2d.setStroke(new BasicStroke(2));
                 if (pattern != null && pattern.size() > 3) {
                     Point2D p0 = pattern.get(0);
-                    int sx = centerX + (int)(p0.x * radius);
-                    int sy = centerY - (int)(p0.y * radius);
+                    int sx = centerX + (int)(p0.getX() * radius);
+                    int sy = centerY - (int)(p0.getY() * radius);
 
                     g2d.fillOval(sx - 8, sy - 8, 16, 16);
                     g2d.setColor(Color.WHITE);
                     g2d.drawOval(sx - 8, sy - 8, 16, 16);
 
                     Point2D p3 = pattern.get(3);
-                    int targetX = centerX + (int)(p3.x * radius);
-                    int targetY = centerY - (int)(p3.y * radius);
+                    int targetX = centerX + (int)(p3.getX() * radius);
+                    int targetY = centerY - (int)(p3.getY() * radius);
 
                     double arrowAngleRad = Math.atan2(targetY - sy, targetX - sx);
 
@@ -121,7 +122,7 @@ public class MouseSimulatorWithGuides extends JFrame {
                     for (int i = 1; i < currentDrawing.size(); i++) {
                         Point2D p1 = currentDrawing.get(i - 1);
                         Point2D p2 = currentDrawing.get(i);
-                        g2d.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
+                        g2d.drawLine((int) p1.getX(), (int) p1.getY(), (int) p2.getX(), (int) p2.getY());
                     }
                 }
             }
@@ -146,7 +147,7 @@ public class MouseSimulatorWithGuides extends JFrame {
                 if (currentDrawing.size() > 10) {
                     List<Point2D> mathReadyDrawing = new ArrayList<>();
                     for (Point2D p : currentDrawing) {
-                        mathReadyDrawing.add(new Point2D(p.x, -p.y));
+                        mathReadyDrawing.add(new Point2D(p.getX(), -p.getY()));
                     }
 
                     List<Point2D> normalized = ShapeNormalizer.preProcess(mathReadyDrawing, POINTS, TRIM);
