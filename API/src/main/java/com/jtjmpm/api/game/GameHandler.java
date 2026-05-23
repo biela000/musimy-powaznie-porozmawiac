@@ -85,12 +85,16 @@ public class GameHandler extends WebSocketServer {
 
     // HELPER FUNCTIONS FOR HANDLING MESSAGES
 
-    private void handlePlayerReady(WebSocket conn, String playerId){
-
+    private void handlePlayerReady(WebSocket conn){
+        String sessionID = getSessionId(conn);
+        store.setPlayerReady(sessionID);
+        ReadyMessage readyMessage = new ReadyMessage(store.getPlayerReady(sessionID));
+        conn.send(readyMessage);
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
         // TODO
+
         System.out.println("Creating a lobby: " + lobbyName + " is creating a lobby");
     }
 

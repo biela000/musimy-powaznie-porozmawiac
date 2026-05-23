@@ -66,4 +66,9 @@ public class GameState {
     public int getPlayer1Hp() { return player1Hp; }
     public int getPlayer2Hp() { return player2Hp; }
     public boolean isGameStarted() { return isGameStarted; }
+    public boolean getPlayerReady(String playerId){
+        if (playerId.equals(player1Id)) return player1Ready;
+        if (playerId.equals(player2Id)) return player2Ready;
+        return false;
+    }
 }
