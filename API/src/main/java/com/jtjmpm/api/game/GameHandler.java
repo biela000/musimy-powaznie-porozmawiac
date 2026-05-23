@@ -67,10 +67,12 @@ public class GameHandler extends WebSocketServer {
 
             switch (message.type) {
                 case "CREATE_LOBBY":
-                    handleCreateLobby(conn, ((LobbyMessage) message).lobbyName);
+                    LobbyMessage createLobbyMessage = gson.fromJson(rawJson, LobbyMessage.class);
+                    handleCreateLobby(conn, createLobbyMessage.lobbyName);
                     break;
                 case "JOIN_LOBBY":
-                    handleJoinLobby(conn, ((LobbyMessage) message).lobbyName);
+                    LobbyMessage joinLobbyMessage = gson.fromJson(rawJson, LobbyMessage.class);
+                    handleJoinLobby(conn, joinLobbyMessage.lobbyName);
                     break;
                 case "PLAYER_MOVE":
                     PlayerMoveMessage playerMoveMessage = gson.fromJson(rawJson, PlayerMoveMessage.class);
@@ -78,6 +80,9 @@ public class GameHandler extends WebSocketServer {
                     break;
                 case "LEAVE_LOBBY":
                     handleLeaveLobby(conn);
+                    break;
+                case "TOGGLE_READY":
+                    handlePlayerReady(conn);
                     break;
                 default:
                     System.out.println("Unknown message type: " + message.type);
@@ -87,19 +92,16 @@ public class GameHandler extends WebSocketServer {
         }
     }
 
-    // HELPER FUNCTIONS FOR HANDLING MESSAGES
-
     private void handlePlayerReady(WebSocket conn){
         String sessionId = getSessionId(conn);
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
-        try{
+        try {
             store.setPlayerReady(sessionId);
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
             String jsonResponse = gson.toJson(responseMessage);
             conn.send(jsonResponse);
-
         } catch (Exception e) {
             System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
@@ -107,16 +109,15 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
-        // TODO
         String sessionId = getSessionId(conn);
         System.out.println("Creating a lobby: " + lobbyName + " " + sessionId + " is creating a lobby");
 
-        try{
-            if(store.createLobby(lobbyName, sessionId)){
-                GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+        try {
+            if (store.createLobby(lobbyName, sessionId)) {
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
-            }else{
+            } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
                 String jsonResponse = gson.toJson(errorMessage);
                 conn.send(jsonResponse);
@@ -128,16 +129,15 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handleJoinLobby(WebSocket conn, String lobbyName) {
-        // TODO
         String sessionId = getSessionId(conn);
         System.out.println("Joining a lobby: " + lobbyName + " " + sessionId + " is joining a lobby");
 
-        try{
-            if(store.connectToLobby(lobbyName, sessionId)){
-                GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+        try {
+            if (store.connectToLobby(lobbyName, sessionId)) {
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
-            }else{
+            } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
                 String jsonResponse = gson.toJson(errorMessage);
                 conn.send(jsonResponse);

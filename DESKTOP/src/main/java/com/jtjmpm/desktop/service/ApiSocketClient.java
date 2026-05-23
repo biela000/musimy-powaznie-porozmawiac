@@ -15,6 +15,7 @@ public class ApiSocketClient {
     private static ApiSocketClient instance;
     private WebSocketClient client;
     private final Gson gson = new Gson();
+    private Consumer<String> onMessageCallback;
 
     private Consumer<ShapeMessage> onShapeReceived;
 
@@ -25,6 +26,8 @@ public class ApiSocketClient {
         return instance;
     }
 
+    public void setOnMessageCallback(Consumer<String> callback) {
+        this.onMessageCallback = callback;
     public void setOnShapeReceived(Consumer<ShapeMessage> callback) {
         this.onShapeReceived = callback;
     }
@@ -40,6 +43,10 @@ public class ApiSocketClient {
 
                 @Override
                 public void onMessage(String message) {
+                    System.out.println("API message: " + message);
+
+                    if (onMessageCallback != null) {
+                        onMessageCallback.accept(message);
                     System.out.println("API message received");
                     try {
                         WsMessage base = gson.fromJson(message, WsMessage.class);
