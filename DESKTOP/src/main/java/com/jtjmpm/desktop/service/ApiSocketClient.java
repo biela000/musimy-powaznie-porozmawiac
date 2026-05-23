@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.WsMessage;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -30,7 +31,19 @@ public class ApiSocketClient {
 
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("API message: " + message);
+                    System.out.println("API message received");
+                    try {
+                        WsMessage base = gson.fromJson(message, WsMessage.class);
+                        if (base == null || base.type == null) return;
+                        switch (base.type) {
+                            case "SHAPE" -> handleShape(message);
+                            case "MOVE_RESULT" -> handleMoveResult(message);
+                            default -> System.out.println("Unknown message type: " + base.type);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Failed to parse incoming WebSocket message");
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -41,6 +54,14 @@ public class ApiSocketClient {
                 @Override
                 public void onError(Exception e) {
                     e.printStackTrace();
+                }
+
+                private void handleShape(String message){
+
+                }
+
+                private void handleMoveResult(String message){
+                    System.out.println("Message: " + message);
                 }
             };
             new Thread(() -> {
