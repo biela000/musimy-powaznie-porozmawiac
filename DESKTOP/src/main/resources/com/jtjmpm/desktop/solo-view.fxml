@@ -16,7 +16,7 @@
     <top>
         <VBox alignment="CENTER" spacing="10.0">
             <padding>
-                <Insets top="20" bottom="10"/>
+                <Insets top="20" bottom="10" left="10" right="10"/>
             </padding>
             <Label text="Player moves visualization"
                    style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;"/>
@@ -26,9 +26,9 @@
     </top>
 
     <center>
-        <VBox alignment="CENTER" style="-fx-border-color: #444444; -fx-border-width: 2px; -fx-background-color: #111111;" BorderPane.marginLineRewind="20">
+        <VBox alignment="CENTER" maxWidth="540.0" maxHeight="440.0" style="-fx-border-color: #444444; -fx-border-width: 2px; -fx-background-color: #111111;">
             <padding>
-                <Insets interstate="10"/>
+                <Insets top="10" bottom="10" left="10" right="10"/>
             </padding>
             <Canvas fx:id="gestureCanvas" width="500.0" height="400.0" />
         </VBox>
