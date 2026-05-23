@@ -1,10 +1,7 @@
 package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
-import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.LobbyMessage;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.*;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -87,6 +84,10 @@ public class GameHandler extends WebSocketServer {
     }
 
     // HELPER FUNCTIONS FOR HANDLING MESSAGES
+
+    private void handlePlayerReady(WebSocket conn, String playerId){
+
+    }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
         // TODO
