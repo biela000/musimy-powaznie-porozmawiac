@@ -1,5 +1,9 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.ControllerRotation;
+import com.jtjmpm.Point2D;
+
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,11 +73,16 @@ public class RotationVectorParser {
         return new ArrayList<>(currentPath);
     }
 
-    public List<Point2D> processBatch(List<float[]> rawDataList) {
+    public List<Point2D> processBatch(List<ControllerRotation> rawDataList) {
         startRecording();
         if (rawDataList != null) {
-            for (float[] sensorValues : rawDataList) {
-                processRawSensorValues(sensorValues);
+            for (ControllerRotation sensorValues : rawDataList) {
+                float[] point = new float[4];
+                point[0] = sensorValues.x;
+                point[1] = sensorValues.y;
+                point[2] = sensorValues.z;
+                point[3] = sensorValues.scalar;
+                processRawSensorValues(point);
             }
         }
 

@@ -1,5 +1,6 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,9 +17,9 @@ public class GestureEvaluator {
         double gestureLen = pathLength(gesture);
 
         double lengthPenalty = 1.0;
-        if (patternLen > 0 && gestureLen > 0) {
-            lengthPenalty = Math.min(patternLen, gestureLen) / Math.max(patternLen, gestureLen);
-        }
+//        if (patternLen > 0 && gestureLen > 0) {
+//            lengthPenalty = Math.min(patternLen, gestureLen) / Math.max(patternLen, gestureLen);
+//        }
 
         double dtwCost = calculateDTW(pattern, gesture, windowPercent);
         double normalizedCost = dtwCost / Math.max(pattern.size(), gesture.size());

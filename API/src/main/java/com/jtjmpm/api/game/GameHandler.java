@@ -2,6 +2,10 @@ package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
 import com.jtjmpm.*;
+import com.jtjmpm.api.game.game_logic.GestureToScore;
+import com.jtjmpm.api.game.game_logic.PatternGenerator;
+import com.jtjmpm.api.game.game_logic.RotationVectorParser;
+import com.jtjmpm.api.game.game_logic.ShapeNormalizer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -150,6 +154,37 @@ public class GameHandler extends WebSocketServer {
         // Obliczacie to co macie tutaj
         // Wynik przesylacie komenda:
         // conn.send(MoveResultMessage);
+        String sessionId = getSessionId(conn);
+        System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
+
+        try {
+            RotationVectorParser parser = new RotationVectorParser();
+            List<Point2D> normalPoints = parser.processBatch(move);
+            List<Point2D> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
+
+            ShapeMessage shapeMessage = new ShapeMessage(normalizedPoints);
+
+            String jsonResponse = gson.toJson(shapeMessage);
+            conn.send(jsonResponse);
+            /*List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+
+            double accuracyScore = GestureToScore.getScore(circlePattern, move);
+
+            double accuracyScore = GestureToScore.getScore(trianglePattern, move);
+
+            System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
+            MoveResultMessage resultMessage = new MoveResultMessage(accuracyScore);
+
+            String jsonResponse = gson.toJson(resultMessage);
+            conn.send(jsonResponse);*/
+
+            //TODO
+            //Update game state
+
+        } catch (Exception e) {
+            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handleLeaveLobby(WebSocket conn) {

@@ -1,5 +1,7 @@
 package com.jtjmpm.api.game.game_logic;
 
+import com.jtjmpm.Point2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,29 +19,33 @@ public class ShapeNormalizer {
     }
 
     private static List<Point2D> normalize(List<Point2D> points) {
+        if (points == null || points.isEmpty()) {
+            return points;
+        }
+
+        Point2D startPoint = points.get(0);
+        double anchorX = startPoint.getX();
+        double anchorY = startPoint.getY();
+
         double minX = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
 
         for (Point2D p : points) {
-            if (p.x < minX) minX = p.x;
-            if (p.x > maxX) maxX = p.x;
-            if (p.y < minY) minY = p.y;
-            if (p.y > maxY) maxY = p.y;
+            if (p.getX() < minX) minX = p.getX();
+            if (p.getX() > maxX) maxX = p.getX();
+            if (p.getY() < minY) minY = p.getY();
+            if (p.getY() > maxY) maxY = p.getY();
         }
 
-        double centerX = (minX + maxX) / 2.0;
-        double centerY = (minY + maxY) / 2.0;
-
-        double scale = Math.max(maxX - minX, maxY - minY) / 2.0;
-
+        double scale = Math.max(maxX - minX, maxY - minY);
         if (scale == 0) scale = 1.0;
 
         List<Point2D> normalizedPoints = new ArrayList<>();
         for (Point2D p : points) {
-            double newX = (p.x - centerX) / scale;
-            double newY = (p.y - centerY) / scale;
+            double newX = (p.getX() - anchorX) / scale;
+            double newY = (p.getY() - anchorY) / scale;
             normalizedPoints.add(new Point2D(newX, newY));
         }
 
@@ -66,8 +72,8 @@ public class ShapeNormalizer {
             double d = p1.distanceTo(p2);
 
             if (D + d >= interval) {
-                double qx = p1.x + ((interval - D) / d) * (p2.x - p1.x);
-                double qy = p1.y + ((interval - D) / d) * (p2.y - p1.y);
+                double qx = p1.getX() + ((interval - D) / d) * (p2.getX() - p1.getX());
+                double qy = p1.getY() + ((interval - D) / d) * (p2.getY() - p1.getY());
                 Point2D q = new Point2D(qx, qy);
 
                 newPoints.add(q);
@@ -86,7 +92,7 @@ public class ShapeNormalizer {
         return newPoints;
     }
 
-    static double pathLength(List<Point2D> points) {
+    public static double pathLength(List<Point2D> points) {
         double d = 0.0;
         for (int i = 1; i < points.size(); i++) {
             d += points.get(i - 1).distanceTo(points.get(i));

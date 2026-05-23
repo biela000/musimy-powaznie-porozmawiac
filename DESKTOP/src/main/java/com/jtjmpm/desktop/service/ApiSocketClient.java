@@ -1,6 +1,9 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.WsMessage;
+import com.jtjmpm.ShapeMessage;
+import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -14,6 +17,8 @@ public class ApiSocketClient {
     private final Gson gson = new Gson();
     private Consumer<String> onMessageCallback;
 
+    private Consumer<ShapeMessage> onShapeReceived;
+
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();
@@ -23,6 +28,8 @@ public class ApiSocketClient {
 
     public void setOnMessageCallback(Consumer<String> callback) {
         this.onMessageCallback = callback;
+    public void setOnShapeReceived(Consumer<ShapeMessage> callback) {
+        this.onShapeReceived = callback;
     }
 
     public void connect(String url, Runnable onConnected) {
@@ -40,6 +47,18 @@ public class ApiSocketClient {
 
                     if (onMessageCallback != null) {
                         onMessageCallback.accept(message);
+                    System.out.println("API message received");
+                    try {
+                        WsMessage base = gson.fromJson(message, WsMessage.class);
+                        if (base == null || base.type == null) return;
+                        switch (base.type) {
+                            case "SHAPE" -> handleShape(message);
+                            case "MOVE_RESULT" -> handleMoveResult(message);
+                            default -> System.out.println("Unknown message type: " + base.type);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Failed to parse incoming WebSocket message");
+                        e.printStackTrace();
                     }
                 }
 
@@ -51,6 +70,17 @@ public class ApiSocketClient {
                 @Override
                 public void onError(Exception e) {
                     e.printStackTrace();
+                }
+
+                private void handleShape(String message){
+                    ShapeMessage shapeMsg = gson.fromJson(message, ShapeMessage.class);
+                    if (onShapeReceived != null && shapeMsg != null) {
+                        Platform.runLater(() -> onShapeReceived.accept(shapeMsg));
+                    }
+                }
+
+                private void handleMoveResult(String message){
+                    System.out.println("Message: " + message);
                 }
             };
             new Thread(() -> {

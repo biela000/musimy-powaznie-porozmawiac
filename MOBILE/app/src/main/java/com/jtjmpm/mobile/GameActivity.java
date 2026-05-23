@@ -72,7 +72,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private void startSensor() {
         if (rotationSensor != null) {
-            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener(this, rotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
     }
 
