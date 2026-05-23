@@ -72,7 +72,8 @@ public class GameHandler extends WebSocketServer {
                     handleJoinLobby(conn, ((LobbyMessage) message).lobbyName);
                     break;
                 case "PLAYER_MOVE":
-                    handlePlayerMove(conn, ((PlayerMoveMessage) message).move);
+                    PlayerMoveMessage playerMoveMessage = gson.fromJson(rawJson, PlayerMoveMessage.class);
+                    handlePlayerMove(conn, playerMoveMessage.move);
                     break;
                 case "LEAVE_LOBBY":
                     handleLeaveLobby(conn);
@@ -99,7 +100,10 @@ public class GameHandler extends WebSocketServer {
 
     private void handlePlayerMove(WebSocket conn, List<ControllerRotation> move) {
         // TODO
-        System.out.println("Player with session ID: " + getSessionId(conn) + " is sending sensor data");
+        // Dodajecie klase MoveResultMessage
+        // Obliczacie to co macie tutaj
+        // Wynik przesylacie komenda:
+        // conn.send(MoveResultMessage);
     }
 
     private void handleLeaveLobby(WebSocket conn) {
