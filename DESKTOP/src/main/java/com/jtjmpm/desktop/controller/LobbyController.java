@@ -49,7 +49,7 @@ public class LobbyController {
     private void onPlaySolo() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jtjmpm/desktop/solo-view.fxml")
+                    getClass().getResource("/com/jtjmpm/desktop/game-view.fxml")
             );
 
             Scene scene = new Scene(loader.load());
