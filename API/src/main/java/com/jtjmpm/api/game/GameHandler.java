@@ -1,14 +1,11 @@
 package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
-import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.LobbyMessage;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
-import com.jtjmpm.Point2D;
-import com.jtjmpm.MoveResultMessage;
+import com.jtjmpm.*;
 import com.jtjmpm.api.game.game_logic.GestureToScore;
 import com.jtjmpm.api.game.game_logic.PatternGenerator;
+import com.jtjmpm.api.game.game_logic.RotationVectorParser;
+import com.jtjmpm.api.game.game_logic.ShapeNormalizer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -112,7 +109,15 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
 
         try {
-            List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+            RotationVectorParser parser = new RotationVectorParser();
+            List<Point2D> normalPoints = parser.processBatch(move);
+            List<Point2D> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
+
+            ShapeMessage shapeMessage = new ShapeMessage(normalizedPoints);
+
+            String jsonResponse = gson.toJson(shapeMessage);
+            conn.send(jsonResponse);
+            /*List<Point2D> circlePattern = PatternGenerator.createCircle(64);
 
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
@@ -121,7 +126,7 @@ public class GameHandler extends WebSocketServer {
             MoveResultMessage resultMessage = new MoveResultMessage(accuracyScore);
 
             String jsonResponse = gson.toJson(resultMessage);
-            conn.send(jsonResponse);
+            conn.send(jsonResponse);*/
 
             //TODO
             //Update game state
