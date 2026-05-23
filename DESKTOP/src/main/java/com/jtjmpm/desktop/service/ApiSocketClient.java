@@ -17,8 +17,6 @@ public class ApiSocketClient {
     private final Gson gson = new Gson();
     private Consumer<String> onMessageCallback;
 
-    private Consumer<ShapeMessage> onShapeReceived;
-
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();

@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 
-public class SoloController {
+public class GameController {
 
     @FXML
     private Canvas gestureCanvas;

@@ -9,7 +9,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.jtjmpm.desktop.controller.SoloController"
+            fx:controller="com.jtjmpm.desktop.controller.GameController"
             prefHeight="600.0" prefWidth="800.0"
             style="-fx-background-color: #222222;">
 

@@ -7,7 +7,12 @@ import com.jtjmpm.WsMessage;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class ReadyController {
     @FXML private Label lobbyLabel;
@@ -24,9 +29,16 @@ public class ReadyController {
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
-        if ("GAME_STATE_UPDATE".equals(base.type)) {
-            GameStateUpdateMessage update = gson.fromJson(message, GameStateUpdateMessage.class);
-            Platform.runLater(() -> updateReadyStatus(update));
+        switch (base.type) {
+            case "GAME_STATE_UPDATE":
+                GameStateUpdateMessage update = gson.fromJson(message, GameStateUpdateMessage.class);
+                Platform.runLater(() -> updateReadyStatus(update));
+                break;
+            case "GAME_START":
+                Platform.runLater(this::navigateToGame);
+                break;
+            default:
+                System.out.println("Unknown message type: " + base.type);
         }
     }
 
@@ -43,5 +55,19 @@ public class ReadyController {
     private void onReady() {
         ApiSocketClient.getInstance().send(new ReadyMessage());
         System.out.println("USER_READY sent");
+    }
+
+    private void navigateToGame() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/jtjmpm/desktop/game-view.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage) lobbyLabel.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
