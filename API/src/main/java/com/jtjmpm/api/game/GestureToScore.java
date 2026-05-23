@@ -1,5 +1,6 @@
 package com.jtjmpm.api.game;
 
+import com.jtjmpm.ControllerRotation;
 import com.jtjmpm.api.game.game_logic.GestureEvaluator;
 import com.jtjmpm.api.game.game_logic.Point2D;
 import com.jtjmpm.api.game.game_logic.RotationVectorParser;
@@ -8,7 +9,7 @@ import com.jtjmpm.api.game.game_logic.ShapeNormalizer;
 import java.util.List;
 
 public class GestureToScore {
-    public static double getScore(List<Point2D> pattern, List<float[]> rawData, double k, double windowPercent) {
+    public static double getScore(List<Point2D> pattern, List<ControllerRotation> rawData, double k, double windowPercent) {
         RotationVectorParser parser = new RotationVectorParser();
 
         List<Point2D> normalPoints = parser.processBatch(rawData);
@@ -16,7 +17,7 @@ public class GestureToScore {
         return GestureEvaluator.evaluateScoreBiDirectional(pattern, normalizedPoints, k, windowPercent);
     }
 
-    public static double getScore(List<Point2D> pattern, List<float[]> rawData) {
+    public static double getScore(List<Point2D> pattern, List<ControllerRotation> rawData) {
         RotationVectorParser parser = new RotationVectorParser();
 
         List<Point2D> normalPoints = parser.processBatch(rawData);
