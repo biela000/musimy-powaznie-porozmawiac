@@ -24,6 +24,7 @@ public class GameStateStore {
     public void createLobby(String lobbyID, String sessionID){
         GameState newState = new GameState(sessionID);
 
+        if(lobbies.containsKey(lobbyID)) return;
         lobbies.put(lobbyID, newState);
         sessionToLobby.put(sessionID, lobbyID);
     }
