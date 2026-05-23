@@ -66,4 +66,6 @@ public class GameState {
     public int getPlayer1Hp() { return player1Hp; }
     public int getPlayer2Hp() { return player2Hp; }
     public boolean isGameStarted() { return isGameStarted; }
+    public boolean getPlayer1Ready() { return player1Ready; }
+    public boolean getPlayer2Ready() { return player2Ready; }
 }
