@@ -1,8 +1,9 @@
 package com.jtjmpm;
 
 public class GameStateUpdateMessage extends WsMessage{
-
-    public GameStateUpdateMessage(String type) {
-        super(type);
+    GameState gameState;
+    public GameStateUpdateMessage(GameState gameState) {
+        super("GAME_STATE_UPDATE");
+        this.gameState = gameState;
     }
 }
