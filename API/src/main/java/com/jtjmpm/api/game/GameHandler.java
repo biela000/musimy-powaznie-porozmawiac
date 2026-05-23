@@ -63,10 +63,12 @@ public class GameHandler extends WebSocketServer {
 
             switch (message.type) {
                 case "CREATE_LOBBY":
-                    handleCreateLobby(conn, ((LobbyMessage) message).lobbyName);
+                    LobbyMessage createLobbyMessage = gson.fromJson(rawJson, LobbyMessage.class);
+                    handleCreateLobby(conn, createLobbyMessage.lobbyName);
                     break;
                 case "JOIN_LOBBY":
-                    handleJoinLobby(conn, ((LobbyMessage) message).lobbyName);
+                    LobbyMessage joinLobbyMessage = gson.fromJson(rawJson, LobbyMessage.class);
+                    handleJoinLobby(conn, joinLobbyMessage.lobbyName);
                     break;
                 case "PLAYER_MOVE":
                     PlayerMoveMessage playerMoveMessage = gson.fromJson(rawJson, PlayerMoveMessage.class);

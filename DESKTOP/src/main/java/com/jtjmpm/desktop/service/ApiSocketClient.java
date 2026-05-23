@@ -1,7 +1,6 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
-import com.jtjmpm.WsMessage;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
