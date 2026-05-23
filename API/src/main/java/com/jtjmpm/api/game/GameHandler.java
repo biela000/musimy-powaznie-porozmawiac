@@ -122,7 +122,20 @@ public class GameHandler extends WebSocketServer {
 
     private void handleJoinLobby(WebSocket conn, String lobbyName) {
         // TODO
-        System.out.println("Joining a lobby: " + lobbyName + " is joining a lobby");
+        String sessionId = getSessionId(conn);
+        System.out.println("Joining a lobby: " + lobbyName + " " + sessionId + " is joining a lobby");
+
+        try{
+            store.connectToLobby(lobbyName, sessionId);
+
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+            String jsonResponse = gson.toJson(responseMessage);
+            conn.send(jsonResponse);
+
+        } catch (Exception e) {
+            System.err.println("Error while creating lobby from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handlePlayerMove(WebSocket conn, List<ControllerRotation> move) {
