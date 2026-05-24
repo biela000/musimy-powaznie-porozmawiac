@@ -43,23 +43,23 @@ public class GameStateStore {
         return false;
     }
 
-    public void removeSession(String sessionID) {
+    public boolean removeSession(String sessionID) { //returns true if player was in a lobby and left successfully, false otherwise
         String lobbyId = sessionToLobby.remove(sessionID);
-
-        //If any of the players disconnects from the lobby we close it (might have to change this logic later)
+        // if host leaves, lobby closes, if the second player leaves, the lobby remains
         if (lobbyId != null) {
             GameState state = lobbies.get(lobbyId);
-
             if (state != null) {
                 String p1 = state.getPlayer1Id();
                 String p2 = state.getPlayer2Id();
 
-                if (p1 != null) sessionToLobby.remove(p1);
-                if (p2 != null) sessionToLobby.remove(p2);
-
-                lobbies.remove(lobbyId);
+                if (p1.equals(sessionID)) {
+                    sessionToLobby.remove(p1);
+                    lobbies.remove(lobbyId);
+                } else if (p2.equals(sessionID)) sessionToLobby.remove(p2);
             }
+            return true;
         }
+        return false;
     }
 
     //GAMEPLAY LOGIC
