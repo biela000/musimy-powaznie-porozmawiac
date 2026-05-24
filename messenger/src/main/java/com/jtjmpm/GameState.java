@@ -1,7 +1,7 @@
 package com.jtjmpm;
 
 public class GameState {
-    private final String player1Id; // Host
+    private String player1Id; // Host
     private String player2Id;       // Gość
 
     private int player1Hp = 100;
@@ -11,6 +11,9 @@ public class GameState {
     private boolean player2Ready = false;
 
     private boolean isGameStarted = false;
+
+    public GameState(){
+    }
 
     //player 1 is always the host
     public GameState(String hostId) {
