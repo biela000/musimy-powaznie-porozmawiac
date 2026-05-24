@@ -172,7 +172,7 @@ public class GameHandler extends WebSocketServer {
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
-            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore);
+            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore, sessionId);
             String jsonResponse = gson.toJson(resultMessage);
             conn.send(jsonResponse);
         } catch (Exception e) {
