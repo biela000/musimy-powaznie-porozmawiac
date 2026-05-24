@@ -23,6 +23,10 @@
             <Label text="Make a gesture"
                    style="-fx-font-size: 14px; -fx-text-fill: #aaaaaa;"/>
         </VBox>
+        <VBox alignment="CENTER" spacing="5.0">
+            <Label fx:id="accuracyLabel" text="Accuracy: --.-%"
+                   style="-fx-font-size: 16px; -fx-text-fill: #00ff00;"/>
+        </VBox>
     </top>
 
     <center>

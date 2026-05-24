@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -19,6 +20,8 @@ public class GameController {
 
     @FXML
     private Canvas gestureCanvas;
+    @FXML
+    public Label accuracyLabel;
 
     private GraphicsContext gc;
 
@@ -37,7 +40,9 @@ public class GameController {
 
         switch (base.type) {
             case "MOVE_RESULT":
-                drawGesture(gson.fromJson(message, MoveResultMessage.class));
+                Platform.runLater(() -> {
+                    drawGesture(gson.fromJson(message, MoveResultMessage.class));
+                });
                 break;
             case "GAME_STATUS_UPDATE":
                 break;
@@ -51,6 +56,9 @@ public class GameController {
         if (message == null || message.points == null || message.points.isEmpty()) {
             return;
         }
+
+        double percent = message.accuracy * 100.0;
+        accuracyLabel.setText(String.format("Accuracy: %.1f%%", percent));
 
         clearCanvas();
 
