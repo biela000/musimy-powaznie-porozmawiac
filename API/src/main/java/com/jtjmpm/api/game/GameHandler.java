@@ -34,6 +34,8 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Connected, session ID: " + sessionId);
         activeSessions.put(sessionId, conn);
 
+        conn.send(gson.toJson(new WelcomeMessage(sessionId)));
+
         GameState lobby = store.getPlayersLobby(sessionId);
 
         GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
