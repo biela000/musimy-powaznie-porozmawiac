@@ -189,8 +189,9 @@ public class GameHandler extends WebSocketServer {
             store.removeSession(sessionId);
 
             GameState lobby = store.getPlayersLobby(sessionId);
+            String lobbyName = store.getLobbyIdForPlayer(sessionId);
 
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
+            LobbyLeftMessage responseMessage = new LobbyLeftMessage(lobbyName, lobby);
             String jsonResponse = gson.toJson(responseMessage);
 
 
