@@ -97,14 +97,14 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
         try {
-            store.setPlayerReady(sessionId);
+            boolean areBothPlayersReady = store.setPlayerReady(sessionId);
 
             GameState lobby = store.getPlayersLobby(sessionId);
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
             String jsonResponse = gson.toJson(responseMessage);
 
-            if (lobby.getPlayer1Ready() && lobby.getPlayer2Ready()) {
+            if (areBothPlayersReady) {
                 WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
                 WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
 
