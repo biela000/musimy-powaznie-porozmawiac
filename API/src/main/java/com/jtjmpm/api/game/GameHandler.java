@@ -36,10 +36,10 @@ public class GameHandler extends WebSocketServer {
 
         conn.send(gson.toJson(new WelcomeMessage(sessionId)));
 
-        GameState lobby = store.getPlayersLobby(sessionId);
+        //GameState lobby = store.getPlayersLobby(sessionId);
 
-        GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
-        String jsonResponse = gson.toJson(responseMessage);
+        //GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
+        //String jsonResponse = gson.toJson(responseMessage);
     }
 
     @Override
