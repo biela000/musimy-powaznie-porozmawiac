@@ -202,7 +202,7 @@ public class GameHandler extends WebSocketServer {
         }
     }
 
-}
+
 
     // UTILITIES
 
