@@ -186,16 +186,23 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Player with session ID: " + getSessionId(conn) + " is leaving his lobby");
 
         try {
-            store.removeSession(sessionId);
+            if(store.removeSession(sessionId)){
+                GameState lobby = store.getPlayersLobby(sessionId);
+                String lobbyName = store.getLobbyIdForPlayer(sessionId);
 
-            GameState lobby = store.getPlayersLobby(sessionId);
-            String lobbyName = store.getLobbyIdForPlayer(sessionId);
-
-            LobbyLeftMessage responseMessage = new LobbyLeftMessage(lobbyName, lobby);
-            String jsonResponse = gson.toJson(responseMessage);
+                LobbyLeftMessage responseMessage = new LobbyLeftMessage(lobbyName, lobby);
+                String jsonResponse = gson.toJson(responseMessage);
 
 
-            conn.send(jsonResponse);
+                conn.send(jsonResponse);
+            }
+            else{
+                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Player " + sessionId + "isn't in any lobby or there was an error with his lobby...");
+                String jsonResponse = gson.toJson(errorMessage);
+                conn.send(jsonResponse);
+            }
+
+
         } catch (Exception e) {
             System.err.println("Error while leaving lobby: from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
