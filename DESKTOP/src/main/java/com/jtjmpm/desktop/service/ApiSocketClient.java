@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.WelcomeMessage;
 import com.jtjmpm.WsMessage;
 import com.jtjmpm.ShapeMessage;
 import javafx.application.Platform;
@@ -16,6 +17,12 @@ public class ApiSocketClient {
     private WebSocketClient client;
     private final Gson gson = new Gson();
     private Consumer<String> onMessageCallback;
+
+    private String myPlayerId;
+
+    public String getMyPlayerId() {
+        return myPlayerId;
+    }
 
     public static ApiSocketClient getInstance() {
         if (instance == null) {
@@ -40,6 +47,16 @@ public class ApiSocketClient {
                 @Override
                 public void onMessage(String message) {
                     System.out.println("API message: " + message);
+
+                    WsMessage base = gson.fromJson(message, WsMessage.class);
+
+                    switch(base.type){
+                        case "WELCOME":
+                            WelcomeMessage welcome = gson.fromJson(message, WelcomeMessage.class);
+                            ApiSocketClient.this.myPlayerId = welcome.myPlayerId;
+                            System.out.println("API message received, saved my player ID: " + myPlayerId);
+                            return;
+                    }
 
                     if (onMessageCallback != null) {
                         onMessageCallback.accept(message);

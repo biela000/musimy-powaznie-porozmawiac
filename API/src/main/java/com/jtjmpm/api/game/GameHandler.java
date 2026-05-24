@@ -33,6 +33,8 @@ public class GameHandler extends WebSocketServer {
         String sessionId = getSessionId(conn);
         System.out.println("Connected, session ID: " + sessionId);
         activeSessions.put(sessionId, conn);
+
+        conn.send(gson.toJson(new WelcomeMessage(sessionId)));
     }
 
     @Override
@@ -125,9 +127,19 @@ public class GameHandler extends WebSocketServer {
 
         try {
             if (store.createLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
+
+                GameState lobby = store.getPlayersLobby(sessionId);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
+                String GSjsonResponse = gson.toJson(responseMessage);
+                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+                player1.send(GSjsonResponse);
+                player2.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
                 String jsonResponse = gson.toJson(errorMessage);
@@ -145,9 +157,19 @@ public class GameHandler extends WebSocketServer {
 
         try {
             if (store.connectToLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
+
+                GameState lobby = store.getPlayersLobby(sessionId);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
+                String GSjsonResponse = gson.toJson(responseMessage);
+                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+                player1.send(GSjsonResponse);
+                player2.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
                 String jsonResponse = gson.toJson(errorMessage);
@@ -172,9 +194,16 @@ public class GameHandler extends WebSocketServer {
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
-            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore);
+            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore, sessionId);
             String jsonResponse = gson.toJson(resultMessage);
-            conn.send(jsonResponse);
+
+            GameState lobby = store.getPlayersLobby(sessionId);
+
+            WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+            WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+            player1.send(jsonResponse);
+            player2.send(jsonResponse);
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();

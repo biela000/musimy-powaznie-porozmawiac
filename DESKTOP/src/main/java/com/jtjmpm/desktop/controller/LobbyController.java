@@ -29,8 +29,9 @@ public class LobbyController {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         if ("LOBBY_JOINED".equals(base.type)) {
+            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
             Platform.runLater(() -> {
-                navigateToReady(lobbyNameInput.getText().trim());
+                navigateToReady(lobbyNameInput.getText().trim(), stage);
             });
         }
     }
@@ -49,7 +50,7 @@ public class LobbyController {
     private void onPlaySolo() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jtjmpm/desktop/game-view.fxml")
+                    getClass().getResource("/com/jtjmpm/desktop/solo-view.fxml")
             );
 
             Scene scene = new Scene(loader.load());
@@ -73,7 +74,7 @@ public class LobbyController {
         );
     }
 
-    private void navigateToReady(String lobbyName) {
+    private void navigateToReady(String lobbyName, Stage stage) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/jtjmpm/desktop/ready-view.fxml")
@@ -84,7 +85,6 @@ public class LobbyController {
             ReadyController controller = loader.getController();
             controller.setLobbyName(lobbyName);
 
-            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();
