@@ -196,7 +196,14 @@ public class GameHandler extends WebSocketServer {
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
             MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore, sessionId);
             String jsonResponse = gson.toJson(resultMessage);
-            conn.send(jsonResponse);
+
+            GameState lobby = store.getPlayersLobby(sessionId);
+
+            WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+            WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+            player1.send(jsonResponse);
+            player2.send(jsonResponse);
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
