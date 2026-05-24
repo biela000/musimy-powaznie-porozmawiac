@@ -54,6 +54,7 @@ public class GameStateStore {
 
                 if (p1.equals(sessionID)) {
                     sessionToLobby.remove(p1);
+                    sessionToLobby.remove(p2);
                     lobbies.remove(lobbyId);
                 } else if (p2.equals(sessionID)) sessionToLobby.remove(p2);
             }
