@@ -182,9 +182,26 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handleLeaveLobby(WebSocket conn) {
-        // TODO
+        String sessionId = getSessionId(conn);
         System.out.println("Player with session ID: " + getSessionId(conn) + " is leaving his lobby");
+
+        try {
+            store.removeSession(sessionId);
+
+            GameState lobby = store.getPlayersLobby(sessionId);
+
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
+            String jsonResponse = gson.toJson(responseMessage);
+
+
+            conn.send(jsonResponse);
+        } catch (Exception e) {
+            System.err.println("Error while leaving lobby: from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+}
 
     // UTILITIES
 
