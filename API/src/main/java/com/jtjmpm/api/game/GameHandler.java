@@ -131,9 +131,15 @@ public class GameHandler extends WebSocketServer {
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
 
-                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+                GameState lobby = store.getPlayersLobby(sessionId);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
                 String GSjsonResponse = gson.toJson(responseMessage);
-                conn.send(GSjsonResponse);
+                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+                player1.send(GSjsonResponse);
+                player2.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
                 String jsonResponse = gson.toJson(errorMessage);
@@ -155,9 +161,15 @@ public class GameHandler extends WebSocketServer {
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
 
-                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+                GameState lobby = store.getPlayersLobby(sessionId);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
                 String GSjsonResponse = gson.toJson(responseMessage);
-                conn.send(GSjsonResponse);
+                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
+                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
+
+                player1.send(GSjsonResponse);
+                player2.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
                 String jsonResponse = gson.toJson(errorMessage);
