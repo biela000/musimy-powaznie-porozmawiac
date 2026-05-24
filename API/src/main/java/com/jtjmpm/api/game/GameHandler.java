@@ -97,14 +97,14 @@ public class GameHandler extends WebSocketServer {
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
         try {
-            store.setPlayerReady(sessionId);
+            boolean areBothPlayersReady = store.setPlayerReady(sessionId);
 
             GameState lobby = store.getPlayersLobby(sessionId);
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
             String jsonResponse = gson.toJson(responseMessage);
 
-            if (lobby.getPlayer1Ready() && lobby.getPlayer2Ready()) {
+            if (areBothPlayersReady) {
                 WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
                 WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
 
@@ -171,20 +171,45 @@ public class GameHandler extends WebSocketServer {
 
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
-            System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
+            System.out.println("Accuracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
             MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore);
             String jsonResponse = gson.toJson(resultMessage);
             conn.send(jsonResponse);
         } catch (Exception e) {
-            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
+            System.err.println("Error while calculating score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     private void handleLeaveLobby(WebSocket conn) {
-        // TODO
+        String sessionId = getSessionId(conn);
         System.out.println("Player with session ID: " + getSessionId(conn) + " is leaving his lobby");
+
+        try {
+            if(store.removeSession(sessionId)){
+                GameState lobby = store.getPlayersLobby(sessionId);
+                String lobbyName = store.getLobbyIdForPlayer(sessionId);
+
+                LobbyLeftMessage responseMessage = new LobbyLeftMessage(lobbyName, lobby);
+                String jsonResponse = gson.toJson(responseMessage);
+
+
+                conn.send(jsonResponse);
+            }
+            else{
+                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Player " + sessionId + "isn't in any lobby or there was an error with his lobby...");
+                String jsonResponse = gson.toJson(errorMessage);
+                conn.send(jsonResponse);
+            }
+
+
+        } catch (Exception e) {
+            System.err.println("Error while leaving lobby: from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+
 
     // UTILITIES
 
