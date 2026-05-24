@@ -35,11 +35,6 @@ public class GameHandler extends WebSocketServer {
         activeSessions.put(sessionId, conn);
 
         conn.send(gson.toJson(new WelcomeMessage(sessionId)));
-
-        //GameState lobby = store.getPlayersLobby(sessionId);
-
-        //GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
-        //String jsonResponse = gson.toJson(responseMessage);
     }
 
     @Override
@@ -132,9 +127,13 @@ public class GameHandler extends WebSocketServer {
 
         try {
             if (store.createLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+                String GSjsonResponse = gson.toJson(responseMessage);
+                conn.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
                 String jsonResponse = gson.toJson(errorMessage);
@@ -152,9 +151,13 @@ public class GameHandler extends WebSocketServer {
 
         try {
             if (store.connectToLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName, store.getPlayersLobby(sessionId));
+                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
                 String jsonResponse = gson.toJson(responseMessage);
                 conn.send(jsonResponse);
+
+                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(store.getPlayersLobby(sessionId));
+                String GSjsonResponse = gson.toJson(responseMessage);
+                conn.send(GSjsonResponse);
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
                 String jsonResponse = gson.toJson(errorMessage);
