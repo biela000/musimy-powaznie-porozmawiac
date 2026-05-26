@@ -2,6 +2,7 @@ package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.LobbyMessage;
+import com.jtjmpm.WelcomeMessage;
 import com.jtjmpm.WsMessage;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
@@ -15,25 +16,47 @@ import javafx.scene.control.Label;
 import java.io.IOException;
 
 public class LobbyController {
+    private final static String SOLO_VIEW = "/com/jtjmpm/desktop/solo-view.fxml";
+    private final static String READY_VIEW = "/com/jtjmpm/desktop/ready-view.fxml";
+
     @FXML private TextField lobbyNameInput;
     @FXML private Label statusLabel;
+
+    private final ApiSocketClient client = ApiSocketClient.getInstance();
 
     private final Gson gson = new Gson();
 
     @FXML
     public void initialize() {
-        ApiSocketClient.getInstance().setOnMessageCallback(this::handleApiMessage);
+        client.setOnMessageCallback(this::handleApiMessage);
     }
 
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
-        if ("LOBBY_JOINED".equals(base.type)) {
-            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
-            Platform.runLater(() -> {
-                navigateToReady(lobbyNameInput.getText().trim(), stage);
-            });
+        switch (base.type) {
+            case "LOBBY_JOINED":
+                handleLobbyJoined();
+                break;
+            case "WELCOME":
+                WelcomeMessage welcome = gson.fromJson(message, WelcomeMessage.class);
+                handleWelcome(welcome);
+                break;
+            default:
+                ApiSocketClient.handleUnknownMessage(base);
         }
+    }
+
+    private void handleLobbyJoined() {
+        Stage stage = (Stage) lobbyNameInput.getScene().getWindow(); // Needs to be here because in Platform.runLater might be too late
+        Platform.runLater(() -> {
+            navigateToReady(lobbyNameInput.getText().trim(), stage);
+        });
+    }
+
+    private void handleWelcome(WelcomeMessage message) {
+        client.setMyPlayerId(message.myPlayerId);
+        System.out.println("API message received, saved my player ID: " + message.myPlayerId);
     }
 
     @FXML
@@ -49,9 +72,7 @@ public class LobbyController {
     @FXML
     private void onPlaySolo() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jtjmpm/desktop/solo-view.fxml")
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(SOLO_VIEW));
 
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
@@ -69,16 +90,12 @@ public class LobbyController {
             return;
         }
 
-        ApiSocketClient.getInstance().send(
-                new LobbyMessage(type, name)
-        );
+        client.send(new LobbyMessage(type, name));
     }
 
     private void navigateToReady(String lobbyName, Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jtjmpm/desktop/ready-view.fxml")
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(READY_VIEW));
 
             Scene scene = new Scene(loader.load());
 

@@ -3,8 +3,6 @@ package com.jtjmpm.desktop.service;
 import com.google.gson.Gson;
 import com.jtjmpm.WelcomeMessage;
 import com.jtjmpm.WsMessage;
-import com.jtjmpm.ShapeMessage;
-import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -14,14 +12,18 @@ import java.util.function.Consumer;
 
 public class ApiSocketClient {
     private static ApiSocketClient instance;
-    private WebSocketClient client;
-    private final Gson gson = new Gson();
-    private Consumer<String> onMessageCallback;
 
+    private final Gson gson = new Gson();
+    private WebSocketClient client;
+    private Consumer<String> onMessageCallback;
     private String myPlayerId;
 
     public String getMyPlayerId() {
         return myPlayerId;
+    }
+
+    public void setMyPlayerId(String s) {
+        myPlayerId = s;
     }
 
     public static ApiSocketClient getInstance() {
@@ -29,6 +31,10 @@ public class ApiSocketClient {
             instance = new ApiSocketClient();
         }
         return instance;
+    }
+
+    public static void handleUnknownMessage(WsMessage message) {
+        System.out.println("Unknown message type: " + message.type);
     }
 
     public void setOnMessageCallback(Consumer<String> callback) {
@@ -48,19 +54,10 @@ public class ApiSocketClient {
                 public void onMessage(String message) {
                     System.out.println("API message: " + message);
 
-                    WsMessage base = gson.fromJson(message, WsMessage.class);
-
-                    switch(base.type){
-                        case "WELCOME":
-                            WelcomeMessage welcome = gson.fromJson(message, WelcomeMessage.class);
-                            ApiSocketClient.this.myPlayerId = welcome.myPlayerId;
-                            System.out.println("API message received, saved my player ID: " + myPlayerId);
-                            return;
-                    }
-
                     if (onMessageCallback != null) {
                         onMessageCallback.accept(message);
                     }
+
                     System.out.println("API message received");
                 }
 
