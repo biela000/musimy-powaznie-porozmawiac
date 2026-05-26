@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
+import com.jtjmpm.MessageType;
 import com.jtjmpm.messages.GameStateUpdateMessage;
 import com.jtjmpm.messages.ReadyMessage;
 import com.jtjmpm.messages.WsMessage;
@@ -15,6 +16,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ReadyController {
+    private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
+
     @FXML private Label lobbyLabel;
     @FXML private Label player1StatusLabel;
     @FXML private Label player2StatusLabel;
@@ -30,11 +33,11 @@ public class ReadyController {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         switch (base.type) {
-            case "GAME_STATE_UPDATE":
+            case MessageType.GAME_STATE_UPDATE:
                 GameStateUpdateMessage update = gson.fromJson(message, GameStateUpdateMessage.class);
                 Platform.runLater(() -> updateReadyStatus(update));
                 break;
-            case "GAME_START":
+            case MessageType.GAME_START:
                 Platform.runLater(this::navigateToGame);
                 break;
             default:
@@ -54,14 +57,11 @@ public class ReadyController {
     @FXML
     private void onReady() {
         ApiSocketClient.getInstance().send(new ReadyMessage());
-        System.out.println("USER_READY sent");
     }
 
     private void navigateToGame() {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jtjmpm/desktop/game-view.fxml")
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_VIEW));
 
             Scene scene = new Scene(loader.load());
             Stage stage = (Stage) lobbyLabel.getScene().getWindow();
