@@ -14,7 +14,16 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        server = new GameSocketService(8080);
+        Parameters params = getParameters();
+        int port = 8080;
+        if(!params.getRaw().isEmpty()){
+            try {
+                port = Integer.parseInt(params.getRaw().get(0));
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        server = new GameSocketService(port);
         server.start();
 
         // Currently just using localhost but should be changed
