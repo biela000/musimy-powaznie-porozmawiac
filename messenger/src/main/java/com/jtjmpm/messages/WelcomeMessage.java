@@ -1,10 +1,12 @@
-package com.jtjmpm;
+package com.jtjmpm.messages;
+
+import com.jtjmpm.MessageType;
 
 public class WelcomeMessage extends WsMessage {
     public String myPlayerId;
 
     public WelcomeMessage(String myPlayerId) {
-        super("WELCOME");
+        super(MessageType.WELCOME);
         this.myPlayerId = myPlayerId;
     }
 }

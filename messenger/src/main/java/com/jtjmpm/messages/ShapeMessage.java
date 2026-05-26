@@ -1,4 +1,7 @@
-package com.jtjmpm;
+package com.jtjmpm.messages;
+
+import com.jtjmpm.MessageType;
+import com.jtjmpm.Point2D;
 
 import java.util.List;
 
@@ -7,7 +10,7 @@ public class ShapeMessage extends WsMessage {
     public double accuracy;
 
     public ShapeMessage(List<Point2D> points, double accuracy) {
-        super("SHAPE_DRAWN");
+        super(MessageType.SHAPE_DRAWN);
         this.points = points;
         this.accuracy = accuracy;
     }

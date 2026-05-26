@@ -1,7 +1,9 @@
-package com.jtjmpm;
+package com.jtjmpm.messages;
+
+import com.jtjmpm.WsErrorName;
 
 public class LobbyErrorMessage extends WsErrorMessage{
     public LobbyErrorMessage(String description) {
-        super("LOBBY_ERROR", description);
+        super(WsErrorName.LOBBY_ERROR, description);
     }
 }
