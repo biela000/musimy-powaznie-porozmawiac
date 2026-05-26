@@ -1,9 +1,10 @@
 package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
-import com.jtjmpm.LobbyMessage;
-import com.jtjmpm.WelcomeMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.MessageType;
+import com.jtjmpm.messages.LobbyMessage;
+import com.jtjmpm.messages.WelcomeMessage;
+import com.jtjmpm.messages.WsMessage;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -35,10 +36,10 @@ public class LobbyController {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         switch (base.type) {
-            case "LOBBY_JOINED":
+            case MessageType.LOBBY_JOINED:
                 handleLobbyJoined();
                 break;
-            case "WELCOME":
+            case MessageType.WELCOME:
                 WelcomeMessage welcome = gson.fromJson(message, WelcomeMessage.class);
                 handleWelcome(welcome);
                 break;
@@ -61,12 +62,12 @@ public class LobbyController {
 
     @FXML
     private void onCreateLobby() {
-        sendLobbyMessage("CREATE_LOBBY");
+        sendLobbyMessage(MessageType.CREATE_LOBBY);
     }
 
     @FXML
     private void onJoinLobby() {
-        sendLobbyMessage("JOIN_LOBBY");
+        sendLobbyMessage(MessageType.JOIN_LOBBY);
     }
 
     @FXML
@@ -83,7 +84,7 @@ public class LobbyController {
         }
     }
 
-    private void sendLobbyMessage(String type) {
+    private void sendLobbyMessage(MessageType type) {
         String name = lobbyNameInput.getText().trim();
         if (name.isEmpty()) {
             statusLabel.setText("Please enter a lobby name.");

@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
+import com.jtjmpm.messages.*;
 import com.jtjmpm.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;

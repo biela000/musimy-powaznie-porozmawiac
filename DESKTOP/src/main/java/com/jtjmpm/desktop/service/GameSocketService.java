@@ -1,8 +1,8 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.messages.PlayerMoveMessage;
+import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;

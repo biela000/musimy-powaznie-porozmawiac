@@ -1,9 +1,9 @@
 package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
-import com.jtjmpm.GameStateUpdateMessage;
-import com.jtjmpm.ReadyMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.messages.GameStateUpdateMessage;
+import com.jtjmpm.messages.ReadyMessage;
+import com.jtjmpm.messages.WsMessage;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
