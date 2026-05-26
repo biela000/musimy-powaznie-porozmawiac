@@ -12,8 +12,21 @@ import java.net.InetSocketAddress;
 public class GameSocketService extends WebSocketServer {
     private WebSocket connectedClient = null;
     private final Gson gson = new Gson();
+    private static GameSocketService instance;
+    private static int port = 8080;
 
-    public GameSocketService(int port) {
+    public static void setPort(int p) {
+        port = p;
+    }
+
+    public static GameSocketService getInstance() {
+        if (instance == null) {
+            instance = new GameSocketService();
+        }
+        return instance;
+    }
+
+    private GameSocketService() {
         super(new InetSocketAddress(port));
     }
 

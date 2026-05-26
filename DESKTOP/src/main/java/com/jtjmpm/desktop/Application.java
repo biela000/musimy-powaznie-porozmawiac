@@ -9,43 +9,51 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
-    private GameSocketService server;
+    private final static String API_URL = "ws://127.0.0.1:3000"; // localhost
+    private final static String WINDOW_TITLE = "MPP";
+    private final static String START_VIEW = "lobby-view.xml";
 
-    @Override
-    public void start(Stage stage) throws IOException {
+    private int getPortFromParams() {
         Parameters params = getParameters();
+
         int port = 8080;
-        if(!params.getRaw().isEmpty()){
+        if (!params.getRaw().isEmpty()) {
             try {
-                port = Integer.parseInt(params.getRaw().get(0));
+                port = Integer.parseInt(params.getRaw().getFirst());
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         }
-        server = new GameSocketService(port);
+
+        return port;
+    }
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        int port = getPortFromParams();
+        GameSocketService.setPort(port);
+
+        GameSocketService server = GameSocketService.getInstance();
         server.start();
 
-        // Currently just using localhost but should be changed
-        // to an env variable later :)
-        //"ws://127.0.0.1:3000" local host
-        ApiSocketClient.getInstance().connect("ws://127.0.0.1:3000", () -> {
+        ApiSocketClient client = ApiSocketClient.getInstance();
+        client.connect(API_URL, () -> {
             System.out.println("API connection established");
         });
 
-        FXMLLoader fxmlLoader = new FXMLLoader(
-                Application.class.getResource("lobby-view.fxml")
-        );
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource(START_VIEW));
+
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Game");
+        stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
         stage.show();
 
-        stage.setOnCloseRequest(e -> {
+        stage.setOnCloseRequest(_ -> {
             try {
                 server.stop();
-                ApiSocketClient.getInstance().close();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                client.close();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
     }
