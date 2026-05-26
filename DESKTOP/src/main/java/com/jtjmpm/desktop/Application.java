@@ -2,14 +2,13 @@ package com.jtjmpm.desktop;
 
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import com.jtjmpm.desktop.service.GameSocketService;
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Application extends javafx.application.Application {
     private GameSocketService server;
 
     @Override
@@ -34,7 +33,7 @@ public class HelloApplication extends Application {
         });
 
         FXMLLoader fxmlLoader = new FXMLLoader(
-                HelloApplication.class.getResource("lobby-view.fxml")
+                Application.class.getResource("lobby-view.fxml")
         );
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Game");
