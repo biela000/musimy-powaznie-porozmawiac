@@ -1,7 +1,6 @@
 package com.jtjmpm.messages;
 
 import com.jtjmpm.MessageType;
-import com.jtjmpm.Point2D;
 
 import java.util.List;
 
