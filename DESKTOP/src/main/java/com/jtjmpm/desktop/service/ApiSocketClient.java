@@ -15,14 +15,14 @@ public class ApiSocketClient {
     private final Gson gson = new Gson();
     private WebSocketClient client;
     private Consumer<String> onMessageCallback;
-    private String myPlayerId;
+    private String playerId;
 
-    public String getMyPlayerId() {
-        return myPlayerId;
+    public String getPlayerId() {
+        return playerId;
     }
 
-    public void setMyPlayerId(String s) {
-        myPlayerId = s;
+    public void setPlayerId(String s) {
+        playerId = s;
     }
 
     public static ApiSocketClient getInstance() {

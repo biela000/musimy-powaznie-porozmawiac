@@ -56,7 +56,7 @@ public class LobbyController {
     }
 
     private void handleWelcome(WelcomeMessage message) {
-        client.setMyPlayerId(message.myPlayerId);
+        client.setPlayerId(message.myPlayerId);
         System.out.println("API message received, saved my player ID: " + message.myPlayerId);
     }
 
