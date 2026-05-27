@@ -4,10 +4,10 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 public class Player {
-    public static final int MAX_HP = 100;
+    public static final double MAX_HP = 100;
 
     private final String id;
-    private int hp;
+    private double hp;
     private boolean ready;
     private List<Point2D.Double> lastMove;
 
@@ -17,11 +17,11 @@ public class Player {
         this.ready = false;
     }
 
-    public synchronized int getHp() {
+    public synchronized double getHp() {
         return hp;
     }
 
-    public synchronized void setHp(int hp) {
+    public synchronized void setHp(double hp) {
         this.hp = Math.max(hp, 0);
     }
 
