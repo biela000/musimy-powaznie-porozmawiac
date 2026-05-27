@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.geometry.Insets?>
+<VBox alignment="CENTER" spacing="10.0" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
+    <Label text="GESTURE" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="420.0" style="-fx-accent: #00ff00;"/>
+    <Label fx:id="hpLabel" text="HP: 100/100" style="-fx-text-fill: white;"/>
+
+    <VBox alignment="CENTER" maxWidth="440.0" maxHeight="440.0" style="-fx-border-color: #444444; -fx-border-width: 2px; -fx-background-color: #111111;">
+        <padding>
+            <Insets top="10" bottom="10" left="10" right="10"/>
+        </padding>
+        <Canvas fx:id="canvas" width="400.0" height="400.0" />
+    </VBox>
+
+    <Label fx:id="accuracyLabel" text="Accuracy: --.-%" style="-fx-font-size: 16px; -fx-text-fill: #00ff00;"/>
+</VBox>
