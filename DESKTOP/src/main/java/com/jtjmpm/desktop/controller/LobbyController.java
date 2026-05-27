@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import java.io.IOException;
 
 public class LobbyController {
-    private final static String SOLO_VIEW = "/com/jtjmpm/desktop/solo-view.fxml";
     private final static String READY_VIEW = "/com/jtjmpm/desktop/ready-view.fxml";
 
     @FXML private TextField lobbyNameInput;
@@ -68,20 +67,6 @@ public class LobbyController {
     @FXML
     private void onJoinLobby() {
         sendLobbyMessage(MessageType.JOIN_LOBBY);
-    }
-
-    @FXML
-    private void onPlaySolo() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(SOLO_VIEW));
-
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
-            stage.setScene(scene);
-        } catch (IOException e) {
-            e.printStackTrace();
-            statusLabel.setText("Failed to load Solo Mode screen");
-        }
     }
 
     private void sendLobbyMessage(MessageType type) {
