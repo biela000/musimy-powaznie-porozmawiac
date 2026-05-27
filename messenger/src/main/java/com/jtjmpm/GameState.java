@@ -1,5 +1,7 @@
 package com.jtjmpm;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,6 +32,10 @@ public class GameState {
 
     public synchronized Player getPlayer(String playerId) {
         return players.get(playerId);
+    }
+
+    public synchronized Collection<Player> getPlayers() {
+        return players.values();
     }
 
     public synchronized void applyDamage(String targetPlayerId, int damage) {
