@@ -30,6 +30,8 @@ public class GameSocketService extends WebSocketServer {
         return instance;
     }
 
+
+
     private GameSocketService() {
         super(new InetSocketAddress(port));
     }
@@ -43,6 +45,9 @@ public class GameSocketService extends WebSocketServer {
         }
         connectedClient = conn;
         System.out.println("Client connected: " + conn.getRemoteSocketAddress());
+        if (onClientConnected != null) {
+            onClientConnected.run();
+        }
     }
 
     @Override
@@ -50,6 +55,10 @@ public class GameSocketService extends WebSocketServer {
         if (conn == connectedClient) {
             connectedClient = null;
             System.out.println("Client disconnected: " + reason);
+
+            if (onClientDisconnected != null) {
+                onClientDisconnected.run();
+            }
         }
     }
 
@@ -65,6 +74,8 @@ public class GameSocketService extends WebSocketServer {
             default -> System.out.println("Unknown message type: " + base.type);
         }
     }
+
+
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
@@ -86,5 +97,13 @@ public class GameSocketService extends WebSocketServer {
 
     public boolean hasClient() {
         return connectedClient != null;
+    }
+
+    public void setOnClientConnected(Runnable callback) {
+        this.onClientConnected = callback;
+    }
+
+    public void setOnClientDisconnected(Runnable callback) {
+        this.onClientDisconnected = callback;
     }
 }
