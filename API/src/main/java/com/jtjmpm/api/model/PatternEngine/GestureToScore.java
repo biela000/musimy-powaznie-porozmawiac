@@ -18,7 +18,7 @@ public class GestureToScore {
         RotationVectorParser parser = new RotationVectorParser();
 
         List<Point2D.Double> normalPoints = parser.processBatch(rawData);
-        List<Point2D.Double> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 6);
-        return GestureEvaluator.evaluateScoreBiDirectional(pattern, normalizedPoints, 2.5, 0.20);
+        List<Point2D.Double> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 4);
+        return GestureEvaluator.evaluateScoreBiDirectional(pattern, normalizedPoints, 3.5, 0.15);
     }
 }
