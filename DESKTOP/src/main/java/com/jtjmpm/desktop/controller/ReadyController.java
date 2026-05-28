@@ -15,14 +15,23 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
 
+    private final static Map<Boolean, String> playerStatusText = new HashMap<>();
+    {
+        playerStatusText.put(true, "READY");
+        playerStatusText.put(false, "NOT READY");
+    }
+
     @FXML private Label lobbyLabel;
-    @FXML private Label player1StatusLabel;
-    @FXML private Label player2StatusLabel;
+    @FXML private Label hostStatusLabel;
+    @FXML private Label enemyStatusLabel;
 
     private final Gson gson = new Gson();
 
@@ -57,16 +66,27 @@ public class ReadyController {
             ApiSocketClient.getInstance().setEnemyId(null);
         }
 
-        String enemyId = players.stream()
+        Optional<Player> enemy = players.stream()
                 .filter(player -> !player.getId().equals(ApiSocketClient.getInstance().getHostId()))
-                .findFirst()
-                .toString();
+                .findFirst();
 
-        ApiSocketClient.getInstance().setEnemyId(enemyId);
+        enemy.ifPresent(player -> ApiSocketClient.getInstance().setEnemyId(player.getId()));
     }
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
+        ApiSocketClient client = ApiSocketClient.getInstance();
+        System.out.println(client.getHostId());
+        System.out.println(client.getEnemyId());
 
+        boolean isHostReady = update.gameState.getPlayer(client.getHostId()).isReady();
+        boolean isEnemyReady = false;
+
+        if (client.getEnemyId() != null) {
+            isEnemyReady = update.gameState.getPlayer(client.getEnemyId()).isReady();
+        }
+
+        hostStatusLabel.setText(playerStatusText.get(isHostReady));
+        enemyStatusLabel.setText(playerStatusText.get(isEnemyReady));
     }
 
     public void setLobbyName(String name) {
