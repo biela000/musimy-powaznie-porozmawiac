@@ -1,6 +1,6 @@
 package com.jtjmpm.api.game.game_logic;
 
-import com.jtjmpm.Point2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 import static com.jtjmpm.api.game.game_logic.ShapeNormalizer.pathLength;
 
 public class GestureEvaluator {
-    private static double evaluateScore(List<Point2D> pattern, List<Point2D> gesture, double k, double windowPercent) {
+    private static double evaluateScore(List<Point2D.Double> pattern, List<Point2D.Double> gesture, double k, double windowPercent) {
         if (pattern == null || gesture == null || pattern.isEmpty() || gesture.isEmpty()) {
             return 0.0;
         }
@@ -28,10 +28,10 @@ public class GestureEvaluator {
         return dtwScore * lengthPenalty;
     }
 
-    public static double evaluateScoreBiDirectional(List<Point2D> pattern, List<Point2D> gesture, double k, double windowPercent) {
+    public static double evaluateScoreBiDirectional(List<Point2D.Double> pattern, List<Point2D.Double> gesture, double k, double windowPercent) {
         double scoreForward = evaluateScore(pattern, gesture, k, windowPercent);
 
-        List<Point2D> reversedGesture = new ArrayList<>(gesture);
+        List<Point2D.Double> reversedGesture = new ArrayList<>(gesture);
         Collections.reverse(reversedGesture);
 
         double scoreBackward = evaluateScore(pattern, reversedGesture, k, windowPercent);
@@ -39,7 +39,7 @@ public class GestureEvaluator {
         return Math.max(scoreForward, scoreBackward);
     }
 
-    private static double calculateDTW(List<Point2D> pattern, List<Point2D> gesture, double windowPercent) {
+    private static double calculateDTW(List<Point2D.Double> pattern, List<Point2D.Double> gesture, double windowPercent) {
         int n = pattern.size();
         int m = gesture.size();
         int window = Math.max((int)(Math.max(n, m) * windowPercent), Math.abs(n - m) + 1);
@@ -58,7 +58,7 @@ public class GestureEvaluator {
             int endJ = Math.min(m, i + window);
 
             for (int j = startJ; j <= endJ; j++) {
-                double cost = pattern.get(i - 1).distanceTo(gesture.get(j - 1));
+                double cost = pattern.get(i - 1).distance(gesture.get(j - 1));
                 double minPrev = Math.min(dtw[i - 1][j], Math.min(dtw[i][j - 1], dtw[i - 1][j - 1]));
                 dtw[i][j] = cost + minPrev;
             }

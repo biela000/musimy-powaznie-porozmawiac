@@ -1,15 +1,14 @@
 package com.jtjmpm.api.game.game_logic;
 
 import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.Point2D;
 
-import java.sql.Array;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RotationVectorParser {
 
-    private List<Point2D> currentPath;
+    private List<Point2D.Double> currentPath;
     private boolean isRecording;
 
     private float startYaw = Float.NaN;
@@ -65,15 +64,15 @@ public class RotationVectorParser {
         double finalX = continuousYaw - startYaw;
         double finalY = -(rawPitch - startPitch);
 
-        currentPath.add(new Point2D(finalX, finalY));
+        currentPath.add(new Point2D.Double(finalX, finalY));
     }
 
-    private List<Point2D> stopRecording() {
+    private List<Point2D.Double> stopRecording() {
         isRecording = false;
         return new ArrayList<>(currentPath);
     }
 
-    public List<Point2D> processBatch(List<ControllerRotation> rawDataList) {
+    public List<Point2D.Double> processBatch(List<ControllerRotation> rawDataList) {
         startRecording();
         if (rawDataList != null) {
             for (ControllerRotation sensorValues : rawDataList) {

@@ -2,6 +2,7 @@ package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
 import com.jtjmpm.*;
+import com.jtjmpm.messages.*;
 import com.jtjmpm.api.game.game_logic.GestureToScore;
 import com.jtjmpm.api.game.game_logic.PatternGenerator;
 import com.jtjmpm.api.game.game_logic.RotationVectorParser;
@@ -13,6 +14,7 @@ import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.awt.geom.Point2D;
 
 public class GameHandler extends WebSocketServer {
 
@@ -187,9 +189,9 @@ public class GameHandler extends WebSocketServer {
 
         try {
             RotationVectorParser parser = new RotationVectorParser();
-            List<Point2D> normalPoints = parser.processBatch(move);
-            List<Point2D> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
-            List<Point2D> circlePattern = PatternGenerator.createCircle(64);
+            List<Point2D.Double> normalPoints = parser.processBatch(move);
+            List<Point2D.Double> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
+            List<Point2D.Double> circlePattern = PatternGenerator.createCircle(64);
 
             double accuracyScore = GestureToScore.getScore(circlePattern, move);
 
