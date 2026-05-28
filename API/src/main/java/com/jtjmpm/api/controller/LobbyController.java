@@ -88,7 +88,9 @@ public class LobbyController implements MessageController {
                 conn.send(gson.toJson(responseMessage));
 
                 GameState lobby = store.getPlayersLobby(sessionId);
-                List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
+                List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName()).stream()
+                        .filter(id -> !id.equals(sessionId))
+                        .toList();
 
                 GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby);
                 registry.broadcast(playerIds, gson.toJson(updateMessage));
