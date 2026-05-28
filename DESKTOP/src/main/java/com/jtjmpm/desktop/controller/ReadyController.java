@@ -32,6 +32,7 @@ public class ReadyController {
     @FXML private Label lobbyLabel;
     @FXML private Label hostStatusLabel;
     @FXML private Label enemyStatusLabel;
+    @FXML private Label startingSoonLabel;
 
     private final Gson gson = new Gson();
 
@@ -75,8 +76,6 @@ public class ReadyController {
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
         ApiSocketClient client = ApiSocketClient.getInstance();
-        System.out.println(client.getHostId());
-        System.out.println(client.getEnemyId());
 
         boolean isHostReady = update.gameState.getPlayer(client.getHostId()).isReady();
         boolean isEnemyReady = false;
@@ -87,6 +86,12 @@ public class ReadyController {
 
         hostStatusLabel.setText(playerStatusText.get(isHostReady));
         enemyStatusLabel.setText(playerStatusText.get(isEnemyReady));
+
+        if (isHostReady && isEnemyReady) {
+            startingSoonLabel.setText("STARTING SOON...");
+        } else {
+            startingSoonLabel.setText("");
+        }
     }
 
     public void setLobbyName(String name) {
