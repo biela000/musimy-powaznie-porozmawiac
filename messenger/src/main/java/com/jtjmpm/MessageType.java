@@ -9,6 +9,7 @@ public enum MessageType {
     LOBBY_JOINED,
     CREATE_LOBBY,
     JOIN_LOBBY,
+    LEAVE_LOBBY,
 
     // Readiness & Game start
     TOGGLE_READY,

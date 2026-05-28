@@ -159,7 +159,6 @@ public class GameHandler extends WebSocketServer {
 
     private void handleLeaveLobby(WebSocket conn) {
         // TODO
-        System.out.println("Player with session ID: " + getSessionId(conn) + " is leaving his lobby");
     }
 
     // UTILITIES

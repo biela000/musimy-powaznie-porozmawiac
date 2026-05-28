@@ -95,4 +95,8 @@ public class LobbyController implements MessageController {
             e.printStackTrace();
         }
     }
+
+    private void handleLeave(WebSocket conn, String rawJson) {
+        System.out.println("Player with session ID: " + SocketUtils.getSessionId(conn) + " is leaving his lobby");
+    }
 }
