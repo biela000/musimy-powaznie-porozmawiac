@@ -23,6 +23,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
 public class StartController {
     private final static String LOBBY_VIEW = "/com/jtjmpm/desktop/lobby-view.fxml";
     private final static String API_URL = "ws://127.0.0.1:3000";
@@ -80,17 +85,11 @@ public class StartController {
     }
 
     private void setupQRCode() {
-        try {
+        String ipAddress = getValidLocalIp();
+        int port = 8080;
 
-            String ipAddress = InetAddress.getLocalHost().getHostAddress();
-            int port = 8080;
-
-            String qrData = ipAddress + ":" + port;
-            generateQRCode(qrData);
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        String qrData = ipAddress + ":" + port;
+        generateQRCode(qrData);
     }
 
     private void generateQRCode(String text) {
@@ -110,5 +109,35 @@ public class StartController {
         } catch (WriterException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getValidLocalIp() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+
+                if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+                    continue;
+                }
+
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+
+                    if (addr.getHostAddress().contains(":")) {
+                        continue;
+                    }
+
+                    return addr.getHostAddress();
+                }
+            }
+        } catch (SocketException e) {
+            System.err.println("Failed to retrieve network interfaces.");
+            e.printStackTrace();
+        }
+
+        return "127.0.0.1";
     }
 }
