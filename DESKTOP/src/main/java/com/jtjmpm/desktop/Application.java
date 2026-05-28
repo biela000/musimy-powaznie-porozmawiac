@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     private final static String API_URL = "ws://127.0.0.1:3000"; // localhost
     private final static String WINDOW_TITLE = "MPP";
-    private final static String START_VIEW = "lobby-view.xml";
+    private final static String START_VIEW = "lobby-view.fxml";
 
     private int getPortFromParams() {
         Parameters params = getParameters();

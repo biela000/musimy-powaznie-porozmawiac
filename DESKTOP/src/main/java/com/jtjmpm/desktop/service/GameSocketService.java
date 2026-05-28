@@ -1,6 +1,7 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.MessageType;
 import com.jtjmpm.messages.PlayerMoveMessage;
 import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.WebSocket;
@@ -54,7 +55,7 @@ public class GameSocketService extends WebSocketServer {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         switch (base.type) {
-            case "PLAYER_MOVE" -> {
+            case MessageType.PLAYER_MOVE -> {
                 PlayerMoveMessage move = gson.fromJson(message, PlayerMoveMessage.class);
                 handlePlayerMove(move);
             }

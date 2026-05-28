@@ -46,8 +46,7 @@ public class ReadyController {
     }
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
-        player1StatusLabel.setText("Player 1: " + (update.gameState.getPlayer1Ready() ? "✅ Ready" : "❌ Not ready"));
-        player2StatusLabel.setText("Player 2: " + (update.gameState.getPlayer2Ready() ? "✅ Ready" : "❌ Not ready"));
+
     }
 
     public void setLobbyName(String name) {
