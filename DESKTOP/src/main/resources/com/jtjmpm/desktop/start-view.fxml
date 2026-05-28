@@ -16,7 +16,7 @@
     <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
 </padding>
 
-<Label text="Start Server" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+<Label text="we need to talk" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: purple"/>
 
 <ImageView fx:id="qrCodeImageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true"/>
 
