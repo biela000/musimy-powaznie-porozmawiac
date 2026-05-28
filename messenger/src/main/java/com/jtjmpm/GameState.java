@@ -34,6 +34,11 @@ public class GameState {
         return false;
     }
 
+    public synchronized boolean removePlayer(String playerId) {
+        Player removed = players.remove(playerId);
+        return removed != null;
+    }
+
     public synchronized Player getPlayer(String playerId) {
         return players.get(playerId);
     }

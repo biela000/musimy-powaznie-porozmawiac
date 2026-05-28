@@ -5,7 +5,7 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.geometry.Insets?>
-<VBox alignment="CENTER" spacing="10.0" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10.0" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
     <Label text="GESTURE" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;"/>
     <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="420.0" style="-fx-accent: #00ff00;"/>
     <Label fx:id="hpLabel" text="HP: 100/100" style="-fx-text-fill: white;"/>

@@ -1,6 +1,8 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
+import com.jtjmpm.MessageType;
+import com.jtjmpm.messages.WelcomeMessage;
 import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -55,6 +57,11 @@ public class ApiSocketClient {
 
                     if (onMessageCallback != null) {
                         onMessageCallback.accept(message);
+                    } else {
+                        WelcomeMessage welcomeMessage = gson.fromJson(message, WelcomeMessage.class);
+                        if (welcomeMessage.type.equals(MessageType.WELCOME)) {
+                            setPlayerId(welcomeMessage.myPlayerId);
+                        }
                     }
 
                     System.out.println("API message received");

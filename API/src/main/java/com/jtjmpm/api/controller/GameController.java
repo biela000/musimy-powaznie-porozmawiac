@@ -1,9 +1,7 @@
 package com.jtjmpm.api.controller;
 
 import com.google.gson.Gson;
-import com.jtjmpm.GameState;
 import com.jtjmpm.MessageType;
-import com.jtjmpm.Player;
 import com.jtjmpm.PlayerMoveResult;
 import com.jtjmpm.api.model.GameStateStore;
 import com.jtjmpm.api.model.PatternEngine.GestureToScore;

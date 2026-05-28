@@ -33,14 +33,11 @@ public class LobbyController {
 
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
+        System.out.println("HANDLING API MESSAGE");
 
         switch (base.type) {
             case MessageType.LOBBY_JOINED:
                 handleLobbyJoined();
-                break;
-            case MessageType.WELCOME:
-                WelcomeMessage welcome = gson.fromJson(message, WelcomeMessage.class);
-                handleWelcome(welcome);
                 break;
             default:
                 ApiSocketClient.handleUnknownMessage(base);
@@ -52,11 +49,6 @@ public class LobbyController {
         Platform.runLater(() -> {
             navigateToReady(lobbyNameInput.getText().trim(), stage);
         });
-    }
-
-    private void handleWelcome(WelcomeMessage message) {
-        client.setPlayerId(message.myPlayerId);
-        System.out.println("API message received, saved my player ID: " + message.myPlayerId);
     }
 
     @FXML
