@@ -2,11 +2,11 @@ package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
 import com.jtjmpm.*;
-import com.jtjmpm.messages.*;
-import com.jtjmpm.api.game.game_logic.GestureToScore;
-import com.jtjmpm.api.game.game_logic.PatternGenerator;
-import com.jtjmpm.api.game.game_logic.RotationVectorParser;
-import com.jtjmpm.api.game.game_logic.ShapeNormalizer;
+import com.jtjmpm.api.model.GameStateStore;
+import com.jtjmpm.api.model.PatternEngine.GestureToScore;
+import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
+import com.jtjmpm.api.model.PatternEngine.RotationVectorParser;
+import com.jtjmpm.api.model.PatternEngine.ShapeNormalizer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.awt.geom.Point2D;
 
 public class GameHandler extends WebSocketServer {
-
     private final ConcurrentHashMap<String, WebSocket> activeSessions = new ConcurrentHashMap<>();
     private final GameStateStore store;
     private final Gson gson;
@@ -28,13 +27,12 @@ public class GameHandler extends WebSocketServer {
         this.gson = new Gson();
     }
 
-    // CONNECTIONS
-
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         String sessionId = getSessionId(conn);
-        System.out.println("Connected, session ID: " + sessionId);
         activeSessions.put(sessionId, conn);
+
+        System.out.println("Connected, session ID: " + sessionId);
 
         conn.send(gson.toJson(new WelcomeMessage(sessionId)));
     }
@@ -42,9 +40,10 @@ public class GameHandler extends WebSocketServer {
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         String sessionId = getSessionId(conn);
-        System.out.println("Connection closed, session ID: " + sessionId);
-        activeSessions.remove(sessionId);
         store.removeSession(sessionId);
+        activeSessions.remove(sessionId);
+
+        System.out.println("Connection closed, session ID: " + sessionId);
     }
 
     @Override
@@ -52,8 +51,8 @@ public class GameHandler extends WebSocketServer {
         String sessionId = conn != null ? getSessionId(conn) : "unknown";
         System.err.println("Connection failed, session ID: " + sessionId + " " + ex.getMessage());
         if (conn != null) {
-            activeSessions.remove(sessionId);
             store.removeSession(sessionId);
+            activeSessions.remove(sessionId);
         }
     }
 
@@ -61,8 +60,6 @@ public class GameHandler extends WebSocketServer {
     public void onStart() {
         System.out.println("GameHandler WebSocket server started on port " + getPort());
     }
-
-    // HANDLING MESSAGES
 
     @Override
     public void onMessage(WebSocket conn, String rawJson) {

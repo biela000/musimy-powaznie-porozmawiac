@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game.game_logic;
+package com.jtjmpm.api.model.PatternEngine;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

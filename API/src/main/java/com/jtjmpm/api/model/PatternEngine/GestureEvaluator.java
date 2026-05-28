@@ -1,11 +1,11 @@
-package com.jtjmpm.api.game.game_logic;
+package com.jtjmpm.api.model.PatternEngine;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jtjmpm.api.game.game_logic.ShapeNormalizer.pathLength;
+import static com.jtjmpm.api.model.PatternEngine.ShapeNormalizer.pathLength;
 
 public class GestureEvaluator {
     private static double evaluateScore(List<Point2D.Double> pattern, List<Point2D.Double> gesture, double k, double windowPercent) {

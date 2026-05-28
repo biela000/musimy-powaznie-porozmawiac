@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.model;
 
 import com.jtjmpm.GameState;
 import org.springframework.core.io.support.ResourcePatternResolver;

@@ -1,4 +1,4 @@
-package com.jtjmpm.api.game.game_logic;
+package com.jtjmpm.api.model.PatternEngine;
 
 import com.jtjmpm.ControllerRotation;
 

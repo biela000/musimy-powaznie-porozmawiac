@@ -1,13 +1,10 @@
 package com.jtjmpm.api.config;
 
 import com.jtjmpm.api.game.GameHandler;
-import com.jtjmpm.api.game.GameStateStore;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jtjmpm.api.model.GameStateStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import java.net.InetSocketAddress;
 
