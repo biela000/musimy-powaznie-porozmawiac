@@ -40,7 +40,7 @@ public class GameStateStore {
         return false;
     }
 
-    public void removeSession(String sessionId) {
+    public boolean removeSession(String sessionId) {
         String lobbyId = sessionToLobby.remove(sessionId);
 
         if (lobbyId != null) {
@@ -49,7 +49,9 @@ public class GameStateStore {
             if (state != null && state.getPlayers().isEmpty()) {
                 lobbies.remove(lobbyId);
             }
+            return true;
         }
+        return false;
     }
 
     //GAMEPLAY LOGIC
