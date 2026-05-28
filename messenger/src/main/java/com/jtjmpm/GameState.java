@@ -66,6 +66,10 @@ public class GameState {
         return null;
     }
 
+    public String getName() {
+        return name;
+    }
+
     //SIMPLE GETTERS
     public boolean isGameStarted() { return isGameStarted; }
     public String getHostId() { return hostId; }
