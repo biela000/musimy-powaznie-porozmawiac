@@ -2,6 +2,7 @@ package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
+import com.jtjmpm.Player;
 import com.jtjmpm.messages.GameStateUpdateMessage;
 import com.jtjmpm.messages.ReadyMessage;
 import com.jtjmpm.messages.WsMessage;
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
@@ -35,7 +37,10 @@ public class ReadyController {
         switch (base.type) {
             case MessageType.GAME_STATE_UPDATE:
                 GameStateUpdateMessage update = gson.fromJson(message, GameStateUpdateMessage.class);
-                Platform.runLater(() -> updateReadyStatus(update));
+                Platform.runLater(() -> {
+                    updateEnemyId(update);
+                    updateReadyStatus(update);
+                });
                 break;
             case MessageType.GAME_START:
                 Platform.runLater(this::navigateToGame);
@@ -43,6 +48,21 @@ public class ReadyController {
             default:
                 System.out.println("Unknown message type: " + base.type);
         }
+    }
+
+    private void updateEnemyId(GameStateUpdateMessage update) {
+        List<Player> players = update.gameState.getPlayers();
+
+        if (players.size() == 1) {
+            ApiSocketClient.getInstance().setEnemyId(null);
+        }
+
+        String enemyId = players.stream()
+                .filter(player -> !player.getId().equals(ApiSocketClient.getInstance().getHostId()))
+                .findFirst()
+                .toString();
+
+        ApiSocketClient.getInstance().setEnemyId(enemyId);
     }
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
