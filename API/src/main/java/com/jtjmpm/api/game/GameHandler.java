@@ -107,31 +107,7 @@ public class GameHandler extends WebSocketServer {
 
     private void handlePlayerMove(WebSocket conn, List<ControllerRotation> move) {
         String sessionId = getSessionId(conn);
-        System.out.println("Receiving a move from: " + sessionId + " (size: " + move.size() + ")");
 
-        try {
-            RotationVectorParser parser = new RotationVectorParser();
-            List<Point2D.Double> normalPoints = parser.processBatch(move);
-            List<Point2D.Double> normalizedPoints = ShapeNormalizer.preProcess(normalPoints, 64, 3);
-            List<Point2D.Double> circlePattern = PatternGenerator.createCircle(64);
-
-            double accuracyScore = GestureToScore.getScore(circlePattern, move);
-
-            System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
-            MoveResultMessage resultMessage = new MoveResultMessage(normalizedPoints, accuracyScore, sessionId);
-            String jsonResponse = gson.toJson(resultMessage);
-
-            GameState lobby = store.getPlayersLobby(sessionId);
-
-            WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
-            WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
-
-            player1.send(jsonResponse);
-            player2.send(jsonResponse);
-        } catch (Exception e) {
-            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void handleLeaveLobby(WebSocket conn) {

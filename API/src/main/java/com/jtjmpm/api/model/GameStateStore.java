@@ -20,18 +20,18 @@ public class GameStateStore {
         this.resourcePatternResolver = resourcePatternResolver;
     }
 
-    public List<Player> getPlayersFromLobby(String lobbyName) {
-        return lobbies.get(lobbyName).getPlayers();
+    public List<String> getPlayerIdsFromLobby(String lobbyName) {
+        return lobbies.get(lobbyName).getPlayers().stream().map(Player::getId).toList();
     }
 
     //HANDLING LOBBIES
 
-    public boolean createLobby(String lobbyID, String sessionID){
-        GameState newState = new GameState(sessionID);
+    public boolean createLobby(String lobbyName, String sessionId){
+        GameState newState = new GameState(lobbyName, sessionId);
 
-        if(lobbies.containsKey(lobbyID)) return false;
-        lobbies.put(lobbyID, newState);
-        sessionToLobby.put(sessionID, lobbyID);
+        if(lobbies.containsKey(lobbyName)) return false;
+        lobbies.put(lobbyName, newState);
+        sessionToLobby.put(sessionId, lobbyName);
         return true;
     }
 
@@ -87,17 +87,6 @@ public class GameStateStore {
 
     public String getLobbyIdForPlayer(String sessionID) {
         return sessionToLobby.get(sessionID);
-    }
-
-    public List<String> getPlayersIdsInLobby(String lobbyId) {
-        List<String> ids = new ArrayList<>();
-        GameState state = lobbies.get(lobbyId);
-
-        if (state != null) {
-            if (state.getPlayer1Id() != null) ids.add(state.getPlayer1Id());
-            if (state.getPlayer2Id() != null) ids.add(state.getPlayer2Id());
-        }
-        return ids;
     }
 
     public GameState getPlayersLobby(String sessionID){

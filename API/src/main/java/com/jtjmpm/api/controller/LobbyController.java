@@ -88,7 +88,7 @@ public class LobbyController implements MessageController {
                 conn.send(gson.toJson(responseMessage));
 
                 GameState lobby = store.getPlayersLobby(sessionId);
-                List<String> playerIds = lobby.getPlayers().stream().map(Player::getId).toList();
+                List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
                 GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby);
                 registry.broadcast(playerIds, gson.toJson(updateMessage));
@@ -117,7 +117,7 @@ public class LobbyController implements MessageController {
             store.togglePlayerReady(sessionId);
 
             GameState lobby = store.getPlayersLobby(sessionId);
-            List<String> playerIds = lobby.getPlayers().stream().map(Player::getId).toList();
+            List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
             registry.broadcast(playerIds, gson.toJson(responseMessage));
