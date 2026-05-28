@@ -94,30 +94,7 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handlePlayerReady(WebSocket conn){
-        String sessionId = getSessionId(conn);
-        System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
-        try {
-            store.setPlayerReady(sessionId);
-
-            GameState lobby = store.getPlayersLobby(sessionId);
-
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
-            String jsonResponse = gson.toJson(responseMessage);
-
-            if (lobby.getPlayer1Ready() && lobby.getPlayer2Ready()) {
-                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
-                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
-
-                player1.send(gson.toJson(new StartGameMessage()));
-                player2.send(gson.toJson(new StartGameMessage()));
-            }
-
-            conn.send(jsonResponse);
-        } catch (Exception e) {
-            System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {

@@ -13,12 +13,19 @@ import org.springframework.stereotype.Component;
 import com.jtjmpm.MessageType;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class LobbyController implements MessageController {
+    private final static int START_GAME_DELAY_SECONDS = 5;
+
     private final GameStateStore store;
     private final SessionRegistry registry;
     private final Gson gson;
+
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson) {
         this.store = store;
@@ -31,7 +38,8 @@ public class LobbyController implements MessageController {
         return List.of(
                 MessageType.CREATE_LOBBY,
                 MessageType.JOIN_LOBBY,
-                MessageType.LEAVE_LOBBY
+                MessageType.LEAVE_LOBBY,
+                MessageType.TOGGLE_READY
         );
     }
 
@@ -43,6 +51,7 @@ public class LobbyController implements MessageController {
             case MessageType.CREATE_LOBBY -> handleCreate(conn, rawJson);
             case MessageType.JOIN_LOBBY -> handleJoin(conn, rawJson);
             case MessageType.LEAVE_LOBBY -> handleLeave(conn, rawJson);
+            case MessageType.TOGGLE_READY -> handleToggleReady(conn, rawJson);
         }
     }
 
@@ -98,5 +107,33 @@ public class LobbyController implements MessageController {
 
     private void handleLeave(WebSocket conn, String rawJson) {
         System.out.println("Player with session ID: " + SocketUtils.getSessionId(conn) + " is leaving his lobby");
+    }
+
+    private void handleToggleReady(WebSocket conn, String rawJson) {
+        String sessionId = SocketUtils.getSessionId(conn);
+        System.out.println("Toggling ready state of session: " + sessionId + " ...");
+
+        try {
+            store.togglePlayerReady(sessionId);
+
+            GameState lobby = store.getPlayersLobby(sessionId);
+            List<String> playerIds = lobby.getPlayers().stream().map(Player::getId).toList();
+
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
+            registry.broadcast(playerIds, gson.toJson(responseMessage));
+
+            if (lobby.isReady()) {
+                StartGameMessage startGameMessage = new StartGameMessage();
+
+                scheduler.schedule(() -> {
+                    if (lobby.isReady()) {
+                        registry.broadcast(playerIds, gson.toJson(startGameMessage));
+                    }
+                }, START_GAME_DELAY_SECONDS, TimeUnit.SECONDS);
+            }
+        } catch (Exception e) {
+            System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

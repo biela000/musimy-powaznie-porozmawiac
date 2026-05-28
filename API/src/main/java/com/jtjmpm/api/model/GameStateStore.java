@@ -69,16 +69,9 @@ public class GameStateStore {
 
     //GAMEPLAY LOGIC
 
-    public boolean setPlayerReady(String sessionID) {
-        String lobbyId = sessionToLobby.get(sessionID);
-        if (lobbyId != null) {
-            GameState state = lobbies.get(lobbyId);
-            if (state != null) {
-                //returns true if both players are ready
-                return state.setPlayerReady(sessionID);
-            }
-        }
-        return false;
+    public void togglePlayerReady(String sessionId) {
+        String lobbyId = sessionToLobby.get(sessionId);
+        lobbies.get(lobbyId).getPlayer(sessionId).toggleReady();
     }
 
     public GameState applyDamage(String lobbyId, String targetSessionId, int damageAmount) {
