@@ -16,6 +16,9 @@ public class GameSocketService extends WebSocketServer {
     private static GameSocketService instance;
     private static int port = 8080;
 
+    private Runnable onClientConnected;
+    private Runnable onClientDisconnected;
+
     public static void setPort(int p) {
         port = p;
     }
