@@ -63,7 +63,7 @@ public class GameController implements MessageController {
             List<Point2D.Double> circlePattern = PatternGenerator.createCircle(64);
 
             double accuracyScore = GestureToScore.getScore(circlePattern, playerMoveMessage.move);
-            System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
+            System.out.println("Accuracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
 
             MoveResultMessage resultMessage = new MoveResultMessage(
                     new PlayerMoveResult(normalizedPoints, accuracyScore), sessionId
@@ -72,7 +72,7 @@ public class GameController implements MessageController {
             List<String> playerIds = store.getPlayerIdsFromLobby(store.getLobbyIdForPlayer(sessionId));
             registry.broadcast(playerIds, gson.toJson(resultMessage));
         } catch (Exception e) {
-            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
+            System.err.println("Error while calculating score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
