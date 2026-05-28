@@ -2,6 +2,7 @@ package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
+import com.jtjmpm.Player;
 import com.jtjmpm.messages.GameStateUpdateMessage;
 import com.jtjmpm.messages.ReadyMessage;
 import com.jtjmpm.messages.WsMessage;
@@ -14,13 +15,24 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
 
+    private final static Map<Boolean, String> playerStatusText = new HashMap<>();
+    {
+        playerStatusText.put(true, "READY");
+        playerStatusText.put(false, "NOT READY");
+    }
+
     @FXML private Label lobbyLabel;
-    @FXML private Label player1StatusLabel;
-    @FXML private Label player2StatusLabel;
+    @FXML private Label hostStatusLabel;
+    @FXML private Label enemyStatusLabel;
+    @FXML private Label startingSoonLabel;
 
     private final Gson gson = new Gson();
 
@@ -35,7 +47,10 @@ public class ReadyController {
         switch (base.type) {
             case MessageType.GAME_STATE_UPDATE:
                 GameStateUpdateMessage update = gson.fromJson(message, GameStateUpdateMessage.class);
-                Platform.runLater(() -> updateReadyStatus(update));
+                Platform.runLater(() -> {
+                    updateEnemyId(update);
+                    updateReadyStatus(update);
+                });
                 break;
             case MessageType.GAME_START:
                 Platform.runLater(this::navigateToGame);
@@ -45,8 +60,38 @@ public class ReadyController {
         }
     }
 
-    private void updateReadyStatus(GameStateUpdateMessage update) {
+    private void updateEnemyId(GameStateUpdateMessage update) {
+        List<Player> players = update.gameState.getPlayers();
 
+        if (players.size() == 1) {
+            ApiSocketClient.getInstance().setEnemyId(null);
+        }
+
+        Optional<Player> enemy = players.stream()
+                .filter(player -> !player.getId().equals(ApiSocketClient.getInstance().getHostId()))
+                .findFirst();
+
+        enemy.ifPresent(player -> ApiSocketClient.getInstance().setEnemyId(player.getId()));
+    }
+
+    private void updateReadyStatus(GameStateUpdateMessage update) {
+        ApiSocketClient client = ApiSocketClient.getInstance();
+
+        boolean isHostReady = update.gameState.getPlayer(client.getHostId()).isReady();
+        boolean isEnemyReady = false;
+
+        if (client.getEnemyId() != null) {
+            isEnemyReady = update.gameState.getPlayer(client.getEnemyId()).isReady();
+        }
+
+        hostStatusLabel.setText("Host: " + playerStatusText.get(isHostReady));
+        enemyStatusLabel.setText("Enemy: " + playerStatusText.get(isEnemyReady));
+
+        if (isHostReady && isEnemyReady) {
+            startingSoonLabel.setText("STARTING SOON...");
+        } else {
+            startingSoonLabel.setText("");
+        }
     }
 
     public void setLobbyName(String name) {

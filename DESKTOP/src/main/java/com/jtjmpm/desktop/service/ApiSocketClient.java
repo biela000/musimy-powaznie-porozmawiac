@@ -17,14 +17,23 @@ public class ApiSocketClient {
     private final Gson gson = new Gson();
     private WebSocketClient client;
     private Consumer<String> onMessageCallback;
-    private String playerId;
+    private String hostId;
+    private String enemyId;
 
-    public String getPlayerId() {
-        return playerId;
+    public String getHostId() {
+        return hostId;
     }
 
-    public void setPlayerId(String s) {
-        playerId = s;
+    public void setHostId(String s) {
+        hostId = s;
+    }
+
+    public String getEnemyId() {
+        return enemyId;
+    }
+
+    public void setEnemyId(String s) {
+        enemyId = s;
     }
 
     public static ApiSocketClient getInstance() {
@@ -60,7 +69,7 @@ public class ApiSocketClient {
                     } else {
                         WelcomeMessage welcomeMessage = gson.fromJson(message, WelcomeMessage.class);
                         if (welcomeMessage.type.equals(MessageType.WELCOME)) {
-                            setPlayerId(welcomeMessage.myPlayerId);
+                            setHostId(welcomeMessage.myPlayerId);
                         }
                     }
 

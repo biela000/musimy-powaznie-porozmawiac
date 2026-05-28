@@ -52,7 +52,7 @@ public class GameController {
     }
 
     private void handleMoveResult(MoveResultMessage message){
-        String hostId = ApiSocketClient.getInstance().getPlayerId();
+        String hostId = ApiSocketClient.getInstance().getHostId();
         if (hostId == null) {
             System.err.println("Local player id is not set");
             return;
@@ -68,7 +68,7 @@ public class GameController {
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
         gameState = message.gameState;
 
-        String hostId = ApiSocketClient.getInstance().getPlayerId();
+        String hostId = ApiSocketClient.getInstance().getHostId();
 
         hostPanelController.playerStateUpdate(gameState.getPlayer(hostId));
         enemyPanelController.playerStateUpdate(

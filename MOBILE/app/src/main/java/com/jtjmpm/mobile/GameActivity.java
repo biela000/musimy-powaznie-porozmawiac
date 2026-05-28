@@ -18,7 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.gson.Gson;
 import com.jtjmpm.ControllerRotation;
-import com.jtjmpm.PlayerMoveMessage;
+import com.jtjmpm.messages.PlayerMoveMessage;
 
 import java.util.ArrayList;
 import java.util.List;
