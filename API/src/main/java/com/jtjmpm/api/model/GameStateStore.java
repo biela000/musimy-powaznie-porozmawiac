@@ -2,66 +2,51 @@ package com.jtjmpm.api.model;
 
 import com.jtjmpm.GameState;
 import com.jtjmpm.Player;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class GameStateStore {
-    private final ConcurrentHashMap<String, String> sessionToLobby = new ConcurrentHashMap<>(); //Stores lobby ids for sessions
-    private final ConcurrentHashMap<String, GameState> lobbies = new ConcurrentHashMap<>(); //Stores GameStates for lobbies
-    private final ResourcePatternResolver resourcePatternResolver;
+    private final ConcurrentHashMap<String, String> sessionToLobby = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, GameState> lobbies = new ConcurrentHashMap<>();
 
-    public GameStateStore(ResourcePatternResolver resourcePatternResolver) {
-        this.resourcePatternResolver = resourcePatternResolver;
+    public GameStateStore() {
     }
 
     public List<String> getPlayerIdsFromLobby(String lobbyName) {
         return lobbies.get(lobbyName).getPlayers().stream().map(Player::getId).toList();
     }
 
-    //HANDLING LOBBIES
-
     public boolean createLobby(String lobbyName, String sessionId){
         GameState newState = new GameState(lobbyName, sessionId);
 
-        if(lobbies.containsKey(lobbyName)) return false;
+        if (lobbies.containsKey(lobbyName)) return false;
         lobbies.put(lobbyName, newState);
         sessionToLobby.put(sessionId, lobbyName);
         return true;
     }
 
-    public boolean connectToLobby(String lobbyID, String sessionID) {
-        GameState state = lobbies.get(lobbyID);
+    public boolean connectToLobby(String lobbyId, String sessionId) {
+        GameState state = lobbies.get(lobbyId);
         if (state != null) {
-            //joined is false if the lobby is full and player failed to join
-            boolean joined = state.addPlayer2(sessionID);
+            boolean joined = state.addPlayer(sessionId);
             if (joined) {
-                sessionToLobby.put(sessionID, lobbyID);
+                sessionToLobby.put(sessionId, lobbyId);
                 return true;
             }
         }
         return false;
     }
 
-    public void removeSession(String sessionID) {
-        String lobbyId = sessionToLobby.remove(sessionID);
+    public void removeSession(String sessionId) {
+        String lobbyId = sessionToLobby.remove(sessionId);
 
-        //If any of the players disconnects from the lobby we close it (might have to change this logic later)
         if (lobbyId != null) {
             GameState state = lobbies.get(lobbyId);
 
-            if (state != null) {
-                String p1 = state.getPlayer1Id();
-                String p2 = state.getPlayer2Id();
-
-                if (p1 != null) sessionToLobby.remove(p1);
-                if (p2 != null) sessionToLobby.remove(p2);
-
+            if (state != null && state.getPlayers().isEmpty()) {
                 lobbies.remove(lobbyId);
             }
         }
