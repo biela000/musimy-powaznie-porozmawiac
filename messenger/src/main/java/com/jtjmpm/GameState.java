@@ -1,7 +1,6 @@
 package com.jtjmpm;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,10 +13,14 @@ public class GameState {
 
     private boolean isGameStarted = false;
 
+    private final String name;
+
     public GameState() {
+        this.name = "unknown";
     }
 
-    public GameState(String hostId) {
+    public GameState(String name, String hostId) {
+        this.name = name;
         this.hostId = hostId;
         players.put(hostId, new Player(hostId));
     }
@@ -44,6 +47,14 @@ public class GameState {
         if (player != null) {
             player.setHp(player.getHp() - damage);
         }
+    }
+
+    public synchronized boolean isReady() {
+        for (Player player : players.values()) {
+            if (!player.isReady()) return false;
+        }
+
+        return true;
     }
 
     //GETTERS
