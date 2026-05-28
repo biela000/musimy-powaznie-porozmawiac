@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.jtjmpm.MessageType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -108,7 +109,32 @@ public class LobbyController implements MessageController {
     }
 
     private void handleLeave(WebSocket conn, String rawJson) {
-        System.out.println("Player with session ID: " + SocketUtils.getSessionId(conn) + " is leaving his lobby");
+        String sessionId = SocketUtils.getSessionId(conn);
+        System.out.println("Player with session ID: " + sessionId + " is leaving his lobby");
+
+        try {
+            if(store.removeSession(sessionId)){
+                GameState lobby = store.getPlayersLobby(sessionId);
+
+                LobbyLeftMessage responseMessage = new LobbyLeftMessage(sessionId);
+                String jsonResponse = gson.toJson(responseMessage);
+
+                for (Player player : lobby.getPlayers()){
+                    if(Objects.equals(player.getId(), sessionId)) continue;
+                    registry.get(player.getId()).send(jsonResponse);
+                }
+                conn.send(jsonResponse);
+
+            }
+            else{
+                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Player " + sessionId + "isn't in any lobby or there was an error with his lobby...");
+                String jsonResponse = gson.toJson(errorMessage);
+                conn.send(jsonResponse);
+            }
+        } catch (Exception e) {
+            System.err.println("Error while leaving lobby: from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void handleToggleReady(WebSocket conn, String rawJson) {
