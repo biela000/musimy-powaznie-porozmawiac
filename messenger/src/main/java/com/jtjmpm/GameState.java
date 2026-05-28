@@ -1,74 +1,81 @@
 package com.jtjmpm;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class GameState {
-    private String player1Id; // Host
-    private String player2Id;       // Gość
+    public static final int LOBBY_SIZE = 2;
 
-    private int player1Hp = 100;
-    private int player2Hp = 100;
-
-    private boolean player1Ready = false;
-    private boolean player2Ready = false;
+    private String hostId;
+    private final Map<String, Player> players = new ConcurrentHashMap<>();
 
     private boolean isGameStarted = false;
 
-    public GameState(){
+    private final String name;
+
+    public GameState() {
+        this.name = "unknown";
     }
 
-    //player 1 is always the host
-    public GameState(String hostId) {
-        this.player1Id = hostId;
+    public GameState(String name, String hostId) {
+        this.name = name;
+        this.hostId = hostId;
+        players.put(hostId, new Player(hostId));
     }
 
     // SYNCHRONIZED LOGIC
-
-    public synchronized boolean addPlayer2(String guestId) {
-        if (this.player2Id == null) {
-            this.player2Id = guestId;
+    public synchronized boolean addPlayer(String guestId) {
+        if (players.size() < LOBBY_SIZE) {
+            players.put(guestId, new Player(guestId));
             return true;
         }
         return false;
     }
 
-    public synchronized boolean setPlayerReady(String playerId) {
-        if (playerId.equals(player1Id)) player1Ready = !player1Ready;
-        if (playerId.equals(player2Id)) player2Ready = !player2Ready;
+    public synchronized boolean removePlayer(String playerId) {
+        Player removed = players.remove(playerId);
+        return removed != null;
+    }
 
-        // Returns true if both players are ready and the game can be started
-        if (player1Ready && player2Ready && !isGameStarted) {
-            isGameStarted = true;
-            return true;
-        }
-        return false;
+    public synchronized Player getPlayer(String playerId) {
+        return players.get(playerId);
+    }
+
+    public synchronized List<Player> getPlayers() {
+        return new ArrayList<>(players.values());
     }
 
     public synchronized void applyDamage(String targetPlayerId, int damage) {
-        if (targetPlayerId.equals(player1Id)) {
-            player1Hp = Math.max(0, player1Hp - damage);
-        } else if (targetPlayerId.equals(player2Id)) {
-            player2Hp = Math.max(0, player2Hp - damage);
+        Player player = players.get(targetPlayerId);
+        if (player != null) {
+            player.setHp(player.getHp() - damage);
         }
     }
 
-    //GETTERS
+    public synchronized boolean isReady() {
+        for (Player player : players.values()) {
+            if (!player.isReady()) return false;
+        }
 
+        return true;
+    }
+
+    //GETTERS
     public boolean isGameOver() {
-        return player1Hp <= 0 || player2Hp <= 0;
+        return false;
     }
 
     public String getWinnerId() {
-        if (player1Hp <= 0) return player2Id;
-        if (player2Hp <= 0) return player1Id;
         return null;
     }
 
-    //SIMPLE GETTERS
+    public String getName() {
+        return name;
+    }
 
-    public String getPlayer1Id() { return player1Id; }
-    public String getPlayer2Id() { return player2Id; }
-    public int getPlayer1Hp() { return player1Hp; }
-    public int getPlayer2Hp() { return player2Hp; }
+    //SIMPLE GETTERS
     public boolean isGameStarted() { return isGameStarted; }
-    public boolean getPlayer1Ready() { return player1Ready; }
-    public boolean getPlayer2Ready() { return player2Ready; }
+    public String getHostId() { return hostId; }
 }

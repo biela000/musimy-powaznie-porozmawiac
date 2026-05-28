@@ -35,12 +35,10 @@ public class GameHandler {
 
                 @Override
                 public void onMessage(String message) {
-
                 }
 
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
-                    Log.d("DEV", "AKSJBCAKJSBCAKJBCA");
                 }
 
                 @Override

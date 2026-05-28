@@ -1,8 +1,9 @@
 package com.jtjmpm.desktop.service;
 
 import com.google.gson.Gson;
-import com.jtjmpm.PlayerMoveMessage;
-import com.jtjmpm.WsMessage;
+import com.jtjmpm.MessageType;
+import com.jtjmpm.messages.PlayerMoveMessage;
+import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -12,8 +13,21 @@ import java.net.InetSocketAddress;
 public class GameSocketService extends WebSocketServer {
     private WebSocket connectedClient = null;
     private final Gson gson = new Gson();
+    private static GameSocketService instance;
+    private static int port = 8080;
 
-    public GameSocketService(int port) {
+    public static void setPort(int p) {
+        port = p;
+    }
+
+    public static GameSocketService getInstance() {
+        if (instance == null) {
+            instance = new GameSocketService();
+        }
+        return instance;
+    }
+
+    private GameSocketService() {
         super(new InetSocketAddress(port));
     }
 
@@ -41,7 +55,7 @@ public class GameSocketService extends WebSocketServer {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         switch (base.type) {
-            case "PLAYER_MOVE" -> {
+            case MessageType.PLAYER_MOVE -> {
                 PlayerMoveMessage move = gson.fromJson(message, PlayerMoveMessage.class);
                 handlePlayerMove(move);
             }
