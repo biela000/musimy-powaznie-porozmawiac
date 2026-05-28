@@ -121,63 +121,11 @@ public class GameHandler extends WebSocketServer {
     }
 
     private void handleCreateLobby(WebSocket conn, String lobbyName) {
-        String sessionId = getSessionId(conn);
-        System.out.println("Creating a lobby: " + lobbyName + " " + sessionId + " is creating a lobby");
 
-        try {
-            if (store.createLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
-                String jsonResponse = gson.toJson(responseMessage);
-                conn.send(jsonResponse);
-
-                GameState lobby = store.getPlayersLobby(sessionId);
-
-                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
-                String GSjsonResponse = gson.toJson(responseMessage);
-                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
-                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
-
-                player1.send(GSjsonResponse);
-                player2.send(GSjsonResponse);
-            } else {
-                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " already exists...");
-                String jsonResponse = gson.toJson(errorMessage);
-                conn.send(jsonResponse);
-            }
-        } catch (Exception e) {
-            System.err.println("Error while creating lobby from session: " + sessionId + ": " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void handleJoinLobby(WebSocket conn, String lobbyName) {
-        String sessionId = getSessionId(conn);
-        System.out.println("Joining a lobby: " + lobbyName + " " + sessionId + " is joining a lobby");
 
-        try {
-            if (store.connectToLobby(lobbyName, sessionId)) {
-                LobbyJoinedMessage responseMessage = new LobbyJoinedMessage(lobbyName);
-                String jsonResponse = gson.toJson(responseMessage);
-                conn.send(jsonResponse);
-
-                GameState lobby = store.getPlayersLobby(sessionId);
-
-                GameStateUpdateMessage GSresponseMessage = new GameStateUpdateMessage(lobby);
-                String GSjsonResponse = gson.toJson(responseMessage);
-                WebSocket player1 = activeSessions.get(lobby.getPlayer1Id());
-                WebSocket player2 = activeSessions.get(lobby.getPlayer2Id());
-
-                player1.send(GSjsonResponse);
-                player2.send(GSjsonResponse);
-            } else {
-                LobbyErrorMessage errorMessage = new LobbyErrorMessage("Lobby named " + lobbyName + " is full or doesn't exist...");
-                String jsonResponse = gson.toJson(errorMessage);
-                conn.send(jsonResponse);
-            }
-        } catch (Exception e) {
-            System.err.println("Error while creating lobby from session: " + sessionId + ": " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void handlePlayerMove(WebSocket conn, List<ControllerRotation> move) {

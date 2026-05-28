@@ -1,10 +1,12 @@
 package com.jtjmpm.api.model;
 
 import org.java_websocket.WebSocket;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class SessionRegistry {
     private final ConcurrentHashMap<String, WebSocket> sessions = new ConcurrentHashMap<>();
 

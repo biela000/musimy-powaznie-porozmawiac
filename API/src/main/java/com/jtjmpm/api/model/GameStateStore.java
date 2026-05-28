@@ -1,10 +1,12 @@
 package com.jtjmpm.api.model;
 
 import com.jtjmpm.GameState;
+import com.jtjmpm.Player;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +20,9 @@ public class GameStateStore {
         this.resourcePatternResolver = resourcePatternResolver;
     }
 
+    public List<Player> getPlayersFromLobby(String lobbyName) {
+        return lobbies.get(lobbyName).getPlayers();
+    }
 
     //HANDLING LOBBIES
 
