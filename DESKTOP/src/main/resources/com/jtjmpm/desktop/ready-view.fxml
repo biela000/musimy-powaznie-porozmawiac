@@ -10,8 +10,8 @@
 
     <Label fx:id="lobbyLabel" text="Waiting for players..."/>
 
-    <Label fx:id="hostStatusLabel" text="Host: Not ready"/>
-    <Label fx:id="enemyStatusLabel" text="Enemy: Not ready"/>
+    <Label fx:id="hostStatusLabel" text="Host: NOT READY"/>
+    <Label fx:id="enemyStatusLabel" text="Enemy: NOT READY"/>
 
     <Button text="Ready!" onAction="#onReady" maxWidth="Infinity"/>
     <Label fx:id="startingSoonLabel"/>

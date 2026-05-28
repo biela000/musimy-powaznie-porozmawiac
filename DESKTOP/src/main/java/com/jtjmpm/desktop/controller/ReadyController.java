@@ -84,8 +84,8 @@ public class ReadyController {
             isEnemyReady = update.gameState.getPlayer(client.getEnemyId()).isReady();
         }
 
-        hostStatusLabel.setText(playerStatusText.get(isHostReady));
-        enemyStatusLabel.setText(playerStatusText.get(isEnemyReady));
+        hostStatusLabel.setText("Host: " + playerStatusText.get(isHostReady));
+        enemyStatusLabel.setText("Enemy: " + playerStatusText.get(isEnemyReady));
 
         if (isHostReady && isEnemyReady) {
             startingSoonLabel.setText("STARTING SOON...");
