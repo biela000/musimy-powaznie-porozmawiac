@@ -16,6 +16,9 @@ public class GameSocketService extends WebSocketServer {
     private static GameSocketService instance;
     private static int port = 8080;
 
+    private Runnable onClientConnected;
+    private Runnable onClientDisconnected;
+
     public static void setPort(int p) {
         port = p;
     }
@@ -40,6 +43,9 @@ public class GameSocketService extends WebSocketServer {
         }
         connectedClient = conn;
         System.out.println("Client connected: " + conn.getRemoteSocketAddress());
+        if (onClientConnected != null) {
+            onClientConnected.run();
+        }
     }
 
     @Override
@@ -47,6 +53,10 @@ public class GameSocketService extends WebSocketServer {
         if (conn == connectedClient) {
             connectedClient = null;
             System.out.println("Client disconnected: " + reason);
+
+            if (onClientDisconnected != null) {
+                onClientDisconnected.run();
+            }
         }
     }
 
@@ -83,5 +93,13 @@ public class GameSocketService extends WebSocketServer {
 
     public boolean hasClient() {
         return connectedClient != null;
+    }
+
+    public void setOnClientConnected(Runnable callback) {
+        this.onClientConnected = callback;
+    }
+
+    public void setOnClientDisconnected(Runnable callback) {
+        this.onClientDisconnected = callback;
     }
 }

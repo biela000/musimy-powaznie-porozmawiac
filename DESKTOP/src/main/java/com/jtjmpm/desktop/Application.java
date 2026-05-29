@@ -9,9 +9,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
-    private final static String API_URL = "ws://127.0.0.1:3000"; // localhost
     private final static String WINDOW_TITLE = "MPP";
-    private final static String START_VIEW = "lobby-view.fxml";
+    private final static String START_VIEW = "start-view.fxml";
 
     private int getPortFromParams() {
         Parameters params = getParameters();
@@ -36,11 +35,6 @@ public class Application extends javafx.application.Application {
         GameSocketService server = GameSocketService.getInstance();
         server.start();
 
-        ApiSocketClient client = ApiSocketClient.getInstance();
-        client.connect(API_URL, () -> {
-            System.out.println("API connection established");
-        });
-
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource(START_VIEW));
 
         Scene scene = new Scene(fxmlLoader.load());
@@ -51,7 +45,6 @@ public class Application extends javafx.application.Application {
         stage.setOnCloseRequest(_ -> {
             try {
                 server.stop();
-                client.close();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
