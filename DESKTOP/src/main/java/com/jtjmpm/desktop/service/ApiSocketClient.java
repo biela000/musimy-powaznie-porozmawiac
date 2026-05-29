@@ -9,14 +9,24 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class ApiSocketClient {
+    private static final int RECONNECT_DELAY_SECONDS = 5;
+
     private static ApiSocketClient instance;
 
     private final Gson gson = new Gson();
     private WebSocketClient client;
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> reconnectTask;
     private Consumer<String> onMessageCallback;
+    private Runnable onConnected;
+    private String serverUrl;
     private String hostId;
     private String enemyId;
 
@@ -36,6 +46,14 @@ public class ApiSocketClient {
         enemyId = s;
     }
 
+    public void setServerUrl(String s) {
+        serverUrl = s;
+    }
+
+    public void setOnConnected(Runnable onConnected) {
+        this.onConnected = onConnected;
+    }
+
     public static ApiSocketClient getInstance() {
         if (instance == null) {
             instance = new ApiSocketClient();
@@ -51,12 +69,14 @@ public class ApiSocketClient {
         this.onMessageCallback = callback;
     }
 
-    public void connect(String url, Runnable onConnected) {
+    public void connect() {
+        if (serverUrl == null) return;
         try {
-            client = new WebSocketClient(new URI(url)) {
+            client = new WebSocketClient(new URI(serverUrl)) {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
                     System.out.println("Connected to API");
+                    cancelReconnect();
                     if (onConnected != null) onConnected.run();
                 }
 
@@ -79,6 +99,7 @@ public class ApiSocketClient {
                 @Override
                 public void onClose(int code, String reason, boolean remote) {
                     System.out.println("Disconnected from API: " + reason);
+                    scheduleReconnect();
                 }
 
                 @Override
@@ -97,6 +118,23 @@ public class ApiSocketClient {
         }
     }
 
+    private void scheduleReconnect() {
+        if (reconnectTask == null || reconnectTask.isDone()) {
+            reconnectTask = scheduler.scheduleWithFixedDelay(
+                    this::connect,
+                    RECONNECT_DELAY_SECONDS, RECONNECT_DELAY_SECONDS,
+                    TimeUnit.SECONDS
+            );
+        }
+    }
+
+    private void cancelReconnect() {
+        if (reconnectTask != null) {
+            reconnectTask.cancel(false);
+            reconnectTask = null;
+        }
+    }
+
     public void send(Object message) {
         if (client != null && client.isOpen()) {
             client.send(gson.toJson(message));
@@ -104,6 +142,8 @@ public class ApiSocketClient {
     }
 
     public void close() {
+        cancelReconnect();
+        scheduler.shutdown();
         if (client != null) {
             client.close();
         }
