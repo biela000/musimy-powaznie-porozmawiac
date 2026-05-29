@@ -86,7 +86,7 @@ public class StartController {
 
     private void setupQRCode() {
         String ipAddress = getValidLocalIp();
-        int port = 8080;
+        int port = GameSocketService.getInstance().getPort();
 
         String qrData = ipAddress + ":" + port;
         generateQRCode(qrData);

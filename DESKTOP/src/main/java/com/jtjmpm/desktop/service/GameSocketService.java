@@ -30,8 +30,6 @@ public class GameSocketService extends WebSocketServer {
         return instance;
     }
 
-
-
     private GameSocketService() {
         super(new InetSocketAddress(port));
     }
