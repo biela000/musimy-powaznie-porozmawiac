@@ -54,10 +54,12 @@ public class StartController {
             Platform.runLater(this::updateUI);
         });
 
-        ApiSocketClient.getInstance().connect(API_URL, () -> {
+        ApiSocketClient.getInstance().setServerUrl(API_URL);
+        ApiSocketClient.getInstance().setOnConnected(() -> {
             isApiConnected = true;
             Platform.runLater(this::updateUI);
         });
+        ApiSocketClient.getInstance().connect();
 
         setupQRCode();
         updateUI();

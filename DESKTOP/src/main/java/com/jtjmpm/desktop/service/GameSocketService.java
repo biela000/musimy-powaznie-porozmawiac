@@ -102,6 +102,4 @@ public class GameSocketService extends WebSocketServer {
     public void setOnClientDisconnected(Runnable callback) {
         this.onClientDisconnected = callback;
     }
-
-
 }
