@@ -74,11 +74,6 @@ public class GameSocketService extends WebSocketServer {
     }
 
     @Override
-    public InetSocketAddress getLocalSocketAddress(WebSocket conn) {
-        return super.getLocalSocketAddress(conn);
-    }
-
-    @Override
     public void onError(WebSocket conn, Exception ex) {
         ex.printStackTrace();
     }
