@@ -1,13 +1,13 @@
 package com.jtjmpm.desktop.utils;
 
-import com.jtjmpm.Player;
+import com.jtjmpm.messages.PlayerDTO;
 
 import java.util.Collection;
 
 public class GameStateUtils {
-    public static Player getEnemy(Collection<Player> players, String hostId) {
-        for (Player player : players) {
-            if (!player.getId().equals(hostId)) {
+    public static PlayerDTO getEnemy(Collection<PlayerDTO> players, String hostId) {
+        for (PlayerDTO player : players) {
+            if (!player.id().equals(hostId)) {
                 return player;
             }
         }

@@ -2,7 +2,7 @@ package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
-import com.jtjmpm.Player;
+import com.jtjmpm.messages.PlayerDTO;
 import com.jtjmpm.messages.GameStateUpdateMessage;
 import com.jtjmpm.messages.ReadyMessage;
 import com.jtjmpm.messages.WsMessage;
@@ -15,10 +15,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
@@ -61,27 +58,30 @@ public class ReadyController {
     }
 
     private void updateEnemyId(GameStateUpdateMessage update) {
-        List<Player> players = update.gameState.getPlayers();
+        Collection<PlayerDTO> players = update.gameState.players().values();
 
         if (players.size() == 1) {
             ApiSocketClient.getInstance().setEnemyId(null);
         }
 
-        Optional<Player> enemy = players.stream()
-                .filter(player -> !player.getId().equals(ApiSocketClient.getInstance().getHostId()))
+        Optional<PlayerDTO> enemy = players.stream()
+                .filter(player -> !player.id().equals(ApiSocketClient.getInstance().getHostId()))
                 .findFirst();
 
-        enemy.ifPresent(player -> ApiSocketClient.getInstance().setEnemyId(player.getId()));
+        enemy.ifPresent(player -> ApiSocketClient.getInstance().setEnemyId(player.id()));
     }
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
         ApiSocketClient client = ApiSocketClient.getInstance();
 
-        boolean isHostReady = update.gameState.getPlayer(client.getHostId()).isReady();
+        PlayerDTO host = update.gameState.players().get(client.getHostId());
+        boolean isHostReady = host.ready();
+
         boolean isEnemyReady = false;
 
         if (client.getEnemyId() != null) {
-            isEnemyReady = update.gameState.getPlayer(client.getEnemyId()).isReady();
+            PlayerDTO enemy = update.gameState.players().get(client.getEnemyId());
+            isEnemyReady = enemy.ready();
         }
 
         hostStatusLabel.setText("Host: " + playerStatusText.get(isHostReady));

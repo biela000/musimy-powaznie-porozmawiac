@@ -1,6 +1,6 @@
 package com.jtjmpm.desktop.controller;
 
-import com.jtjmpm.Player;
+import com.jtjmpm.messages.PlayerDTO;
 import com.jtjmpm.PlayerMoveResult;
 import com.jtjmpm.desktop.utils.ShapeDrawer;
 import javafx.fxml.FXML;
@@ -10,6 +10,9 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.paint.Color;
 
 public class PlayerPanelController {
+
+    private static final double MAX_HP = 100.0;
+
     @FXML private ProgressBar hpBar;
     @FXML private Label hpLabel;
     @FXML private Canvas canvas;
@@ -25,12 +28,12 @@ public class PlayerPanelController {
         accuracyLabel.setText(String.format("Accuracy: %.1f%%", moveResult.accuracy * 100.0));
     }
 
-    public void playerStateUpdate(Player player) {
-        updateHealthBar(player.getHp());
+    public void playerStateUpdate(PlayerDTO player) {
+        updateHealthBar(player.hp());
     }
 
     private void updateHealthBar(double myHp) {
-        hpBar.setProgress(myHp / Player.MAX_HP);
-        hpLabel.setText("HP: " + (int)myHp + "/" + (int)Player.MAX_HP);
+        hpBar.setProgress(myHp / MAX_HP);
+        hpLabel.setText("HP: " + (int)myHp + "/" + (int)MAX_HP);
     }
 }

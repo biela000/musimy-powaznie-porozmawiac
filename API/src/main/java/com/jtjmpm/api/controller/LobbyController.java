@@ -92,7 +92,7 @@ public class LobbyController implements MessageController {
                         .filter(id -> !id.equals(sessionId))
                         .toList();
 
-                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby);
+                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby.toDTO());
                 registry.broadcast(playerIds, gson.toJson(updateMessage));
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage(
@@ -121,7 +121,7 @@ public class LobbyController implements MessageController {
             GameState lobby = store.getPlayersLobby(sessionId);
             List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby);
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby.toDTO());
             registry.broadcast(playerIds, gson.toJson(responseMessage));
 
             if (lobby.isReady()) {

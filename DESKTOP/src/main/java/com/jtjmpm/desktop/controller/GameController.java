@@ -25,7 +25,7 @@ public class GameController {
 
     private final Gson gson = new Gson();
 
-    private GameState gameState = new GameState();
+    private GameStateDTO gameState;
 
     @FXML
     public void initialize() {
@@ -70,9 +70,9 @@ public class GameController {
 
         String hostId = ApiSocketClient.getInstance().getHostId();
 
-        hostPanelController.playerStateUpdate(gameState.getPlayer(hostId));
+        hostPanelController.playerStateUpdate(gameState.players().get(hostId));
         enemyPanelController.playerStateUpdate(
-                Objects.requireNonNull(GameStateUtils.getEnemy(gameState.getPlayers(), hostId))
+                Objects.requireNonNull(GameStateUtils.getEnemy(gameState.players().values(), hostId))
         );
     }
 
