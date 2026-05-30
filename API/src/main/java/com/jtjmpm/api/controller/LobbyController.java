@@ -5,6 +5,7 @@ import com.jtjmpm.GameState;
 import com.jtjmpm.Player;
 import com.jtjmpm.api.model.GameStateStore;
 import com.jtjmpm.api.model.SessionRegistry;
+import com.jtjmpm.api.model.SpellRegistry;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
 import org.java_websocket.WebSocket;
@@ -23,14 +24,16 @@ public class LobbyController implements MessageController {
 
     private final GameStateStore store;
     private final SessionRegistry registry;
+    private final SpellRegistry spellRegistry;
     private final Gson gson;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson) {
+    public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry) {
         this.store = store;
         this.registry = registry;
         this.gson = gson;
+        this.spellRegistry = spellRegistry;
     }
 
     @Override
@@ -116,9 +119,33 @@ public class LobbyController implements MessageController {
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
 
         try {
-            store.togglePlayerReady(sessionId);
+            ReadyMessage readyMsg = gson.fromJson(rawJson, ReadyMessage.class);
 
             GameState lobby = store.getPlayersLobby(sessionId);
+            if(lobby == null) return;
+
+            Player player = lobby.getPlayer(sessionId);
+
+            if (!player.isReady()) {
+                List<String> spells = readyMsg.selectedSpells;
+
+                if (spells == null || spells.size() != 4) {
+                    System.err.println("Ready failed, not a valid loadout " + sessionId);
+                    return;
+                }
+
+                for (String spellId : spells) {
+                    if (spellRegistry.getSpell(spellId) == null) {
+                        System.err.println("Ready failed, not a valid spell: " + spellId + "' by: " + sessionId);
+                        return;
+                    }
+                }
+
+                player.setSpellLoadout(spells);
+            }
+
+            store.togglePlayerReady(sessionId);
+
             List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
             GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby.toDTO());

@@ -2,6 +2,9 @@ package com.jtjmpm;
 
 import com.jtjmpm.messages.PlayerDTO;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player {
     public static final double MAX_HP = 100;
 
@@ -9,10 +12,13 @@ public class Player {
     private double hp;
     private boolean ready;
 
+    private List<String> spellLoadout;
+
     public Player(String id) {
         this.id = id;
         this.hp = MAX_HP;
         this.ready = false;
+        this.spellLoadout = new ArrayList<>();
     }
 
     public synchronized double getHp() {
@@ -33,6 +39,14 @@ public class Player {
 
     public synchronized void toggleReady() {
         ready = !ready;
+    }
+
+    public List<String> getSpellLoadout() {
+        return spellLoadout;
+    }
+
+    public void setSpellLoadout(List<String> spellLoadout) {
+        this.spellLoadout = spellLoadout;
     }
 
     public String getId() {
