@@ -5,14 +5,22 @@
 
 <VBox alignment="CENTER" spacing="16" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.jtjmpm.desktop.controller.ReadyController"
-      prefWidth="360" prefHeight="260">
+      prefWidth="700" prefHeight="500">
     <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 
-    <Label fx:id="lobbyLabel" text="Waiting for players..."/>
+    <Label fx:id="lobbyLabel" text="Waiting for players..." style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
 
-    <Label fx:id="hostStatusLabel" text="Host: NOT READY"/>
-    <Label fx:id="enemyStatusLabel" text="Enemy: NOT READY"/>
+    <Label text="Select your spells:" />
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+        <TilePane fx:id="spellsContainer" hgap="15" vgap="15" alignment="CENTER"/>
+    </ScrollPane>
 
-    <Button text="Ready!" onAction="#onReady" maxWidth="Infinity"/>
-    <Label fx:id="startingSoonLabel"/>
+    <HBox alignment="CENTER" spacing="40">
+        <Label fx:id="hostStatusLabel" text="Host: NOT READY"/>
+        <Label fx:id="enemyStatusLabel" text="Enemy: NOT READY"/>
+    </HBox>
+
+    <Button text="Ready!" onAction="#onReady" maxWidth="Infinity" style="-fx-font-size: 14px; -fx-padding: 10px;"/>
+    <Label fx:id="startingSoonLabel" textFill="#e74c3c" style="-fx-font-weight: bold;"/>
 </VBox>

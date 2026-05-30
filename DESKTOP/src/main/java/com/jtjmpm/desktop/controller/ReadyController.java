@@ -2,14 +2,13 @@ package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
-import com.jtjmpm.messages.PlayerDTO;
-import com.jtjmpm.messages.GameStateUpdateMessage;
-import com.jtjmpm.messages.ReadyMessage;
-import com.jtjmpm.messages.WsMessage;
+import com.jtjmpm.messages.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -31,11 +30,15 @@ public class ReadyController {
     @FXML private Label enemyStatusLabel;
     @FXML private Label startingSoonLabel;
 
+    @FXML private TilePane spellsContainer;
+
     private final Gson gson = new Gson();
 
     @FXML
     public void initialize() {
         ApiSocketClient.getInstance().setOnMessageCallback(this::handleApiMessage);
+
+        ApiSocketClient.getInstance().send(new GetSpellsListMessage());
     }
 
     private void handleApiMessage(String message) {
@@ -52,8 +55,48 @@ public class ReadyController {
             case MessageType.GAME_START:
                 Platform.runLater(this::navigateToGame);
                 break;
+            case MessageType.AVAILABLE_SPELLS:
+                AvailableSpellsMessage spellsMsg = gson.fromJson(message, AvailableSpellsMessage.class);
+                Platform.runLater(() -> {
+                    renderSpells(spellsMsg);
+                });
+                break;
             default:
                 System.out.println("Unknown message type: " + base.type);
+        }
+    }
+
+    private void renderSpells(AvailableSpellsMessage spellsMsg) {
+        List<SpellDTO> spells = spellsMsg.spells;
+        spellsContainer.getChildren().clear();
+
+        for (SpellDTO spell : spells) {
+            VBox card = new VBox(5);
+            card.setPrefWidth(140);
+            card.setPrefHeight(100);
+
+            card.setStyle(
+                    "-fx-background-color: #ffffff; " +
+                            "-fx-border-color: #bdc3c7; " +
+                            "-fx-border-radius: 8px; " +
+                            "-fx-background-radius: 8px; " +
+                            "-fx-padding: 10px; " +
+                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);"
+            );
+
+            Label nameLabel = new Label(spell.name());
+            nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+            String typeStr = spell.type() != null ? spell.type().toString() : "UNKNOWN";
+            Label typeLabel = new Label(typeStr);
+            typeLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10px;");
+
+            Label dmgLabel = new Label("DMG: " + spell.displayDamage());
+            dmgLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+
+            card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);
+
+            spellsContainer.getChildren().add(card);
         }
     }
 
