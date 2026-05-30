@@ -7,6 +7,7 @@ import com.jtjmpm.desktop.service.ApiSocketClient;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
@@ -31,6 +32,10 @@ public class ReadyController {
     @FXML private Label startingSoonLabel;
 
     @FXML private TilePane spellsContainer;
+
+    @FXML private Button readyButton;
+
+    private final List<String> myLoadout = new ArrayList<>();
 
     private final Gson gson = new Gson();
 
@@ -70,19 +75,30 @@ public class ReadyController {
         List<SpellDTO> spells = spellsMsg.spells;
         spellsContainer.getChildren().clear();
 
+        String defaultStyle = "-fx-background-color: #ffffff; " +
+                "-fx-border-color: #bdc3c7; " +
+                "-fx-border-width: 2px; " +
+                "-fx-border-radius: 8px; " +
+                "-fx-background-radius: 8px; " +
+                "-fx-padding: 10px; " +
+                "-fx-cursor: hand; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
+
+        String selectedStyle = "-fx-background-color: #eafaf1; " +
+                "-fx-border-color: #2ecc71; " +
+                "-fx-border-width: 2px; " +
+                "-fx-border-radius: 8px; " +
+                "-fx-background-radius: 8px; " +
+                "-fx-padding: 10px; " +
+                "-fx-cursor: hand; " +
+                "-fx-effect: dropshadow(three-pass-box, rgba(46,204,113,0.4), 8, 0, 0, 0);";
+
+
         for (SpellDTO spell : spells) {
             VBox card = new VBox(5);
             card.setPrefWidth(140);
             card.setPrefHeight(100);
-
-            card.setStyle(
-                    "-fx-background-color: #ffffff; " +
-                            "-fx-border-color: #bdc3c7; " +
-                            "-fx-border-radius: 8px; " +
-                            "-fx-background-radius: 8px; " +
-                            "-fx-padding: 10px; " +
-                            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);"
-            );
+            card.setStyle(defaultStyle);
 
             Label nameLabel = new Label(spell.name());
             nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
@@ -95,6 +111,20 @@ public class ReadyController {
             dmgLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
 
             card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);
+
+            card.setOnMouseClicked(event -> {
+                String spellId = spell.name();
+
+                if (myLoadout.contains(spellId)) {
+                    myLoadout.remove(spellId);
+                    card.setStyle(defaultStyle);
+                } else if (myLoadout.size() < 4) {
+                    myLoadout.add(spellId);
+                    card.setStyle(selectedStyle);
+                }
+
+                readyButton.setDisable(myLoadout.size() != 4);
+            });
 
             spellsContainer.getChildren().add(card);
         }
@@ -143,7 +173,7 @@ public class ReadyController {
 
     @FXML
     private void onReady() {
-        ApiSocketClient.getInstance().send(new ReadyMessage());
+        ApiSocketClient.getInstance().send(new ReadyMessage(myLoadout));
     }
 
     private void navigateToGame() {

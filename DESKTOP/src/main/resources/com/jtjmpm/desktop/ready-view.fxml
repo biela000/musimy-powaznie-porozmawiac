@@ -21,6 +21,6 @@
         <Label fx:id="enemyStatusLabel" text="Enemy: NOT READY"/>
     </HBox>
 
-    <Button text="Ready!" onAction="#onReady" maxWidth="Infinity" style="-fx-font-size: 14px; -fx-padding: 10px;"/>
+    <Button fx:id="readyButton" text="Ready!" onAction="#onReady" maxWidth="Infinity" disable="true" style="-fx-font-size: 14px; -fx-padding: 10px;"/>
     <Label fx:id="startingSoonLabel" textFill="#e74c3c" style="-fx-font-weight: bold;"/>
 </VBox>
