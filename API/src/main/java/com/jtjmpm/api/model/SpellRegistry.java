@@ -17,10 +17,12 @@ public class SpellRegistry {
 
     @PostConstruct
     public void initSpells() {
-        addSpell(new Spell("Fireball", "fireball", SpellType.OFFENSE, 40));
-        addSpell(new Spell("Ice Shard", "ice shard", SpellType.OFFENSE, 25));
-        addSpell(new Spell("Air Slash", "air slash", SpellType.OFFENSE, 20));
-        addSpell(new Spell("Water Beam", "water beam", SpellType.OFFENSE, 15));
+        //TODO
+        //export to json
+        addSpell(new Spell("Fireball", "fireball", SpellType.OFFENSE, 40, new FlatDamageEffect(40)));
+        addSpell(new Spell("Ice Shard", "ice shard", SpellType.OFFENSE, 25, new FlatDamageEffect(25)));
+        addSpell(new Spell("Air Slash", "air slash", SpellType.OFFENSE, 20, new FlatDamageEffect(20)));
+        addSpell(new Spell("Water Beam", "water beam", SpellType.OFFENSE, 15, new FlatDamageEffect(15)));
 
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }

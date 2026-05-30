@@ -107,7 +107,7 @@ public class ReadyController {
             Label typeLabel = new Label(typeStr);
             typeLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10px;");
 
-            Label dmgLabel = new Label("DMG: " + spell.displayDamage());
+            Label dmgLabel = new Label("DMG: " + spell.displayPower());
             dmgLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
 
             card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);

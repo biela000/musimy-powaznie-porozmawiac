@@ -4,5 +4,5 @@ public record SpellDTO(
         String name,
         String description,
         SpellType type,
-        int displayDamage
+        int displayPower
 ) {}

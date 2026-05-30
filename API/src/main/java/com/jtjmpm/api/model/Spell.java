@@ -7,9 +7,10 @@ public record Spell(
         String name,
         String description,
         SpellType type,
-        int baseDamage
+        int basePower,
+        SpellEffect effect
 ) {
     public SpellDTO toDTO() {
-        return new SpellDTO(name, description, type, baseDamage);
+        return new SpellDTO(name, description, type, basePower);
     }
 }
