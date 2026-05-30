@@ -61,6 +61,8 @@ public class GameState {
     }
 
     public synchronized boolean isReady() {
+        //TODO
+        //check if both players are in the lobby
         for (Player player : players.values()) {
             if (!player.isReady()) return false;
         }

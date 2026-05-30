@@ -140,7 +140,7 @@ public class LobbyController implements MessageController {
                 player.setSpellLoadout(spells);
             }
 
-            store.togglePlayerReady(sessionId);
+            player.toggleReady();
 
             List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 

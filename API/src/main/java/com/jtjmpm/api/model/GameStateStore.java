@@ -44,7 +44,7 @@ public class GameStateStore {
 
         if (lobbyId != null) {
             GameState state = lobbies.get(lobbyId);
-            if(state != null) {
+            if (state != null) {
                 state.removePlayer(sessionId);
 
                 if (state != null && state.getPlayers().isEmpty()) {
