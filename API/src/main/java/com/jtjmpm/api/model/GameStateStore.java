@@ -44,27 +44,14 @@ public class GameStateStore {
 
         if (lobbyId != null) {
             GameState state = lobbies.get(lobbyId);
+            if(state != null) {
+                state.removePlayer(sessionId);
 
-            if (state != null && state.getPlayers().isEmpty()) {
-                lobbies.remove(lobbyId);
+                if (state != null && state.getPlayers().isEmpty()) {
+                    lobbies.remove(lobbyId);
+                }
             }
         }
-    }
-
-    //GAMEPLAY LOGIC
-
-    public void togglePlayerReady(String sessionId) {
-        String lobbyId = sessionToLobby.get(sessionId);
-        lobbies.get(lobbyId).getPlayer(sessionId).toggleReady();
-    }
-
-    public GameState applyDamage(String lobbyId, String targetSessionId, int damageAmount) {
-        GameState state = lobbies.get(lobbyId);
-        if (state != null) {
-            state.applyDamage(targetSessionId, damageAmount);
-            return state;
-        }
-        return null;
     }
 
     //GETTERS

@@ -3,6 +3,7 @@ package com.jtjmpm.api.model;
 import com.jtjmpm.messages.PlayerDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -25,8 +26,13 @@ public class Player {
         return hp;
     }
 
-    public synchronized void setHp(double hp) {
-        this.hp = Math.max(hp, 0);
+    public synchronized void modifyHp(double amount) {
+        this.hp += amount;
+        if (this.hp > MAX_HP) {
+            this.hp = MAX_HP;
+        } else if (this.hp < 0) {
+            this.hp = 0;
+        }
     }
 
     public synchronized boolean isReady() {
@@ -41,12 +47,16 @@ public class Player {
         ready = !ready;
     }
 
-    public List<String> getSpellLoadout() {
-        return spellLoadout;
+    public synchronized List<String> getSpellLoadout() {
+        return Collections.unmodifiableList(spellLoadout);
     }
 
-    public void setSpellLoadout(List<String> spellLoadout) {
-        this.spellLoadout = spellLoadout;
+    public synchronized void setSpellLoadout(List<String> spellLoadout) {
+        if (spellLoadout == null) {
+            this.spellLoadout = new ArrayList<>();
+        } else {
+            this.spellLoadout = new ArrayList<>(spellLoadout);
+        }
     }
 
     public String getId() {

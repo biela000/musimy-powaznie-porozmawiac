@@ -47,15 +47,17 @@ public class GameState {
         return players.get(playerId);
     }
 
-    public synchronized List<Player> getPlayers() {
-        return new ArrayList<>(players.values());
+    public synchronized Player getEnemy(String myId) {
+        for (String id : players.keySet()) {
+            if (!id.equals(myId)) {
+                return players.get(id);
+            }
+        }
+        return null;
     }
 
-    public synchronized void applyDamage(String targetPlayerId, int damage) {
-        Player player = players.get(targetPlayerId);
-        if (player != null) {
-            player.setHp(player.getHp() - damage);
-        }
+    public synchronized List<Player> getPlayers() {
+        return new ArrayList<>(players.values());
     }
 
     public synchronized boolean isReady() {
@@ -68,10 +70,24 @@ public class GameState {
 
     //GETTERS
     public boolean isGameOver() {
+        if (!isGameStarted) return false;
+
+        for (Player player : players.values()) {
+            if (player.getHp() <= 0) {
+                return true;
+            }
+        }
         return false;
     }
 
     public String getWinnerId() {
+        if (!isGameOver()) return null;
+
+        for (Player player : players.values()) {
+            if (player.getHp() > 0) {
+                return player.getId();
+            }
+        }
         return null;
     }
 
