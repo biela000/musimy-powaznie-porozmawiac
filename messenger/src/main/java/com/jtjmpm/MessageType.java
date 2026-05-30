@@ -15,6 +15,10 @@ public enum MessageType {
     TOGGLE_READY,
     GAME_START,
 
+    // Spells
+    GET_SPELLS_LIST,
+    AVAILABLE_SPELLS,
+
     // Gameplay
     PLAYER_MOVE,
     MOVE_RESULT,
