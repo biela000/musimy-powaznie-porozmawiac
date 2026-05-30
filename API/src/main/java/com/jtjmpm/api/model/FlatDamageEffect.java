@@ -11,7 +11,8 @@ public class FlatDamageEffect implements SpellEffect {
         Player target = state.getPlayer(targetId);
         if (target != null) {
             double actualDamage = Math.round(baseDamage * accuracy);
-
+            target.modifyHp(-actualDamage);
+            System.out.println("Dealt " + actualDamage + " flat damage!");
         }
     }
 }
