@@ -1,7 +1,6 @@
 package com.jtjmpm.api.model;
 
-import com.jtjmpm.GameState;
-import com.jtjmpm.Player;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;

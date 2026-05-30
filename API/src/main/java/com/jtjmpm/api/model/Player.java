@@ -1,4 +1,4 @@
-package com.jtjmpm;
+package com.jtjmpm.api.model;
 
 import com.jtjmpm.messages.PlayerDTO;
 
