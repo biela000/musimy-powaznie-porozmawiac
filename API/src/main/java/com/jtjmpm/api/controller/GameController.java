@@ -3,12 +3,11 @@ package com.jtjmpm.api.controller;
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
 import com.jtjmpm.PlayerMoveResult;
-import com.jtjmpm.api.model.GameStateStore;
+import com.jtjmpm.api.model.*;
 import com.jtjmpm.api.model.PatternEngine.GestureToScore;
 import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
 import com.jtjmpm.api.model.PatternEngine.RotationVectorParser;
 import com.jtjmpm.api.model.PatternEngine.ShapeNormalizer;
-import com.jtjmpm.api.model.SessionRegistry;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
 import org.java_websocket.WebSocket;
@@ -25,11 +24,13 @@ public class GameController implements MessageController {
     private final GameStateStore store;
     private final SessionRegistry registry;
     private final Gson gson;
+    private final SpellRegistry spellRegistry;
 
-    public GameController(GameStateStore store, SessionRegistry registry, Gson gson) {
+    public GameController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry) {
         this.store = store;
         this.registry = registry;
         this.gson = gson;
+        this.spellRegistry = spellRegistry;
     }
 
     @Override
@@ -54,6 +55,25 @@ public class GameController implements MessageController {
         System.out.println("Receiving a move from: " + sessionId + " (size: " + playerMoveMessage.move.size() + ")");
 
         try {
+            GameState gameState = store.getPlayersLobby(sessionId);
+            if (gameState == null) {
+                System.err.println("Game not found for player: " + sessionId);
+                return;
+            }
+            Player player = gameState.getPlayer(sessionId);
+            if (player == null) {
+                System.err.println("Player not found in game state, playerId: " + sessionId);
+                return;
+            }
+
+            String requestedSpellId = playerMoveMessage.spellId;
+            if (!player.getSpellLoadout().contains(requestedSpellId)) {
+                System.err.println("SECURITY ALERT: Player " + sessionId + " attempted to use unequipped spell: " + requestedSpellId);
+                return;
+            }
+
+            System.out.println("Validation passed. Player " + sessionId + " is casting: " + requestedSpellId);
+
             RotationVectorParser parser = new RotationVectorParser();
 
             List<Point2D.Double> normalPoints = parser.processBatch(playerMoveMessage.move);
