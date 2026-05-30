@@ -1,5 +1,7 @@
 package com.jtjmpm;
 
+import com.jtjmpm.messages.PlayerDTO;
+
 public class Player {
     public static final double MAX_HP = 100;
 
@@ -35,5 +37,9 @@ public class Player {
 
     public String getId() {
         return id;
+    }
+
+    public synchronized PlayerDTO toDTO() {
+        return new PlayerDTO(this.id, this.hp, this.ready);
     }
 }

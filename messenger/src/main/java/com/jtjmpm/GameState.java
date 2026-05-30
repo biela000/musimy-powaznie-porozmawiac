@@ -1,6 +1,10 @@
 package com.jtjmpm;
 
+import com.jtjmpm.messages.GameStateDTO;
+import com.jtjmpm.messages.PlayerDTO;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,4 +82,18 @@ public class GameState {
     //SIMPLE GETTERS
     public boolean isGameStarted() { return isGameStarted; }
     public String getHostId() { return hostId; }
+
+    public synchronized GameStateDTO toDTO() {
+        Map<String, PlayerDTO> playerDTOs = new HashMap<>();
+        for (Map.Entry<String, Player> entry : players.entrySet()) {
+            playerDTOs.put(entry.getKey(), entry.getValue().toDTO());
+        }
+
+        return new GameStateDTO(
+                this.name,
+                this.hostId,
+                this.isGameStarted,
+                playerDTOs
+        );
+    }
 }
