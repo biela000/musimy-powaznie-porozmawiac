@@ -9,9 +9,11 @@ import java.util.List;
 
 public class Player {
     public static final double MAX_HP = 100;
+    public static final double MAX_MANA = 100;
 
     private final String id;
     private double hp;
+    private double mana;
     private boolean ready;
 
     private List<String> spellLoadout;
@@ -20,6 +22,7 @@ public class Player {
     public Player(String id) {
         this.id = id;
         this.hp = MAX_HP;
+        this.mana = MAX_MANA;
         this.ready = false;
         this.spellLoadout = new ArrayList<>();
     }
@@ -34,6 +37,19 @@ public class Player {
             this.hp = MAX_HP;
         } else if (this.hp < 0) {
             this.hp = 0;
+        }
+    }
+
+    public synchronized double getMana() {
+        return mana;
+    }
+
+    public synchronized void modifyMana(double amount) {
+        this.mana += amount;
+        if (this.mana > MAX_MANA) {
+            this.mana = MAX_MANA;
+        } else if (this.mana < 0) {
+            this.mana = 0;
         }
     }
 
@@ -74,6 +90,6 @@ public class Player {
     }
 
     public synchronized PlayerDTO toDTO() {
-        return new PlayerDTO(this.id, this.hp, this.ready);
+        return new PlayerDTO(this.id, this.hp, this.mana, this.ready);
     }
 }

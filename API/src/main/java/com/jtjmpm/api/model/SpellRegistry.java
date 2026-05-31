@@ -19,11 +19,11 @@ public class SpellRegistry {
     public void initSpells() {
         //TODO
         //export to json
-        addSpell(new Spell("Fireball", "fireball", SpellType.OFFENSE, 40, new FlatDamageEffect(40)));
-        addSpell(new Spell("Ice Shard", "ice shard", SpellType.OFFENSE, 25, new FlatDamageEffect(25)));
-        addSpell(new Spell("Air Slash", "air slash", SpellType.OFFENSE, 20, new FlatDamageEffect(20)));
-        addSpell(new Spell("Water Beam", "water beam", SpellType.OFFENSE, 15, new FlatDamageEffect(15)));
-        addSpell(new Spell("Tornado", "tornado", SpellType.OFFENSE, 30, new FlatDamageEffect(30)));
+        addSpell(new Spell("Fireball", "fireball", SpellType.OFFENSE, 40, 60, new FlatDamageEffect(40)));
+        addSpell(new Spell("Ice Shard", "ice shard", SpellType.OFFENSE, 25, 15, new FlatDamageEffect(25)));
+        addSpell(new Spell("Air Slash", "air slash", SpellType.OFFENSE, 20, 10, new FlatDamageEffect(20)));
+        addSpell(new Spell("Water Beam", "water beam", SpellType.OFFENSE, 15, 5, new FlatDamageEffect(15)));
+        addSpell(new Spell("Tornado", "tornado", SpellType.OFFENSE, 30, 25, new FlatDamageEffect(30)));
 
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }

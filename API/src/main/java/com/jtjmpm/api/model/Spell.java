@@ -7,7 +7,8 @@ public record Spell(
         String name,
         String description,
         SpellType type,
-        int basePower,
+        int basePower, //TODO change to double
+        double manaCost,
         SpellEffect effect
 ) {
     public SpellDTO toDTO() {

@@ -78,6 +78,13 @@ public class GameController implements MessageController {
                 return;
             }
 
+            Spell spell = spellRegistry.getSpell(requestedSpellId);
+
+            if(player.getMana() < spell.manaCost()) {
+                System.out.println("Player: " + sessionId + "tried casting a spell but does not have enough mana");
+                return;
+            }
+
             System.out.println("Validation passed. Player " + sessionId + " is casting: " + requestedSpellId);
 
             RotationVectorParser parser = new RotationVectorParser();
@@ -100,7 +107,7 @@ public class GameController implements MessageController {
             matchSupervisor.executeAndEvaluate(gameState, playerIds, () -> {
                 //TODO
                 //make this cleaner maybe
-                spellRegistry.getSpell(requestedSpellId).effect().apply(
+                spell.effect().apply(
                         gameState, sessionId, gameState.getEnemy(sessionId).getId(), accuracyScore, combatEngine
                 );
             });
