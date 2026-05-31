@@ -14,7 +14,7 @@ public class FlatDamageEffect implements SpellEffect {
         this.castDuration = castDuration;
     }
     @Override
-    public SpellCastResult apply(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine){
+    public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine){
         // if the spell fails we return it here, if it doesnt we return the method that needs to be ran when the attack hits
         Player caster = state.getPlayer(casterId);
         Player target = state.getPlayer(targetId);

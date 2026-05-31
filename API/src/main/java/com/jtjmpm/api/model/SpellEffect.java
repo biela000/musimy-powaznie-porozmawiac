@@ -3,5 +3,5 @@ package com.jtjmpm.api.model;
 import com.jtjmpm.api.game.CombatEngine;
 
 public interface SpellEffect {
-    SpellCastResult apply(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine);
+    SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine);
 }

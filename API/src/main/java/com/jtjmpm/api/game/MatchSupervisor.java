@@ -37,7 +37,7 @@ public class MatchSupervisor {
         executeAndEvaluate(gameState, playerIds, () -> {
             // can put logic that is the same for all moves here
             // but then we'd have to change SpellCastResult and SpellEffect.apply()
-            SpellCastResult result = spell.effect().apply(gameState, casterId, targetId, accuracy, combatEngine);
+            SpellCastResult result = spell.effect().cast(gameState, casterId, targetId, accuracy, combatEngine);
 
             if (result.status != CastStatus.SUCCESS) {
                 registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
