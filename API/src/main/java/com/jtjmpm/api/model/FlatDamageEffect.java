@@ -2,6 +2,10 @@ package com.jtjmpm.api.model;
 
 import com.jtjmpm.api.game.CombatEngine;
 import com.jtjmpm.messages.CastStatus;
+import com.jtjmpm.messages.CombatEventMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlatDamageEffect implements SpellEffect {
     private final double baseDamage;
@@ -33,9 +37,10 @@ public class FlatDamageEffect implements SpellEffect {
         }
 
         // logic that happens when the attack hits goes here
-        return new SpellCastResult(CastStatus.SUCCESS, castDuration, () -> {
+        return new SpellCastResult(CastStatus.SUCCESS, castDuration, (outEvents) -> {
             double actualDamage = Math.round(baseDamage * accuracy);
-            combatEngine.applyDamage(state, casterId, targetId, actualDamage);
+
+            outEvents.add(combatEngine.applyDamage(state, casterId, targetId, actualDamage));
         });
     }
 }

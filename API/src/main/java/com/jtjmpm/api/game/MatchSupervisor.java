@@ -50,7 +50,7 @@ public class MatchSupervisor {
             else {
                 registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
                         spell.castDurationMs(), result.status)));
-                scheduleImpact(gameState, playerIds, result.delayMs, result.impactAction);
+                scheduleImpact(gameState, playerIds, result.delayMs, result.impactActions);
             }
         });
     }

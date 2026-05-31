@@ -28,7 +28,7 @@ public class GameTickService {
         for (GameState gameState : activeGames) {
             List<String> playerIds = store.getPlayerIdsFromLobby(gameState.getName());
 
-            matchSupervisor.executeAndEvaluate(gameState, playerIds, () -> {
+            matchSupervisor.executeAndEvaluate(gameState, playerIds, (outEvents) -> {
                 for (Player player : gameState.getPlayers()) {
                     player.processEffects(gameState, combatEngine);
                 }
