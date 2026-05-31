@@ -80,11 +80,6 @@ public class GameController implements MessageController {
 
             Spell spell = spellRegistry.getSpell(requestedSpellId);
 
-            if(player.getMana() < spell.manaCost()) {
-                System.out.println("Player: " + sessionId + "tried casting a spell but does not have enough mana");
-                return;
-            }
-
             System.out.println("Validation passed. Player " + sessionId + " is casting: " + requestedSpellId);
 
             RotationVectorParser parser = new RotationVectorParser();
@@ -98,27 +93,11 @@ public class GameController implements MessageController {
             double accuracyScore = GestureToScore.getScore(circlePattern, playerMoveMessage.move);
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
 
-
             List<String> playerIds = store.getPlayerIdsFromLobby(store.getLobbyIdForPlayer(sessionId));
 
-            matchSupervisor.executeAndEvaluate(gameState, playerIds, () -> {
-                //TODO
-                //make this cleaner maybe
-                spell.effect().apply(
-                        gameState, sessionId, gameState.getEnemy(sessionId).getId(), accuracyScore, combatEngine
-                );
-            });
+            matchSupervisor.handlePlayerSpellCast(gameState, sessionId, gameState.getEnemy(sessionId).getId(),
+                    spell, accuracyScore, new PlayerMoveResult(normalizedPoints, accuracyScore), playerIds);
 
-            //TODO change
-            MoveResultMessage resultMessage = new MoveResultMessage(
-                    new PlayerMoveResult(normalizedPoints, accuracyScore),
-                    sessionId,
-                    requestedSpellId,
-                    spell.castDurationMs(),
-                    CastStatus.SUCCESS
-            );
-
-            registry.broadcast(playerIds, gson.toJson(resultMessage));
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
