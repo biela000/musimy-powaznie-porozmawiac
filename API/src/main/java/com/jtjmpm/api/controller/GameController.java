@@ -3,6 +3,8 @@ package com.jtjmpm.api.controller;
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
 import com.jtjmpm.PlayerMoveResult;
+import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.api.game.MatchSupervisor;
 import com.jtjmpm.api.model.*;
 import com.jtjmpm.api.model.PatternEngine.GestureToScore;
 import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
@@ -25,12 +27,16 @@ public class GameController implements MessageController {
     private final SessionRegistry registry;
     private final Gson gson;
     private final SpellRegistry spellRegistry;
+    private final MatchSupervisor matchSupervisor;
+    private final CombatEngine combatEngine;
 
-    public GameController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry) {
+    public GameController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry, MatchSupervisor matchSupervisor, CombatEngine combatEngine) {
         this.store = store;
         this.registry = registry;
         this.gson = gson;
         this.spellRegistry = spellRegistry;
+        this.matchSupervisor = matchSupervisor;
+        this.combatEngine = combatEngine;
     }
 
     @Override
@@ -90,6 +96,15 @@ public class GameController implements MessageController {
             );
 
             List<String> playerIds = store.getPlayerIdsFromLobby(store.getLobbyIdForPlayer(sessionId));
+
+            matchSupervisor.executeAndEvaluate(gameState, playerIds, () -> {
+                //TODO
+                //make this cleaner maybe
+                spellRegistry.getSpell(requestedSpellId).effect().apply(
+                        gameState, sessionId, gameState.getEnemy(sessionId).getId(), accuracyScore, combatEngine
+                );
+            });
+
             registry.broadcast(playerIds, gson.toJson(resultMessage));
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
