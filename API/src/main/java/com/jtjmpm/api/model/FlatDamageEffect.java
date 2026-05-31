@@ -1,5 +1,7 @@
 package com.jtjmpm.api.model;
 
+import com.jtjmpm.api.game.CombatEngine;
+
 public class FlatDamageEffect implements SpellEffect {
     private final double baseDamage;
 
@@ -7,12 +9,11 @@ public class FlatDamageEffect implements SpellEffect {
         this.baseDamage = baseDamage;
     }
     @Override
-    public void apply(GameState state, String casterId, String targetId, double accuracy){
+    public void apply(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine){
         Player target = state.getPlayer(targetId);
-        if (target != null) {
+        if (target != null && accuracy >= 0.5) {
             double actualDamage = Math.round(baseDamage * accuracy);
-            target.modifyHp(-actualDamage);
-            System.out.println("Dealt " + actualDamage + " flat damage!");
+            combatEngine.applyDamage(state.getPlayer(casterId), state.getPlayer(targetId), actualDamage);
         }
     }
 }
