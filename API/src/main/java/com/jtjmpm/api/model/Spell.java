@@ -9,7 +9,8 @@ public record Spell(
         SpellType type,
         int basePower, //TODO change to double
         int manaCost,
-        SpellEffect effect
+        SpellEffect effect,
+        int castDurationMs
 ) {
     public SpellDTO toDTO() {
         return new SpellDTO(name, description, type, basePower, manaCost);

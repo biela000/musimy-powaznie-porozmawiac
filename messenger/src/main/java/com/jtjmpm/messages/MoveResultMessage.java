@@ -9,10 +9,17 @@ import java.util.List;
 public class MoveResultMessage extends WsMessage {
     public PlayerMoveResult result;
     public String playerId;
+    public String spellId;
+    public int castDurationMs;
+    public CastStatus status;
 
-    public MoveResultMessage(PlayerMoveResult result, String playerId) {
+    public MoveResultMessage(PlayerMoveResult result, String playerId, String spellId,
+                             int castDurationMs, CastStatus status) {
         super(MessageType.MOVE_RESULT);
         this.result = result;
         this.playerId = playerId;
+        this.spellId = spellId;
+        this.castDurationMs = castDurationMs;
+        this.status = status;
     }
 }

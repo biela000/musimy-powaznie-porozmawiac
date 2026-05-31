@@ -98,9 +98,6 @@ public class GameController implements MessageController {
             double accuracyScore = GestureToScore.getScore(circlePattern, playerMoveMessage.move);
             System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
 
-            MoveResultMessage resultMessage = new MoveResultMessage(
-                    new PlayerMoveResult(normalizedPoints, accuracyScore), sessionId
-            );
 
             List<String> playerIds = store.getPlayerIdsFromLobby(store.getLobbyIdForPlayer(sessionId));
 
@@ -111,6 +108,15 @@ public class GameController implements MessageController {
                         gameState, sessionId, gameState.getEnemy(sessionId).getId(), accuracyScore, combatEngine
                 );
             });
+
+            //TODO change
+            MoveResultMessage resultMessage = new MoveResultMessage(
+                    new PlayerMoveResult(normalizedPoints, accuracyScore),
+                    sessionId,
+                    requestedSpellId,
+                    spell.castDurationMs(),
+                    CastStatus.SUCCESS
+            );
 
             registry.broadcast(playerIds, gson.toJson(resultMessage));
         } catch (Exception e) {
