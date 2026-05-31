@@ -15,6 +15,7 @@ public class GameState {
     private String hostId;
     private final Map<String, Player> players = new ConcurrentHashMap<>();
 
+    //TODO implement game start
     private boolean isGameStarted = false;
 
     private final String name;
