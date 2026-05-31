@@ -78,10 +78,8 @@ public class Player {
     }
 
     public synchronized void setSpellLoadout(List<String> spellLoadout) {
-        if (spellLoadout == null) {
-            this.spellLoadout = new ArrayList<>();
-        } else {
-            this.spellLoadout = new ArrayList<>(spellLoadout);
+        if (spellLoadout != null) {
+            this.spellLoadout.addAll(spellLoadout);
         }
     }
 
