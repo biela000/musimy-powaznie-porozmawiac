@@ -24,6 +24,7 @@ public enum MessageType {
     MOVE_RESULT,
     SHAPE_DRAWN,
     GAME_STATE_UPDATE,
+    COMBAT_EVENT,
 
     // Errors
     ERROR;
