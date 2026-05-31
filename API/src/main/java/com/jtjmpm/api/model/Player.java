@@ -16,15 +16,15 @@ public class Player {
     private double mana;
     private boolean ready;
 
-    private List<String> spellLoadout;
-    private List<StatusEffect> activeEffects = new ArrayList<>();
+    private final List<String> spellLoadout = new ArrayList<>();
+    private final List<StatusEffect> activeEffects = new ArrayList<>();
 
     public Player(String id) {
         this.id = id;
         this.hp = MAX_HP;
         this.mana = MAX_MANA;
         this.ready = false;
-        this.spellLoadout = new ArrayList<>();
+        this.activeEffects.add(new BaseManaRegenEffect(10.0)); //..
     }
 
     public synchronized double getHp() {

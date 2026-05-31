@@ -30,7 +30,6 @@ public class GameTickService {
 
             matchSupervisor.executeAndEvaluate(gameState, playerIds, () -> {
                 for (Player player : gameState.getPlayers()) {
-                    combatEngine.applyManaRegen(gameState, player.getId(), 10.0);
                     player.processEffects(gameState, combatEngine);
                 }
             });
