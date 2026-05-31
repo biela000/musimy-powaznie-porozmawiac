@@ -20,9 +20,9 @@ public class GameStateStore {
     }
 
     public List<GameState> getAllActiveLobbies() {
-        return lobbies.values().stream()
-                .filter(GameState::isGameStarted)
-                .toList();
+        //TODO
+        //get only games that are active
+        return lobbies.values().stream().toList();
     }
 
     public boolean createLobby(String lobbyName, String sessionId){

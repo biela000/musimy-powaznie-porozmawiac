@@ -27,7 +27,7 @@ public class CombatEngine {
         //some potential damage calculations here
         double finalValue = rawValue;
         Player target = gameState.getPlayer(targetId);
-        target.modifyHp(-finalValue);
+        target.modifyMana(finalValue);
         System.out.println("Player: " + targetId + " regenerated some mana: " + finalValue);
     }
 
