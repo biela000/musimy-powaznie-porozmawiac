@@ -42,7 +42,7 @@ public class PlayerPanelController {
     }
 
     private void updateManaBar(double myMana) {
-        hpBar.setProgress(myMana / MAX_MANA);
-        hpLabel.setText("HP: " + (int)myMana + "/" + (int)MAX_MANA);
+        manaBar.setProgress(myMana / MAX_MANA);
+        manaLabel.setText("Mana: " + (int)myMana + "/" + (int)MAX_MANA);
     }
 }
