@@ -12,7 +12,7 @@ public class CombatEngine {
         double finalDamage = rawDamage;
         Player target = gameState.getPlayer(targetId);
         target.modifyHp(-finalDamage);
-        System.out.println("Player: " + casterId + " did " + rawDamage + " damage to: " + targetId);
+        System.out.println("Player: " + casterId + " did " + finalDamage + " damage to: " + targetId);
     }
 
     public void applyStatusDamage(GameState gameState, String targetId, double rawDamage) {
@@ -20,6 +20,14 @@ public class CombatEngine {
         double finalDamage = rawDamage;
         Player target = gameState.getPlayer(targetId);
         target.modifyHp(-finalDamage);
-        System.out.println("Player: " + targetId + " took some damage: " + rawDamage);
+        System.out.println("Player: " + targetId + " took some damage: " + finalDamage);
+    }
+
+    public void applyManaRegen(GameState gameState, String targetId, double rawValue) {
+        //some potential damage calculations here
+        double finalValue = rawValue;
+        Player target = gameState.getPlayer(targetId);
+        target.modifyHp(-finalValue);
+        System.out.println("Player: " + targetId + " regenerated some mana: " + finalValue);
     }
 }
