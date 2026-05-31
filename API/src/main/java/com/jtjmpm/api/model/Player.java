@@ -1,5 +1,6 @@
 package com.jtjmpm.api.model;
 
+import com.jtjmpm.api.game.CombatEngine;
 import com.jtjmpm.messages.PlayerDTO;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Player {
     private boolean ready;
 
     private List<String> spellLoadout;
+    private List<StatusEffect> activeEffects = new ArrayList<>();
 
     public Player(String id) {
         this.id = id;
@@ -45,6 +47,14 @@ public class Player {
 
     public synchronized void toggleReady() {
         ready = !ready;
+    }
+
+    public synchronized void addEffect(StatusEffect effect) {
+        activeEffects.add(effect);
+    }
+
+    public synchronized void processEffects(GameState gameState, CombatEngine combatEngine) {
+        activeEffects.removeIf(effect -> effect.tick(gameState, id, combatEngine));
     }
 
     public synchronized List<String> getSpellLoadout() {

@@ -3,6 +3,7 @@ package com.jtjmpm.api.model;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +17,12 @@ public class GameStateStore {
 
     public List<String> getPlayerIdsFromLobby(String lobbyName) {
         return lobbies.get(lobbyName).getPlayers().stream().map(Player::getId).toList();
+    }
+
+    public List<GameState> getAllActiveLobbies() {
+        return lobbies.values().stream()
+                .filter(GameState::isGameStarted)
+                .toList();
     }
 
     public boolean createLobby(String lobbyName, String sessionId){

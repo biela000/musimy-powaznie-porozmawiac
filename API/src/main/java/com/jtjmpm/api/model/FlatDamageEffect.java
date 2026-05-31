@@ -13,7 +13,7 @@ public class FlatDamageEffect implements SpellEffect {
         Player target = state.getPlayer(targetId);
         if (target != null && accuracy >= 0.5) {
             double actualDamage = Math.round(baseDamage * accuracy);
-            combatEngine.applyDamage(state.getPlayer(casterId), state.getPlayer(targetId), actualDamage);
+            combatEngine.applyDamage(state, casterId, targetId, actualDamage);
         }
     }
 }

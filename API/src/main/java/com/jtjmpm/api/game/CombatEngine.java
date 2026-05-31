@@ -7,10 +7,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CombatEngine {
-    public void applyDamage(Player caster, Player target, double rawDamage){
+    public void applyDamage(GameState gameState, String casterId, String targetId, double rawDamage){
         //some potential damage calculations here
         double finalDamage = rawDamage;
-        target.modifyHp(rawDamage);
-        System.out.println("Player: " + caster.getId() + " did " + rawDamage + " damage to: " + target.getId());
+        Player target = gameState.getPlayer(targetId);
+        target.modifyHp(-finalDamage);
+        System.out.println("Player: " + casterId + " did " + rawDamage + " damage to: " + targetId);
+    }
+
+    public void applyStatusDamage(GameState gameState, String targetId, double rawDamage) {
+        //some potential damage calculations here
+        double finalDamage = rawDamage;
+        Player target = gameState.getPlayer(targetId);
+        target.modifyHp(-finalDamage);
+        System.out.println("Player: " + targetId + " took some damage: " + rawDamage);
     }
 }
