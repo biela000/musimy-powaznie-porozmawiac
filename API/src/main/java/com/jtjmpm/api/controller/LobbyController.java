@@ -1,6 +1,7 @@
 package com.jtjmpm.api.controller;
 
 import com.google.gson.Gson;
+import com.jtjmpm.api.game.MatchSupervisor;
 import com.jtjmpm.api.model.*;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
@@ -13,24 +14,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class LobbyController implements MessageController {
-    private final static int START_GAME_DELAY_SECONDS = 5;
 
     private final GameStateStore store;
     private final SessionRegistry registry;
     private final SpellRegistry spellRegistry;
     private final Gson gson;
+    private final MatchSupervisor matchSupervisor;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry) {
+    public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry, MatchSupervisor matchSupervisor) {
         this.store = store;
         this.registry = registry;
         this.gson = gson;
         this.spellRegistry = spellRegistry;
+        this.matchSupervisor = matchSupervisor;
     }
 
     @Override
@@ -119,13 +120,14 @@ public class LobbyController implements MessageController {
             ReadyMessage readyMsg = gson.fromJson(rawJson, ReadyMessage.class);
 
             GameState lobby = store.getPlayersLobby(sessionId);
-            if(lobby == null) return;
+            if (lobby == null) return;
 
             Player player = lobby.getPlayer(sessionId);
+            if (player == null) return;
+
+            List<String> spells = readyMsg.selectedSpells;
 
             if (!player.isReady()) {
-                List<String> spells = readyMsg.selectedSpells;
-
                 if (spells == null || spells.size() != 4) {
                     System.err.println("Ready failed, not a valid loadout " + sessionId);
                     return;
@@ -137,26 +139,12 @@ public class LobbyController implements MessageController {
                         return;
                     }
                 }
-
-                player.setSpellLoadout(spells);
             }
-
-            player.toggleReady();
 
             List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby.toDTO(), Collections.emptyList());
-            registry.broadcast(playerIds, gson.toJson(responseMessage));
+            matchSupervisor.handlePlayerReadyToggle(lobby, sessionId, spells, playerIds);
 
-            if (lobby.isReady()) {
-                StartGameMessage startGameMessage = new StartGameMessage();
-
-                scheduler.schedule(() -> {
-                    if (lobby.isReady()) {
-                        registry.broadcast(playerIds, gson.toJson(startGameMessage));
-                    }
-                }, START_GAME_DELAY_SECONDS, TimeUnit.SECONDS);
-            }
         } catch (Exception e) {
             System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
