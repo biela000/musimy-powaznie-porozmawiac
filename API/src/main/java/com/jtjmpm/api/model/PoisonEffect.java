@@ -2,41 +2,26 @@ package com.jtjmpm.api.model;
 
 import com.jtjmpm.api.game.CombatEngine;
 import com.jtjmpm.messages.CombatEventMessage;
-import com.jtjmpm.messages.CombatEventType;
 
 import java.util.List;
 
-public class PoisonEffect implements StatusEffect {
-    private final double damagePerTick;
-    private int duration;
+public class PoisonEffect extends AbstractPeriodicEffect {
 
-    public PoisonEffect(double damagePerTick, int duration) {
-        this.damagePerTick = damagePerTick;
-        this.duration = duration;
+    private final double damagePerInterval;
+
+    public PoisonEffect(double damagePerInterval, double intervalInSeconds, double durationInSeconds) {
+        super(intervalInSeconds, durationInSeconds);
+        this.damagePerInterval = damagePerInterval;
     }
 
     @Override
-    public void onTick(GameState gameState, String targetId, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
-        CombatEventMessage event = combatEngine.applyStatusDamage(gameState, targetId, damagePerTick);
+    protected void applyEffectLogic(GameState state, String targetId, CombatEngine engine, List<CombatEventMessage> outEvents) {
+        CombatEventMessage event = engine.applyStatusDamage(state, targetId, damagePerInterval);
         outEvents.add(event);
-    }
-    @Override
-    public void decreaseDuration() {
-        duration--;
-    }
-
-    @Override
-    public boolean isExpired() {
-        return duration <= 0;
     }
 
     @Override
     public String getName() {
         return "POISON";
-    }
-
-    @Override
-    public int getRemainingDuration() {
-        return duration;
     }
 }
