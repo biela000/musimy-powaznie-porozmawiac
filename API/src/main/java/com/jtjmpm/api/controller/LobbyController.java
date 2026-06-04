@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.jtjmpm.MessageType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -91,7 +92,7 @@ public class LobbyController implements MessageController {
                         .filter(id -> !id.equals(sessionId))
                         .toList();
 
-                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby.toDTO());
+                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(lobby.toDTO(), Collections.emptyList());
                 registry.broadcast(playerIds, gson.toJson(updateMessage));
             } else {
                 LobbyErrorMessage errorMessage = new LobbyErrorMessage(
@@ -144,7 +145,7 @@ public class LobbyController implements MessageController {
 
             List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
 
-            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby.toDTO());
+            GameStateUpdateMessage responseMessage = new GameStateUpdateMessage(lobby.toDTO(), Collections.emptyList());
             registry.broadcast(playerIds, gson.toJson(responseMessage));
 
             if (lobby.isReady()) {
