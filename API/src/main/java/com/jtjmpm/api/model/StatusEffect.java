@@ -21,10 +21,17 @@ public interface StatusEffect {
         return true;
     }
 
-    void decreaseDuration();
-    boolean isExpired();
+    default void decreaseDuration() {}
+
+    default boolean isExpired() {
+        return false;
+    }
+
+    default int getRemainingDuration() {
+        return -1;
+    }
+    // if we want effects to do other things like modify output damage or input damage etc. we can delcare methods for that here
 
     String getName();
-    int getRemainingDuration();
-    // if we want effects to do other things like modify output damage or input damage etc. we can delcare methods for that here
+
 }

@@ -27,7 +27,7 @@ public class Player {
         this.hp = MAX_HP;
         this.mana = 20;
         this.ready = false;
-        this.activeEffects.add(new BaseManaRegenEffect(10.0)); //..
+        this.activeEffects.add(new BaseManaRegenEffect(5.0, 0.5)); //..
     }
 
     public synchronized double getHp() {

@@ -5,35 +5,23 @@ import com.jtjmpm.messages.CombatEventMessage;
 
 import java.util.List;
 
-public class BaseManaRegenEffect implements StatusEffect {
-    private final double valuePerTick;
+public class BaseManaRegenEffect extends AbstractPeriodicEffect {
 
-    public BaseManaRegenEffect(double valuePerTick) {
-        this.valuePerTick = valuePerTick;
+    private final double manaPerInterval;
+
+    public BaseManaRegenEffect(double manaPerTick, double intervalInSeconds) {
+        super(intervalInSeconds);
+        this.manaPerInterval = manaPerTick;
     }
 
     @Override
-    public void onTick(GameState gameState, String targetId, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
-        combatEngine.applyManaRegen(gameState, targetId, valuePerTick);
-    }
-
-    @Override
-    public void decreaseDuration() {
-    }
-
-    @Override
-    public boolean isExpired() {
-        return false;
+    protected void applyEffectLogic(GameState state, String targetId, CombatEngine engine, List<CombatEventMessage> outEvents) {
+        engine.applyManaRegen(state, targetId, manaPerInterval);
     }
 
     @Override
     public String getName() {
-        return "BASE MANA REGEN";
-    }
-
-    @Override
-    public int getRemainingDuration() {
-        return -1;
+        return "BASE_MANA_REGEN";
     }
 
     @Override

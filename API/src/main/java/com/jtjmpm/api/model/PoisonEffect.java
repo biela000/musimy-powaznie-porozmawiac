@@ -5,7 +5,7 @@ import com.jtjmpm.messages.CombatEventMessage;
 
 import java.util.List;
 
-public class PoisonEffect extends AbstractPeriodicEffect {
+public class PoisonEffect extends AbstractTemporaryPeriodicEffect {
 
     private final double damagePerInterval;
 
