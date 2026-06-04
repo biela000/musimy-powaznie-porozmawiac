@@ -35,6 +35,10 @@ public class SpellRegistry {
         addSpell(new Spell("Tornado", "tornado", SpellType.OFFENSE,
                 30, 25, 1000,
                 new FlatDamageEffect(30, 25, 1000)));
+        addSpell(new Spell("Poison", "poison", SpellType.SUPPORT,
+                0, 25, 1000,
+                new ApplyStatusSpellEffect(25, 5,
+                        () -> new PoisonEffect(5, 1, 5))));
 
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }

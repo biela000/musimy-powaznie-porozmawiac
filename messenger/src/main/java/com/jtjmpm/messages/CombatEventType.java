@@ -4,4 +4,5 @@ public enum CombatEventType {
     HIT,
     HEAL,
     BLOCKED,
+    STATUS_APPLIED
 }
