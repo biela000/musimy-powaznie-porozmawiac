@@ -30,4 +30,13 @@ public class PoisonEffect implements StatusEffect {
         return duration <= 0;
     }
 
+    @Override
+    public String getName() {
+        return "POISON";
+    }
+
+    @Override
+    public int getRemainingDuration() {
+        return duration;
+    }
 }

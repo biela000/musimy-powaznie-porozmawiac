@@ -3,10 +3,12 @@ package com.jtjmpm.api.model;
 import com.jtjmpm.api.game.CombatEngine;
 import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.PlayerDTO;
+import com.jtjmpm.messages.StatusEffectDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Player {
     public static final double MAX_HP = 100;
@@ -99,6 +101,12 @@ public class Player {
     }
 
     public synchronized PlayerDTO toDTO() {
-        return new PlayerDTO(this.id, this.hp, this.mana, this.ready);
+        return new PlayerDTO(
+                this.id, this.hp, this.mana, this.ready,
+                this.activeEffects.stream()
+                        .filter(StatusEffect::isVisibleOnUI)
+                        .map(effect -> new StatusEffectDTO(effect.getName(), effect.getRemainingDuration()))
+                        .collect(Collectors.toList())
+        );
     }
 }

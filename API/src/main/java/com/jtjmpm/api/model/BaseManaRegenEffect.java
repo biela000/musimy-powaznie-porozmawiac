@@ -25,4 +25,19 @@ public class BaseManaRegenEffect implements StatusEffect {
     public boolean isExpired() {
         return false;
     }
+
+    @Override
+    public String getName() {
+        return "BASE MANA REGEN";
+    }
+
+    @Override
+    public int getRemainingDuration() {
+        return -1;
+    }
+
+    @Override
+    public boolean isVisibleOnUI() {
+        return false;
+    }
 }

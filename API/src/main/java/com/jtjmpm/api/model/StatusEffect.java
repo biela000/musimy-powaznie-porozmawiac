@@ -17,8 +17,14 @@ public interface StatusEffect {
 
     default void onAttackLanded(CombatEventMessage event, GameState state, String myId, CombatEngine engine) {}
 
+    default boolean isVisibleOnUI() {
+        return true;
+    }
+
     void decreaseDuration();
     boolean isExpired();
 
+    String getName();
+    int getRemainingDuration();
     // if we want effects to do other things like modify output damage or input damage etc. we can delcare methods for that here
 }
