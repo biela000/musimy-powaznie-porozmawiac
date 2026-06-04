@@ -1,6 +1,7 @@
 package com.jtjmpm.api.model;
 
 import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.PlayerDTO;
 
 import java.util.ArrayList;
@@ -69,8 +70,18 @@ public class Player {
         activeEffects.add(effect);
     }
 
-    public synchronized void processEffects(GameState gameState, CombatEngine combatEngine) {
-        activeEffects.removeIf(effect -> effect.tick(gameState, id, combatEngine));
+    public synchronized List<StatusEffect> getActiveEffects() {
+        return activeEffects;
+    }
+
+    public void processEffects(GameState gameState, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
+        for (StatusEffect effect : activeEffects) {
+            effect.onTick(gameState, this.getId(), combatEngine, outEvents);
+
+            effect.decreaseDuration();
+        }
+
+        activeEffects.removeIf(StatusEffect::isExpired);
     }
 
     public synchronized List<String> getSpellLoadout() {

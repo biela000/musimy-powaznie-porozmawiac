@@ -1,6 +1,9 @@
 package com.jtjmpm.api.model;
 
 import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.messages.CombatEventMessage;
+
+import java.util.List;
 
 public class BaseManaRegenEffect implements StatusEffect {
     private final double valuePerTick;
@@ -10,9 +13,16 @@ public class BaseManaRegenEffect implements StatusEffect {
     }
 
     @Override
-    public boolean tick(GameState gameState, String targetId, CombatEngine combatEngine) {
+    public void onTick(GameState gameState, String targetId, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
         combatEngine.applyManaRegen(gameState, targetId, valuePerTick);
+    }
 
+    @Override
+    public void decreaseDuration() {
+    }
+
+    @Override
+    public boolean isExpired() {
         return false;
     }
 }

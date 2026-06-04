@@ -1,6 +1,10 @@
 package com.jtjmpm.api.model;
 
 import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.messages.CombatEventMessage;
+import com.jtjmpm.messages.CombatEventType;
+
+import java.util.List;
 
 public class PoisonEffect implements StatusEffect {
     private final double damagePerTick;
@@ -12,11 +16,18 @@ public class PoisonEffect implements StatusEffect {
     }
 
     @Override
-    public boolean tick(GameState gameState, String targetId, CombatEngine combatEngine) {
-        combatEngine.applyStatusDamage(gameState, targetId, damagePerTick);
-
+    public void onTick(GameState gameState, String targetId, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
+        CombatEventMessage event = combatEngine.applyStatusDamage(gameState, targetId, damagePerTick);
+        outEvents.add(event);
+    }
+    @Override
+    public void decreaseDuration() {
         duration--;
+    }
 
+    @Override
+    public boolean isExpired() {
         return duration <= 0;
     }
+
 }

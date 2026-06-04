@@ -59,28 +59,29 @@ public class MatchSupervisor {
     public void executeAndEvaluate(GameState gameState, List<String> playerIds,
                                    Consumer<List<CombatEventMessage>> gameAction) {
 
-        List<CombatEventMessage> outEvents = new ArrayList<>();
+        // all game state changes go through this synchronized code
+        synchronized (gameState){
+            List<CombatEventMessage> outEvents = new ArrayList<>();
 
-        gameAction.accept(outEvents);
+            gameAction.accept(outEvents);
 
-        if (gameState.isGameOver()) {
-            String winnerId = gameState.getWinnerId();
-            System.out.println("Game Over! Winner: " + winnerId);
-            //TODO
-            // end the game, send game over message or smth like that
-        } else {
-            GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(gameState.toDTO(), outEvents);
+            if (gameState.isGameOver()) {
+                String winnerId = gameState.getWinnerId();
+                System.out.println("Game Over! Winner: " + winnerId);
+                //TODO
+                // end the game, send game over message or smth like that
+            } else {
+                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(gameState.toDTO(), outEvents);
 
-            registry.broadcast(playerIds, gson.toJson(updateMessage));
+                registry.broadcast(playerIds, gson.toJson(updateMessage));
+            }
         }
     }
 
     public void scheduleImpact(GameState gameState, List<String> playerIds, long delayMs,
                                Consumer<List<CombatEventMessage>> impactAction) {
-        scheduler.schedule(() -> {
-            synchronized (gameState) {
-                executeAndEvaluate(gameState, playerIds, impactAction);
-            }
-        }, delayMs, TimeUnit.MILLISECONDS);
+        scheduler.schedule(() ->
+                executeAndEvaluate(gameState, playerIds, impactAction), delayMs, TimeUnit.MILLISECONDS
+        );
     }
 }

@@ -30,7 +30,7 @@ public class GameTickService {
 
             matchSupervisor.executeAndEvaluate(gameState, playerIds, (outEvents) -> {
                 for (Player player : gameState.getPlayers()) {
-                    player.processEffects(gameState, combatEngine);
+                    player.processEffects(gameState, combatEngine, outEvents);
                 }
             });
         }
