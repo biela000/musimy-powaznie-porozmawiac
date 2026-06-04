@@ -25,7 +25,7 @@ public class Player {
     public Player(String id) {
         this.id = id;
         this.hp = MAX_HP;
-        this.mana = MAX_MANA;
+        this.mana = 20;
         this.ready = false;
         this.activeEffects.add(new BaseManaRegenEffect(10.0)); //..
     }

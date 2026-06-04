@@ -2,14 +2,8 @@ package com.jtjmpm.api.game;
 
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
-import com.jtjmpm.api.model.GameState;
-import com.jtjmpm.api.model.SessionRegistry;
-import com.jtjmpm.api.model.Spell;
-import com.jtjmpm.api.model.SpellCastResult;
-import com.jtjmpm.messages.CastStatus;
-import com.jtjmpm.messages.CombatEventMessage;
-import com.jtjmpm.messages.GameStateUpdateMessage;
-import com.jtjmpm.messages.MoveResultMessage;
+import com.jtjmpm.api.model.*;
+import com.jtjmpm.messages.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -38,6 +32,11 @@ public class MatchSupervisor {
     public void handlePlayerSpellCast(GameState gameState, String casterId, String targetId, Spell spell,
                                       double accuracy, PlayerMoveResult moveResult, List<String> playerIds) {
 
+        if (gameState.getStatus() != MatchStatus.IN_PROGRESS) {
+            System.out.println("Move declined, game is not in progress");
+            return;
+        }
+
         executeAndEvaluate(gameState, playerIds, (outEvents) -> {
             // can put logic that is the same for all moves here
             // but then we'd have to change SpellCastResult and SpellEffect.cast()
@@ -55,7 +54,7 @@ public class MatchSupervisor {
         });
     }
 
-    // All changes affecting the game state have to go through this method
+    // All moves that affect the game state have to go through this method
     public void executeAndEvaluate(GameState gameState, List<String> playerIds,
                                    Consumer<List<CombatEventMessage>> gameAction) {
 
@@ -65,12 +64,20 @@ public class MatchSupervisor {
 
             gameAction.accept(outEvents);
 
-            if (gameState.isGameOver()) {
-                String winnerId = gameState.getWinnerId();
-                System.out.println("Game Over! Winner: " + winnerId);
-                //TODO
-                // end the game, send game over message or smth like that
-            } else {
+            if (gameState.isGameOver() && gameState.getStatus() == MatchStatus.IN_PROGRESS) {
+
+                gameState.setStatus(MatchStatus.GAME_OVER);
+
+                if (gameState.isDraw()) {
+                    System.out.println("GAME OVER, DRAW");
+                    registry.broadcast(playerIds, gson.toJson(new GameOverMessage(null, GameOverReason.DRAW)));
+                } else {
+                    String winnerId = gameState.getWinnerId();
+                    System.out.println("GAME OVER, WINNER " + winnerId);
+                    registry.broadcast(playerIds, gson.toJson(new GameOverMessage(winnerId, GameOverReason.WIN)));
+                }
+
+            } else if(gameState.getStatus() == MatchStatus.IN_PROGRESS) {
                 GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(gameState.toDTO(), outEvents);
 
                 registry.broadcast(playerIds, gson.toJson(updateMessage));

@@ -2,6 +2,7 @@ package com.jtjmpm.api.game;
 
 import com.jtjmpm.api.model.GameState;
 import com.jtjmpm.api.model.GameStateStore;
+import com.jtjmpm.api.model.MatchStatus;
 import com.jtjmpm.api.model.Player;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,11 @@ public class GameTickService {
         List<GameState> activeGames = store.getAllActiveLobbies();
 
         for (GameState gameState : activeGames) {
+
+            if (gameState.getStatus() != MatchStatus.IN_PROGRESS) {
+                return;
+            }
+
             List<String> playerIds = store.getPlayerIdsFromLobby(gameState.getName());
 
             matchSupervisor.executeAndEvaluate(gameState, playerIds, (outEvents) -> {

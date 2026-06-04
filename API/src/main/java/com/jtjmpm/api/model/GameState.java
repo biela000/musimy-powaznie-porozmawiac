@@ -18,6 +18,8 @@ public class GameState {
     //TODO implement game start
     private boolean isGameStarted = false;
 
+    private MatchStatus status = MatchStatus.LOBBY;
+
     private final String name;
 
     public GameState() {
@@ -73,25 +75,28 @@ public class GameState {
 
     //GETTERS
     public boolean isGameOver() {
-        if (!isGameStarted) return false;
+        return players.values().stream().anyMatch(player -> player.getHp() <= 0);
+    }
 
-        for (Player player : players.values()) {
-            if (player.getHp() <= 0) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isDraw() {
+        return players.values().stream().allMatch(player -> player.getHp() <= 0);
     }
 
     public String getWinnerId() {
-        if (!isGameOver()) return null;
+        return players.values().stream()
+                .filter(player -> player.getHp() > 0)
+                .findFirst()
+                .map(Player::getId)
+                .orElse(null);
+    }
 
-        for (Player player : players.values()) {
-            if (player.getHp() > 0) {
-                return player.getId();
-            }
-        }
-        return null;
+    public MatchStatus getStatus() {
+        return status;
+    }
+
+    // SETTER
+    public void setStatus(MatchStatus status) {
+        this.status = status;
     }
 
     public String getName() {
