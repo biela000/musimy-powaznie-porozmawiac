@@ -6,40 +6,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-/** Utility class — not instantiable. */
 public final class PatternGenerator {
 
     private PatternGenerator() {}
 
-    // =========================================================================
-    // Public API
-    // =========================================================================
-
     public enum Difficulty { EASY, MEDIUM, HARD }
 
-    /**
-     * A shape ready to be displayed and matched against a player gesture.
-     *
-     * @param name           Human-readable label shown to the player.
-     * @param points         Normalised path (output of ShapeNormalizer) passed to GestureToScore.
-     * @param randomizeStart Whether shuffledPool should re-roll the start offset on each permutation.
-     */
     public record NamedShape(String name, List<Point2D.Double> points, boolean randomizeStart) {
-        /** Convenience constructor for shapes without start randomisation. */
         public NamedShape(String name, List<Point2D.Double> points) {
             this(name, points, false);
         }
     }
 
-    /**
-     * Returns all shapes for the given difficulty in a freshly shuffled order.
-     * Each shape receives a random mild distortion (rotation + axis scale).
-     * Shapes with {@code randomizeStart=true} also receive a random start offset.
-     * Call again once the list is exhausted to get a new permutation.
-     *
-     * @param difficulty  Desired difficulty level.
-     * @param pointsCount Number of points per shape (64 is the standard game value).
-     */
     public static List<NamedShape> shuffledPool(Difficulty difficulty, int pointsCount) {
         List<NamedShape> base = new ArrayList<>(poolFor(difficulty, pointsCount));
         Collections.shuffle(base);
@@ -56,11 +34,6 @@ public final class PatternGenerator {
         return result;
     }
 
-    // =========================================================================
-    // Shape constructors  (public — may be used individually outside the pool)
-    // =========================================================================
-
-    /** Circle starting at the rightmost point, going counter-clockwise. */
     public static List<Point2D.Double> createCircle(int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         if (pointsCount <= 1) return raw;
@@ -71,7 +44,6 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Horizontal figure-eight. */
     public static List<Point2D.Double> createFigureEight(int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         if (pointsCount <= 1) return raw;
@@ -82,7 +54,6 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Equilateral triangle with apex at the top. */
     public static List<Point2D.Double> createTriangle(int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         raw.add(new Point2D.Double(0, 1));
@@ -92,7 +63,6 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Regular convex polygon; starts at the top vertex. */
     public static List<Point2D.Double> createPolygon(int sides, int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         double startAngle = -Math.PI / 2;
@@ -111,12 +81,6 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /**
-     * Star outline with {@code points} outer tips and alternating inner corners.
-     *
-     * @param points      Number of star tips.
-     * @param innerRadius Ratio of inner to outer radius (e.g. 0.38 for 5-pt, 0.5 for 6-pt).
-     */
     public static List<Point2D.Double> createStar(int points, double innerRadius, int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         double startAngle = -Math.PI / 2;
@@ -128,9 +92,8 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Arrow pointing right, closed outline (no segment traced twice). */
     public static List<Point2D.Double> createArrow(int pointsCount) {
-        List<Point2D.Double> raw = List.of(
+        List<Point2D.Double> raw = new ArrayList<>(List.of(
             new Point2D.Double(-1.0,  0.30),
             new Point2D.Double( 0.10, 0.30),
             new Point2D.Double( 0.10, 0.75),
@@ -139,18 +102,13 @@ public final class PatternGenerator {
             new Point2D.Double( 0.10,-0.30),
             new Point2D.Double(-1.0, -0.30),
             new Point2D.Double(-1.0,  0.30)
-        );
-        return ShapeNormalizer.preProcess(new ArrayList<>(raw), pointsCount, 0);
+        ));
+        return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /**
-     * Plus / cross shape.
-     *
-     * @param armWidth Half-width of each arm as a fraction of the bounding box (e.g. 0.28).
-     */
     public static List<Point2D.Double> createCross(double armWidth, int pointsCount) {
         double w = armWidth;
-        List<Point2D.Double> raw = List.of(
+        List<Point2D.Double> raw = new ArrayList<>(List.of(
             new Point2D.Double(-w, -1), new Point2D.Double( w, -1),
             new Point2D.Double( w, -w), new Point2D.Double( 1, -w),
             new Point2D.Double( 1,  w), new Point2D.Double( w,  w),
@@ -158,11 +116,10 @@ public final class PatternGenerator {
             new Point2D.Double(-w,  w), new Point2D.Double(-1,  w),
             new Point2D.Double(-1, -w), new Point2D.Double(-w, -w),
             new Point2D.Double(-w, -1)
-        );
-        return ShapeNormalizer.preProcess(new ArrayList<>(raw), pointsCount, 0);
+        ));
+        return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Heart using the classic parametric formula. The dip is at the top, point at the bottom. */
     public static List<Point2D.Double> createHeart(int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         if (pointsCount <= 1) return raw;
@@ -175,7 +132,6 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    /** Archimedean spiral winding outward for the given number of turns. Open path — no start randomisation. */
     public static List<Point2D.Double> createSpiral(double turns, int pointsCount) {
         List<Point2D.Double> raw = new ArrayList<>();
         if (pointsCount <= 1) return raw;
@@ -187,18 +143,12 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(raw, pointsCount, 0);
     }
 
-    // =========================================================================
-    // Transformations  (public — composable with any shape)
-    // =========================================================================
-
-    /** Scales X and Y axes independently. Useful for turning a circle into an ellipse. */
     public static List<Point2D.Double> withAxisScale(List<Point2D.Double> shape, double scaleX, double scaleY) {
         List<Point2D.Double> out = new ArrayList<>();
         for (Point2D.Double p : shape) out.add(new Point2D.Double(p.x * scaleX, p.y * scaleY));
         return ShapeNormalizer.preProcess(out, shape.size(), 0);
     }
 
-    /** Rotates the shape by {@code angleRadians} around the origin. */
     public static List<Point2D.Double> withRotation(List<Point2D.Double> shape, double angleRadians) {
         double cos = Math.cos(angleRadians), sin = Math.sin(angleRadians);
         List<Point2D.Double> out = new ArrayList<>();
@@ -207,17 +157,12 @@ public final class PatternGenerator {
         return ShapeNormalizer.preProcess(out, shape.size(), 0);
     }
 
-    /** Mirrors the shape horizontally (negates X). */
     public static List<Point2D.Double> withHorizontalFlip(List<Point2D.Double> shape) {
         List<Point2D.Double> out = new ArrayList<>();
         for (Point2D.Double p : shape) out.add(new Point2D.Double(-p.x, p.y));
         return ShapeNormalizer.preProcess(out, shape.size(), 0);
     }
 
-    /**
-     * Shifts the drawing start point along the path by {@code offsetSteps} positions.
-     * Only meaningful for closed shapes.
-     */
     public static List<Point2D.Double> withStartOffset(List<Point2D.Double> shape, int offsetSteps) {
         int n = shape.size();
         if (n == 0 || offsetSteps == 0) return shape;
@@ -226,10 +171,6 @@ public final class PatternGenerator {
         for (int i = 0; i < n; i++) out.add(shape.get((i + offset) % n));
         return ShapeNormalizer.preProcess(out, n, 0);
     }
-
-    // =========================================================================
-    // Private — pool definitions
-    // =========================================================================
 
     private static List<NamedShape> poolFor(Difficulty difficulty, int n) {
         return switch (difficulty) {
@@ -288,19 +229,7 @@ public final class PatternGenerator {
         );
     }
 
-    // =========================================================================
-    // Private — helpers
-    // =========================================================================
-
-    /**
-     * Applies a random rotation and independent per-axis scale distortion.
-     * Ranges are capped per difficulty so the shape stays recognisable and drawable:
-     *   EASY   — ±10°, scale ±8%  per axis
-     *   MEDIUM — ±20°, scale ±15% per axis
-     *   HARD   — ±30°, scale ±22% per axis
-     */
-    private static List<Point2D.Double> applyDistortion(List<Point2D.Double> shape,
-                                                         Difficulty d, Random rng) {
+    private static List<Point2D.Double> applyDistortion(List<Point2D.Double> shape, Difficulty d, Random rng) {
         double maxAngle = switch (d) { case EASY -> 10.0; case MEDIUM -> 20.0; case HARD -> 30.0; };
         double maxScale = switch (d) { case EASY -> 0.08; case MEDIUM -> 0.15; case HARD -> 0.22; };
 
