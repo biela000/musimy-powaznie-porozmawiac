@@ -1,40 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StartActivity">
+    android:background="@color/pixel_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
 
-    <LinearLayout
-        android:id="@+id/startContainer"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:fontFamily="monospace"
         android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:letterSpacing="0.15"
+        android:text="[ CONNECT ]"
+        android:textColor="@color/pixel_text"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/IPAddressInput"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:ems="10"
-            android:inputType="text"
-            android:text="IP address"
-            />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.1"
+        android:text="SERVER ADDRESS"
+        android:textColor="@color/pixel_text"
+        android:textSize="11sp" />
 
-        <Button
-            android:id="@+id/connectButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connect" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <EditText
+        android:id="@+id/IPAddressInput"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/pixel_input_bg"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:hint="192.168.1.1:8080"
+        android:maxLength="21"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/pixel_text"
+        android:textColorHint="#666688"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/scanButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/pixel_button_scan"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.1"
+        android:stateListAnimator="@null"
+        android:text="[ SCAN QR ]"
+        android:textColor="@color/pixel_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/connectButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/pixel_button_connect"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.1"
+        android:stateListAnimator="@null"
+        android:text="[ CONNECT ]"
+        android:textColor="@color/pixel_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

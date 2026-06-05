@@ -63,4 +63,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
     implementation("com.jtjmpm:messenger:1.0-SNAPSHOT")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
