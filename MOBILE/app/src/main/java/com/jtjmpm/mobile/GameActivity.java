@@ -24,7 +24,7 @@ import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
     private final List<ControllerRotation> playerMove = new ArrayList<>();
-    private int activeSpellIndex = 0;
+    private int activeSpellIndex = -1;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
 
@@ -44,7 +44,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         int[] buttonIds = {R.id.spellButton1, R.id.spellButton2, R.id.spellButton3, R.id.spellButton4};
         for (int i = 0; i < buttonIds.length; i++) {
-            final int spellIndex = i + 1;
+            final int spellIndex = i;
             findViewById(buttonIds[i]).setOnTouchListener((view, event) -> handleSpellButtonTouch(view, event, spellIndex));
         }
     }
@@ -90,7 +90,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private void sendMove() {
         if (playerMove.isEmpty()) return;
-        PlayerMoveMessage message = new PlayerMoveMessage(playerMove, String.valueOf(activeSpellIndex));
+        if (activeSpellIndex < 0) return;
+        PlayerMoveMessage message = new PlayerMoveMessage(playerMove, activeSpellIndex);
         String json = new Gson().toJson(message);
         GameHandler.getInstance().send(json);
     }

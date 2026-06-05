@@ -72,11 +72,13 @@ public class GameController implements MessageController {
                 return;
             }
 
-            String requestedSpellId = playerMoveMessage.spellId;
-            if (!player.getSpellLoadout().contains(requestedSpellId)) {
-                System.err.println("SECURITY ALERT: Player " + sessionId + " attempted to use unequipped spell: " + requestedSpellId);
+            List<String> loadout = player.getSpellLoadout();
+            int spellIndex = playerMoveMessage.spellIndex;
+            if (spellIndex < 0 || spellIndex >= loadout.size()) {
+                System.err.println("SECURITY ALERT: Player " + sessionId + " sent invalid spell index: " + spellIndex);
                 return;
             }
+            String requestedSpellId = loadout.get(spellIndex);
 
             Spell spell = spellRegistry.getSpell(requestedSpellId);
 
