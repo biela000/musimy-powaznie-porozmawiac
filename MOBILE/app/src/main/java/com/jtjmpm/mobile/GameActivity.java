@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements SensorEventListener {
-    private Button drawButton;
+    private final List<ControllerRotation> playerMove = new ArrayList<>();
+    private int activeSpellIndex = 0;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
-    private final List<ControllerRotation> playerMove = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +39,21 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             return insets;
         });
 
-        init();
-        addListeners();
-    }
-
-    private void init() {
-        drawButton = findViewById(R.id.drawButton);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+
+        int[] buttonIds = {R.id.spellButton1, R.id.spellButton2, R.id.spellButton3, R.id.spellButton4};
+        for (int i = 0; i < buttonIds.length; i++) {
+            final int spellIndex = i + 1;
+            findViewById(buttonIds[i]).setOnTouchListener((view, event) -> handleSpellButtonTouch(view, event, spellIndex));
+        }
     }
 
-    private void addListeners() {
-        drawButton.setOnTouchListener(this::handleDrawButtonTouch);
-    }
-
-    private boolean handleDrawButtonTouch(View view, MotionEvent event) {
+    private boolean handleSpellButtonTouch(View view, MotionEvent event, int spellIndex) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 playerMove.clear();
+                activeSpellIndex = spellIndex;
                 startSensor();
                 break;
             case MotionEvent.ACTION_UP:
@@ -66,7 +62,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
                 sendMove();
                 break;
         }
-
         return false;
     }
 
@@ -95,7 +90,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     private void sendMove() {
         if (playerMove.isEmpty()) return;
-        PlayerMoveMessage message = new PlayerMoveMessage(playerMove);
+        PlayerMoveMessage message = new PlayerMoveMessage(playerMove, String.valueOf(activeSpellIndex));
         String json = new Gson().toJson(message);
         GameHandler.getInstance().send(json);
     }

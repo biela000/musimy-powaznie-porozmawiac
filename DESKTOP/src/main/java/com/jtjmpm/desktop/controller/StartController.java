@@ -38,7 +38,7 @@ public class StartController {
     @FXML private Label apiStatusLabel;
     @FXML private ImageView qrCodeImageView;
 
-    private boolean isPhoneConnected = false;
+    private boolean isPhoneConnected = true;
     private boolean isApiConnected = false;
 
     public void initialize() {
