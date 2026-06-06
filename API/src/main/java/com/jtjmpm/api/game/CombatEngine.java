@@ -48,4 +48,12 @@ public class CombatEngine {
         target.modifyMana(-finalValue);
         System.out.println("Player: " + targetId + " used " + finalValue + " mana");
     }
+
+    public CombatEventMessage applyHeal(GameState gameState, String targetId, double rawHeal) {
+        Player target = gameState.getPlayer(targetId);
+        target.modifyHp(rawHeal);
+        System.out.println("Player: " + targetId + " healed for: " + rawHeal);
+
+        return new CombatEventMessage(targetId, CombatEventType.HEAL, rawHeal);
+    }
 }
