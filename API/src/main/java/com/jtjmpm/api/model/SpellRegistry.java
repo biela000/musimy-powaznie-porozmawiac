@@ -39,7 +39,35 @@ public class SpellRegistry {
                 0, 25, 1000,
                 new ApplyStatusSpellEffect(25, 5,
                         () -> new PoisonEffect(5, 1, 5))));
+        addSpell(new Spell("Gamble", "gamble", SpellType.OFFENSE, 80, 40, 1000,
+                new GambleSpellEffect(80, 40, 1000)));
 
+        addSpell(new Spell("Heal", "heal", SpellType.SUPPORT, 40, 30, 1000,
+                new HealSpellEffect(40, 30, 1000)));
+
+        addSpell(new Spell("Healing Aura", "healing aura", SpellType.SUPPORT, 0, 50, 1000,
+                new ApplyStatusSpellEffect(50, 1000, true,
+                        acc -> new HealingAuraEffect(10, 1, 10, acc))));
+
+        addSpell(new Spell("Weakness", "weakness", SpellType.SUPPORT, 0, 30, 1000,
+                new ApplyStatusSpellEffect(30, 1000, false,
+                        acc -> new WeaknessEffect(10, acc))));
+
+        addSpell(new Spell("Shield", "shield", SpellType.SUPPORT, 0, 20, 1000,
+                new ApplyStatusSpellEffect(20, 1000, true,
+                        ShieldEffect::new)));
+
+        addSpell(new Spell("Damage Up", "damage up", SpellType.SUPPORT, 0, 25, 1000,
+                new ApplyStatusSpellEffect(25, 1000, true,
+                        DamageUpEffect::new)));
+
+        addSpell(new Spell("Vampirism", "vampirism", SpellType.SUPPORT, 0, 45, 1000,
+                new ApplyStatusSpellEffect(45, 1000, true,
+                        acc -> new VampirismEffect(15, acc))));
+
+        addSpell(new Spell("Blindness", "blindness", SpellType.SUPPORT, 0, 35, 1000,
+                new ApplyStatusSpellEffect(35, 1000, false,
+                        acc -> new BlindnessEffect(5))));
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }
 
