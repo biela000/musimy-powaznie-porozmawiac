@@ -18,6 +18,7 @@ import java.util.Objects;
 public class GameController {
     public static final String LOBBY_VIEW = "/com/jtjmpm/desktop/lobby-view.fxml";
 
+    @FXML private javafx.scene.layout.AnchorPane mainPane;
     @FXML private PlayerPanelController hostPanelController;
     @FXML private PlayerPanelController enemyPanelController;
 
@@ -45,6 +46,7 @@ public class GameController {
     private final java.util.List<javafx.scene.image.Image> deathFrames = new java.util.ArrayList<>();
     private final java.util.Map<String, java.util.List<javafx.scene.image.Image>> spellEffects = new java.util.HashMap<>();
     private final java.util.List<java.util.List<javafx.scene.image.Image>> fireballFramesList = new java.util.ArrayList<>();
+    private final java.util.Map<String, Integer> spellColors = new java.util.HashMap<>();
     
     private javafx.animation.Timeline hostIdleTimeline;
     private javafx.animation.Timeline enemyIdleTimeline;
@@ -98,13 +100,21 @@ public class GameController {
             spellEffects.put("Air Slash", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
 
             String[] colors = {"Blue", "Green", "Orange", "Purple", "Red"};
-            for (String color : colors) {
+            for (int i = 0; i < colors.length; i++) {
+                String color = colors[i];
                 java.util.List<javafx.scene.image.Image> fFrames = new java.util.ArrayList<>();
-                for (int i = 0; i < 4; i++) {
-                    fFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Fireballs/Fireball" + color + "0" + i + ".png")));
+                for (int j = 0; j < 4; j++) {
+                    fFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Fireballs/Fireball" + color + "0" + j + ".png")));
                 }
                 fireballFramesList.add(fFrames);
             }
+            
+            spellColors.put("Fireball", 4); // Red
+            spellColors.put("Ice Shard", 0); // Blue
+            spellColors.put("Tornado", 3); // Purple
+            spellColors.put("Poison", 1); // Green
+            spellColors.put("Water Beam", 0); // Blue
+            spellColors.put("Air Slash", 2); // Orange
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -237,7 +247,33 @@ public class GameController {
         timeline.play();
     }
 
-    private void playProjectile(boolean fromHost, int durationMs) {
+    private void showFloatingText(String text, javafx.scene.paint.Color color, boolean onHost) {
+        Label label = new Label(text);
+        label.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 30));
+        label.setTextFill(color);
+        label.setEffect(new javafx.scene.effect.DropShadow(4, javafx.scene.paint.Color.BLACK));
+        
+        double x = onHost ? 100 + 550 / 2.0 - 50 + 100 : 1366 - 100 - 550 / 2.0 - 50 + 100;
+        double y = 768 - 550 / 2.0;
+
+        label.setLayoutX(x);
+        label.setLayoutY(y);
+        
+        mainPane.getChildren().add(label);
+        
+        javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(javafx.util.Duration.millis(2000), label);
+        tt.setByY(-150);
+        
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(javafx.util.Duration.millis(2000), label);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        
+        javafx.animation.ParallelTransition pt = new javafx.animation.ParallelTransition(tt, ft);
+        pt.setOnFinished(e -> mainPane.getChildren().remove(label));
+        pt.play();
+    }
+
+    private void playProjectile(boolean fromHost, int durationMs, String spellId) {
         projectileImage.setTranslateX(0); // Zapobiega miganiu w starym miejscu
         projectileImage.setVisible(true);
         projectileImage.setScaleX(0.01);
@@ -245,7 +281,9 @@ public class GameController {
         
         double targetScaleX = fromHost ? 1.0 : -1.0;
         
-        java.util.List<javafx.scene.image.Image> frames = fireballFramesList.get(random.nextInt(fireballFramesList.size()));
+        Integer colorIndex = spellColors.get(spellId);
+        if (colorIndex == null) colorIndex = Math.abs(spellId.hashCode()) % fireballFramesList.size();
+        java.util.List<javafx.scene.image.Image> frames = fireballFramesList.get(colorIndex);
         
         double hostX = 100 + 550 / 2.0 - 50; 
         double enemyX = 1366 - 100 - 550 / 2.0 - 50;
@@ -322,26 +360,35 @@ public class GameController {
             return;
         }
 
-        if (message.playerId.equals(hostId)) {
+        boolean isHost = message.playerId.equals(hostId);
+        
+        if (isHost) {
             hostPanelController.moveUpdate(message.result);
-            if (message.status == com.jtjmpm.messages.CastStatus.SUCCESS) {
-                int halfDuration = message.castDurationMs / 2;
-                playAttack(true, halfDuration);
-                javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-                        new javafx.animation.KeyFrame(javafx.util.Duration.millis(halfDuration), ae -> playProjectile(true, halfDuration)),
-                        new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> playEffect(false, message.spellId)));
-                timeline.play();
-            }
         } else {
             enemyPanelController.moveUpdate(message.result);
-            if (message.status == com.jtjmpm.messages.CastStatus.SUCCESS) {
-                int halfDuration = message.castDurationMs / 2;
-                playAttack(false, halfDuration);
-                javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-                        new javafx.animation.KeyFrame(javafx.util.Duration.millis(halfDuration), ae -> playProjectile(false, halfDuration)),
-                        new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> playEffect(true, message.spellId)));
-                timeline.play();
-            }
+        }
+
+        if (message.status != com.jtjmpm.messages.CastStatus.SUCCESS) {
+            showFloatingText("FAILED: " + message.status.name(), javafx.scene.paint.Color.YELLOW, isHost);
+            return;
+        }
+
+        if (isHost) {
+            int fixedAttackTime = 800;
+            int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
+            playAttack(true, fixedAttackTime);
+            javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(fixedAttackTime), ae -> playProjectile(true, projTime, message.spellId)),
+                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> playEffect(false, message.spellId)));
+            timeline.play();
+        } else {
+            int fixedAttackTime = 800;
+            int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
+            playAttack(false, fixedAttackTime);
+            javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(fixedAttackTime), ae -> playProjectile(false, projTime, message.spellId)),
+                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> playEffect(true, message.spellId)));
+            timeline.play();
         }
     }
 
@@ -369,6 +416,26 @@ public class GameController {
 
         hostPanelController.playerStateUpdate(hostPlayer);
         enemyPanelController.playerStateUpdate(enemyPlayer);
+
+        if (message.events != null) {
+            for (CombatEventMessage event : message.events) {
+                boolean onHost = event.targetId.equals(hostId);
+                javafx.scene.paint.Color color = javafx.scene.paint.Color.YELLOW;
+                String text = "";
+                
+                if (event.combatType == com.jtjmpm.messages.CombatEventType.HIT) {
+                    color = javafx.scene.paint.Color.RED;
+                    text = "-" + (int)event.value;
+                } else if (event.combatType == com.jtjmpm.messages.CombatEventType.HEAL) {
+                    color = javafx.scene.paint.Color.LIMEGREEN;
+                    text = "+" + (int)event.value;
+                } else {
+                    text = event.combatType.name();
+                }
+                
+                showFloatingText(text, color, onHost);
+            }
+        }
     }
 
     @FXML
