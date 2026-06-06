@@ -76,26 +76,26 @@ public class GameController {
     private void loadAnimations() {
         try {
             for (int i = 1; i <= 6; i++) {
-                idleFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Wizard Pack/Wizard Pack/Idle_animation/Idle" + i + ".png")));
+                idleFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Idle_animation/Idle" + i + ".png")));
             }
             for (int i = 1; i <= 8; i++) {
-                attackFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Wizard Pack/Wizard Pack/Attack1_animation/Attack1_" + i + ".png")));
+                attackFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Attack1_animation/Attack1_" + i + ".png")));
             }
             for (int i = 0; i < 8; i++) {
-                attack2Frames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Wizard Pack/Wizard Pack/Attack2_animation/Attack2_" + i + ".png")));
+                attack2Frames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Attack2_animation/Attack2_" + i + ".png")));
             }
             for (int i = 0; i < 4; i++) {
-                hitFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Wizard Pack/Wizard Pack/Hit_animation/Hit_" + i + ".png")));
+                hitFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Hit_animation/Hit_" + i + ".png")));
             }
             for (int i = 0; i < 7; i++) {
-                deathFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/Wizard Pack/Wizard Pack/Death_animation/Death_" + i + ".png")));
+                deathFrames.add(new javafx.scene.image.Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Death_animation/Death_" + i + ".png")));
             }
-            spellEffects.put("Fireball", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Explosions/epic_explosion_001/epic_explosion_001_small_orange/frame%04d.png", 13));
-            spellEffects.put("Ice Shard", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
-            spellEffects.put("Tornado", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Smoke Bursts/symmetrical_smoke_burst_001/symmetrical_smoke_burst_001_small_brown/frame%04d.png", 10));
-            spellEffects.put("Poison", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Fantasy Spells/spell_poison_001/spell_poison_001_small_green/frame%04d.png", 17));
-            spellEffects.put("Water Beam", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Splatters/burst_splatter_001/burst_splatter_001_small_red/frame%04d.png", 10));
-            spellEffects.put("Air Slash", loadFrames("/com/jtjmpm/desktop/Super Pixel Effects Gigapack (Free Version) v2.3.0/Super Pixel Effects Gigapack (Free Version)/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
+            spellEffects.put("Fireball", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Explosions/epic_explosion_001/epic_explosion_001_small_orange/frame%04d.png", 13));
+            spellEffects.put("Ice Shard", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
+            spellEffects.put("Tornado", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Smoke Bursts/symmetrical_smoke_burst_001/symmetrical_smoke_burst_001_small_brown/frame%04d.png", 10));
+            spellEffects.put("Poison", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Fantasy Spells/spell_poison_001/spell_poison_001_small_green/frame%04d.png", 17));
+            spellEffects.put("Water Beam", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Splatters/burst_splatter_001/burst_splatter_001_small_red/frame%04d.png", 10));
+            spellEffects.put("Air Slash", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
 
             String[] colors = {"Blue", "Green", "Orange", "Purple", "Red"};
             for (String color : colors) {
@@ -388,7 +388,7 @@ public class GameController {
     private void castSpell(int index) {
         if (myLoadout != null && myLoadout.size() > index) {
             String spellId = myLoadout.get(index);
-            PlayerMoveMessage moveMessage = new PlayerMoveMessage(new java.util.ArrayList<>(), spellId);
+            PlayerMoveMessage moveMessage = new PlayerMoveMessage(new java.util.ArrayList<>(), index);
             ApiSocketClient.getInstance().send(moveMessage);
             System.out.println("DEV: Sent fake spell cast for " + spellId);
         }
