@@ -173,6 +173,7 @@ public class ReadyController {
 
     @FXML
     private void onReady() {
+        ApiSocketClient.getInstance().setCurrentLoadout(new ArrayList<>(myLoadout));
         ApiSocketClient.getInstance().send(new ReadyMessage(myLoadout));
     }
 

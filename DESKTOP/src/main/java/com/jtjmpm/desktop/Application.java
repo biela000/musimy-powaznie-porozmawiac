@@ -40,6 +40,7 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
 
         stage.setOnCloseRequest(_ -> {

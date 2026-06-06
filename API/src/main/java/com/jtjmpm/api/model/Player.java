@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Player {
-    public static final double MAX_HP = 100;
+    public static final double MAX_HP = 10000;
     public static final double MAX_MANA = 100;
 
     private final String id;

@@ -29,6 +29,7 @@ public class ApiSocketClient {
     private String serverUrl;
     private String hostId;
     private String enemyId;
+    private java.util.List<String> currentLoadout;
 
     public String getHostId() {
         return hostId;
@@ -44,6 +45,14 @@ public class ApiSocketClient {
 
     public void setEnemyId(String s) {
         enemyId = s;
+    }
+
+    public java.util.List<String> getCurrentLoadout() {
+        return currentLoadout;
+    }
+
+    public void setCurrentLoadout(java.util.List<String> loadout) {
+        this.currentLoadout = loadout;
     }
 
     public void setServerUrl(String s) {

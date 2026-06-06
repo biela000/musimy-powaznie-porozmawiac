@@ -7,44 +7,51 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
+<AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.jtjmpm.desktop.controller.GameController"
-            prefHeight="700.0" prefWidth="1000.0"
-            style="-fx-background-color: #222222;">
+            prefHeight="768.0" prefWidth="1366.0"
+            style="-fx-background-image: url('/com/jtjmpm/desktop/NightForest/Image.png'); -fx-background-size: cover; -fx-background-position: center bottom;">
 
-    <top>
-        <VBox alignment="CENTER" spacing="10.0">
-            <padding>
-                <Insets top="20" bottom="10" left="10" right="10"/>
-            </padding>
-            <Label text="Arena - 1vs1 Battle"
-                   style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Label fx:id="lobbyInfoLabel" text="Lobby: --- | Waiting for opponent"
-                   style="-fx-font-size: 14px; -fx-text-fill: #aaaaaa;"/>
-        </VBox>
-    </top>
+    <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <Label text="Arena - 1vs1 Battle"
+               style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, black, 4, 1.0, 0, 0);"/>
+        <Label fx:id="lobbyInfoLabel" text="Lobby: --- | Waiting for opponent"
+               style="-fx-font-size: 14px; -fx-text-fill: #cccccc; -fx-effect: dropshadow(gaussian, black, 2, 1.0, 0, 0);"/>
+    </VBox>
 
-    <center>
-        <HBox alignment="CENTER" spacing="30.0">
-            <padding>
-                <Insets top="10" bottom="10" left="10" right="10"/>
-            </padding>
+    <VBox alignment="TOP_CENTER" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0">
+        <fx:include fx:id="hostPanel" source="player-panel.fxml" />
+    </VBox>
 
-            <fx:include fx:id="hostPanel" source="player-panel.fxml" />
-            <fx:include fx:id="enemyPanel" source="player-panel.fxml" />
+    <VBox alignment="TOP_CENTER" AnchorPane.topAnchor="100.0" AnchorPane.rightAnchor="20.0">
+        <fx:include fx:id="enemyPanel" source="player-panel.fxml" />
+    </VBox>
+
+    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0">
+        <javafx.scene.image.ImageView fx:id="hostWizardImage" fitWidth="550" fitHeight="550" preserveRatio="true" />
+        <javafx.scene.image.ImageView fx:id="hostEffectImage" fitWidth="220" fitHeight="220" preserveRatio="true" />
+    </StackPane>
+
+    <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="100.0">
+        <javafx.scene.image.ImageView fx:id="enemyWizardImage" fitWidth="550" fitHeight="550" preserveRatio="true" />
+        <javafx.scene.image.ImageView fx:id="enemyEffectImage" fitWidth="220" fitHeight="220" preserveRatio="true" />
+    </StackPane>
+
+    <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <HBox alignment="CENTER" spacing="20.0">
+            <Button fx:id="spell1Button" text="Spell 1" onAction="#onSpell1" style="-fx-font-size: 16px; -fx-padding: 10px 25px;"/>
+            <Button fx:id="spell2Button" text="Spell 2" onAction="#onSpell2" style="-fx-font-size: 16px; -fx-padding: 10px 25px;"/>
+            <Button fx:id="spell3Button" text="Spell 3" onAction="#onSpell3" style="-fx-font-size: 16px; -fx-padding: 10px 25px;"/>
+            <Button fx:id="spell4Button" text="Spell 4" onAction="#onSpell4" style="-fx-font-size: 16px; -fx-padding: 10px 25px;"/>
         </HBox>
-    </center>
+        <Button text="Return to Menu" onAction="#onBackToMenu" style="-fx-font-size: 14px; -fx-padding: 8px 20px;"/>
+    </VBox>
 
-    <bottom>
-        <VBox alignment="CENTER">
-            <padding>
-                <Insets bottom="20" top="10"/>
-            </padding>
-            <Button text="Return to Menu" onAction="#onBackToMenu"
-                    style="-fx-font-size: 14px; -fx-padding: 8px 20px;"/>
-        </VBox>
-    </bottom>
-</BorderPane>
+    <javafx.scene.image.ImageView fx:id="projectileImage" visible="false" fitWidth="100" fitHeight="100" preserveRatio="true"/>
+
+</AnchorPane>
