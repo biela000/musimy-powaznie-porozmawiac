@@ -1,4 +1,28 @@
 package com.jtjmpm.api.model;
 
-public class HealingAuraEffect {
+import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.messages.CombatEventMessage;
+
+import java.util.List;
+
+public class HealingAuraEffect extends AbstractTemporaryPeriodicEffect {
+    private final double baseHealPerInterval;
+    private final double accuracy;
+
+    public HealingAuraEffect(double baseHealPerInterval, double intervalInSeconds, double durationInSeconds, double accuracy) {
+        super(intervalInSeconds, durationInSeconds);
+        this.baseHealPerInterval = baseHealPerInterval;
+        this.accuracy = accuracy;
+    }
+
+    @Override
+    protected void applyEffectLogic(GameState state, String targetId, CombatEngine engine, List<CombatEventMessage> outEvents) {
+        double healAmount = baseHealPerInterval * accuracy;
+        outEvents.add(engine.applyHeal(state, targetId, healAmount));
+    }
+
+    @Override
+    public String getName() {
+        return "HEALING_AURA";
+    }
 }
