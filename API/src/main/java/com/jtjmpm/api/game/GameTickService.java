@@ -30,7 +30,7 @@ public class GameTickService {
         for (GameState gameState : activeGames) {
 
             if (gameState.getStatus() != MatchStatus.IN_PROGRESS) {
-                return;
+                continue;
             }
 
             List<String> playerIds = store.getPlayerIdsFromLobby(gameState.getName());

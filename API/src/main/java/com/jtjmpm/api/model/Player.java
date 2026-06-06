@@ -76,7 +76,7 @@ public class Player {
         return activeEffects;
     }
 
-    public void processEffects(GameState gameState, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
+    public synchronized void processEffects(GameState gameState, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
         for (StatusEffect effect : activeEffects) {
             effect.onTick(gameState, this.getId(), combatEngine, outEvents);
 
