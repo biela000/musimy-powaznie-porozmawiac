@@ -16,16 +16,6 @@ public class GameStateStore {
     public GameStateStore() {
     }
 
-    public List<String> getPlayerIdsFromLobby(String lobbyName) {
-        return lobbies.get(lobbyName).getPlayers().stream().map(Player::getId).toList();
-    }
-
-    public List<GameState> getAllActiveLobbies() {
-        //TODO
-        //get only games that are active
-        return lobbies.values().stream().toList();
-    }
-
     public boolean createLobby(String lobbyName, String sessionId){
         GameState newState = new GameState(lobbyName, sessionId);
 
@@ -70,5 +60,13 @@ public class GameStateStore {
 
     public GameState getPlayersLobby(String sessionID){
         return lobbies.get(getLobbyIdForPlayer(sessionID));
+    }
+
+    public List<String> getPlayerIdsFromLobby(String lobbyName) {
+        return lobbies.get(lobbyName).getPlayers().stream().map(Player::getId).toList();
+    }
+
+    public List<GameState> getAllLobbies() {
+        return lobbies.values().stream().toList();
     }
 }

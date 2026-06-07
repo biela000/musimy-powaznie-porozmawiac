@@ -24,12 +24,12 @@ public class GameTickService {
 
     @Scheduled(fixedRate = 1000 / GameConstants.TICKS_PER_SECOND)
     public void processServerTick() {
-        List<GameState> activeGames = store.getAllActiveLobbies();
+        List<GameState> activeGames = store.getAllLobbies();
 
         for (GameState gameState : activeGames) {
 
             if (gameState.getStatus() != MatchStatus.IN_PROGRESS) {
-                return;
+                continue;
             }
 
             List<String> playerIds = store.getPlayerIdsFromLobby(gameState.getName());
