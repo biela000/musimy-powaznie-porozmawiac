@@ -44,6 +44,12 @@ public class MatchSupervisor {
             Player caster = gameState.getPlayer(casterId);
             Player target = gameState.getPlayer(targetId);
 
+            if (caster.getHp() <= 0) {
+                registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
+                        spell.castDurationMs(), CastStatus.FAILED_DEATH)));
+                return;
+            }
+
             if (caster.getMana() < spell.manaCost()) {
                 registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
                         spell.castDurationMs(), CastStatus.FAILED_MANA)));

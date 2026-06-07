@@ -111,7 +111,13 @@ public class GameController {
         }
 
         if (message.status != CastStatus.SUCCESS) {
-            animationEngine.showFloatingText("FAILED: " + message.status.name(), Color.YELLOW, isHost);
+            String statusText = switch (message.status) {
+                case FAILED_MANA -> "Not enough mana";
+                case FAILED_ACCURACY -> "Missed";
+                case FAILED_DEATH -> "Dead";
+                default -> "Failed";
+            };
+            animationEngine.showFloatingText(statusText, Color.YELLOW, isHost);
             return;
         }
 
