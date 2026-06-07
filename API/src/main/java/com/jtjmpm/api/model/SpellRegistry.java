@@ -22,22 +22,22 @@ public class SpellRegistry {
         //make this cleaner with the dmg and mana maybe
         addSpell(new Spell("Fireball", "fireball", SpellType.OFFENSE,
                 40, 60, 2000,
-                new FlatDamageEffect(40, 60, 2000)));
+                new FlatDamageEffect(40, 2000)));
         addSpell(new Spell("Ice Shard", "ice shard", SpellType.OFFENSE,
                 25, 15, 2000,
-                new FlatDamageEffect(25, 15, 2000)));
+                new FlatDamageEffect(25, 2000)));
         addSpell(new Spell("Air Slash", "air slash", SpellType.OFFENSE,
                 20, 10, 2000,
-                new FlatDamageEffect(20, 10, 2000)));
+                new FlatDamageEffect(20, 2000)));
         addSpell(new Spell("Water Beam", "water beam", SpellType.OFFENSE,
                 15, 5, 2000,
-                new FlatDamageEffect(15, 5, 2000)));
+                new FlatDamageEffect(15, 2000)));
         addSpell(new Spell("Tornado", "tornado", SpellType.OFFENSE,
                 30, 25, 2000,
-                new FlatDamageEffect(30, 25, 2000)));
+                new FlatDamageEffect(30, 2000)));
         addSpell(new Spell("Poison", "poison", SpellType.SUPPORT,
                 0, 25, 2000,
-                new ApplyStatusSpellEffect(25, 2000,
+                new ApplyStatusSpellEffect(2000,
                         () -> new PoisonEffect(5, 1, 5))));
 
         System.out.println("Loaded " + spells.size() + " spells to the registry");

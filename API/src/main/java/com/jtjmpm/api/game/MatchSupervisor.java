@@ -41,19 +41,28 @@ public class MatchSupervisor {
         }
 
         executeAndEvaluate(gameState, playerIds, (outEvents) -> {
-            // can put logic that is the same for all moves here
-            // but then we'd have to change SpellCastResult and SpellEffect.cast()
+            Player caster = gameState.getPlayer(casterId);
+            Player target = gameState.getPlayer(targetId);
+
+            if (caster.getMana() < spell.manaCost()) {
+                registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
+                        spell.castDurationMs(), CastStatus.FAILED_MANA)));
+                return;
+            }
+
+            combatEngine.applyManaUsage(gameState, casterId, spell.manaCost());
+
+            if (target == null || accuracy < 0.5) {
+                registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
+                        spell.castDurationMs(), CastStatus.FAILED_ACCURACY)));
+                return;
+            }
+
             SpellCastResult result = spell.effect().cast(gameState, casterId, targetId, accuracy, combatEngine);
 
-            if (result.status != CastStatus.SUCCESS) {
-                registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
-                        spell.castDurationMs(), result.status)));
-            }
-            else {
-                registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
-                        spell.castDurationMs(), result.status)));
-                scheduleImpact(gameState, playerIds, result.delayMs, result.impactActions);
-            }
+            registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
+                    spell.castDurationMs(), CastStatus.SUCCESS)));
+            scheduleImpact(gameState, playerIds, result.delayMs, result.impactActions);
         });
     }
 
