@@ -75,40 +75,24 @@ public class ReadyController {
         List<SpellDTO> spells = spellsMsg.spells;
         spellsContainer.getChildren().clear();
 
-        String defaultStyle = "-fx-background-color: #ffffff; " +
-                "-fx-border-color: #bdc3c7; " +
-                "-fx-border-width: 2px; " +
-                "-fx-border-radius: 8px; " +
-                "-fx-background-radius: 8px; " +
-                "-fx-padding: 10px; " +
-                "-fx-cursor: hand; " +
-                "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
-
-        String selectedStyle = "-fx-background-color: #eafaf1; " +
-                "-fx-border-color: #2ecc71; " +
-                "-fx-border-width: 2px; " +
-                "-fx-border-radius: 8px; " +
-                "-fx-background-radius: 8px; " +
-                "-fx-padding: 10px; " +
-                "-fx-cursor: hand; " +
-                "-fx-effect: dropshadow(three-pass-box, rgba(46,204,113,0.4), 8, 0, 0, 0);";
+        // Style przeniesione do global-styles.css
 
 
         for (SpellDTO spell : spells) {
             VBox card = new VBox(5);
             card.setPrefWidth(140);
             card.setPrefHeight(100);
-            card.setStyle(defaultStyle);
+            card.getStyleClass().add("spell-card");
 
             Label nameLabel = new Label(spell.name());
-            nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            nameLabel.getStyleClass().add("spell-card-title");
 
             String typeStr = spell.type() != null ? spell.type().toString() : "UNKNOWN";
             Label typeLabel = new Label(typeStr);
-            typeLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10px;");
+            typeLabel.getStyleClass().add("spell-card-type");
 
             Label dmgLabel = new Label("DMG: " + spell.displayPower());
-            dmgLabel.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
+            dmgLabel.getStyleClass().add("spell-card-dmg");
 
             card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);
 
@@ -117,10 +101,16 @@ public class ReadyController {
 
                 if (myLoadout.contains(spellId)) {
                     myLoadout.remove(spellId);
-                    card.setStyle(defaultStyle);
+                    card.getStyleClass().remove("spell-card-selected");
+                    if (!card.getStyleClass().contains("spell-card")) {
+                        card.getStyleClass().add("spell-card");
+                    }
                 } else if (myLoadout.size() < 4) {
                     myLoadout.add(spellId);
-                    card.setStyle(selectedStyle);
+                    card.getStyleClass().remove("spell-card");
+                    if (!card.getStyleClass().contains("spell-card-selected")) {
+                        card.getStyleClass().add("spell-card-selected");
+                    }
                 }
 
                 readyButton.setDisable(myLoadout.size() != 4);

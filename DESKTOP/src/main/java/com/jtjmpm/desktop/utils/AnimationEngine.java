@@ -32,8 +32,8 @@ public class AnimationEngine {
 
     // projectile image size and offset from the wizard
     public static final double PROJECTILE_IMAGE_SIZE = 100.0;
-    public static final double PROJECTILE_SPAWN_OFFSET_X = 150.0;
-    public static final double PROJECTILE_SPAWN_OFFSET_Y = 50.0;
+    public static final double PROJECTILE_SPAWN_OFFSET_X = 100.0;
+    public static final double PROJECTILE_SPAWN_OFFSET_Y = 0.0;
 
     // floating text offset from the wizard and its flight distance
     public static final double TEXT_SPAWN_OFFSET_X = 50.0;
@@ -249,7 +249,7 @@ public class AnimationEngine {
         double enemyCenterX = SCREEN_WIDTH - WIZARD_OFFSET_X - (WIZARD_SIZE / 2.0);
         double wizardCenterY = SCREEN_HEIGHT - WIZARD_OFFSET_Y - (WIZARD_SIZE / 2.0);
         
-        double x = (onHost ? hostCenterX : enemyCenterX) + TEXT_SPAWN_OFFSET_X;
+        double x = (onHost ? hostCenterX : enemyCenterX) + (onHost ? TEXT_SPAWN_OFFSET_X : -TEXT_SPAWN_OFFSET_X);
         double y = wizardCenterY + TEXT_SPAWN_OFFSET_Y;
 
         label.setLayoutX(x);

@@ -5,21 +5,21 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.geometry.Insets?>
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10.0" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
-    <Label text="GESTURE" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10.0" stylesheets="@player-panel.css" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
+    <Label text="GESTURE" styleClass="panel-title"/>
 
-    <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="250.0" style="-fx-accent: #00ff00; -fx-control-inner-background: #333333; -fx-border-color: #222222;"/>
-    <Label fx:id="hpLabel" text="HP: 100/100" style="-fx-text-fill: white;"/>
+    <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="250.0" styleClass="hp-bar"/>
+    <Label fx:id="hpLabel" text="HP: 100/100" styleClass="stat-label"/>
 
-    <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="250.0" style="-fx-accent: #0088ff; -fx-control-inner-background: #333333; -fx-border-color: #222222;"/>
-    <Label fx:id="manaLabel" text="Mana: 100/100" style="-fx-text-fill: white;"/>
+    <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="250.0" styleClass="mana-bar"/>
+    <Label fx:id="manaLabel" text="Mana: 100/100" styleClass="stat-label"/>
 
-    <VBox alignment="CENTER" maxWidth="250.0" maxHeight="250.0" style="-fx-border-color: #444444; -fx-border-width: 2px; -fx-background-color: #cccccc;">
+    <VBox maxWidth="250.0" maxHeight="250.0" styleClass="canvas-container">
         <padding>
             <Insets top="10" bottom="10" left="10" right="10"/>
         </padding>
         <Canvas fx:id="canvas" width="150.0" height="150.0" />
     </VBox>
 
-    <Label fx:id="accuracyLabel" text="Accuracy: --.-%" style="-fx-font-size: 16px; -fx-text-fill: #00ff00;"/>
+    <Label fx:id="accuracyLabel" text="Accuracy: --.-%" styleClass="accuracy-label"/>
 </VBox>

@@ -1,0 +1,33 @@
+.panel-title {
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.hp-bar {
+    -fx-accent: #00ff00;
+    -fx-control-inner-background: #333333;
+    -fx-border-color: #222222;
+}
+
+.mana-bar {
+    -fx-accent: #0088ff;
+    -fx-control-inner-background: #333333;
+    -fx-border-color: #222222;
+}
+
+.stat-label {
+    -fx-text-fill: white;
+}
+
+.canvas-container {
+    -fx-border-color: #444444;
+    -fx-border-width: 2px;
+    -fx-background-color: #cccccc;
+    -fx-alignment: center;
+}
+
+.accuracy-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #00ff00;
+}
