@@ -75,7 +75,7 @@ public class LobbyController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(READY_VIEW));
 
-            Scene scene = new Scene(loader.load());
+            Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
 
             ReadyController controller = loader.getController();
             controller.setLobbyName(lobbyName);

@@ -21,13 +21,24 @@ import java.util.Random;
 
 public class AnimationEngine {
 
+    // default screen resolution
+    public static final double SCREEN_WIDTH = 1366.0;
+    public static final double SCREEN_HEIGHT = 768.0;
+
+    // wizard image size & offset from the screen edges
     public static final double WIZARD_SIZE = 550.0;
     public static final double WIZARD_OFFSET_X = 100.0;
     public static final double WIZARD_OFFSET_Y = 0.0;
-    public static final double EFFECT_OFFSET_Y = 50.0;
-    
-    public static final double SCREEN_WIDTH = 1366.0;
-    public static final double SCREEN_HEIGHT = 768.0;
+
+    // projectile image size and offset from the wizard
+    public static final double PROJECTILE_IMAGE_SIZE = 100.0;
+    public static final double PROJECTILE_SPAWN_OFFSET_X = 150.0;
+    public static final double PROJECTILE_SPAWN_OFFSET_Y = 50.0;
+
+    // floating text offset from the wizard and its flight distance
+    public static final double TEXT_SPAWN_OFFSET_X = 50.0;
+    public static final double TEXT_SPAWN_OFFSET_Y = 0.0;
+    public static final double TEXT_FLOAT_DISTANCE = -150.0;
 
     private final AnchorPane mainPane;
     private final ImageView hostWizardImage;
@@ -178,21 +189,20 @@ public class AnimationEngine {
         double targetScaleX = fromHost ? 1.0 : -1.0;
         
         List<Image> frames = assets.getProjectileFrames(spellId);
-        
-        double hostX = WIZARD_OFFSET_X + WIZARD_SIZE / 2.0 - 50; 
-        double enemyX = SCREEN_WIDTH - WIZARD_OFFSET_X - WIZARD_SIZE / 2.0 - 50;
-        double y = SCREEN_HEIGHT - WIZARD_OFFSET_Y - WIZARD_SIZE / 2.0 - 50;
 
-        // Offset to spawn closer to the hand
-        hostX += 100;
-        enemyX += 100;
-        y += 100;
+        double hostCenterX = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
+        double enemyCenterX = SCREEN_WIDTH - WIZARD_OFFSET_X - (WIZARD_SIZE / 2.0);
+        double wizardCenterY = SCREEN_HEIGHT - WIZARD_OFFSET_Y - (WIZARD_SIZE / 2.0);
 
-        double startX = fromHost ? hostX : enemyX;
-        double endX = fromHost ? enemyX : hostX;
+        double hostSpawnX = hostCenterX + PROJECTILE_SPAWN_OFFSET_X - (PROJECTILE_IMAGE_SIZE / 2.0);
+        double enemySpawnX = enemyCenterX - PROJECTILE_SPAWN_OFFSET_X - (PROJECTILE_IMAGE_SIZE / 2.0);
+        double spawnY = wizardCenterY + PROJECTILE_SPAWN_OFFSET_Y - (PROJECTILE_IMAGE_SIZE / 2.0);
+
+        double startX = fromHost ? hostSpawnX : enemySpawnX;
+        double endX = fromHost ? enemySpawnX : hostSpawnX;
 
         projectileImage.setLayoutX(startX);
-        projectileImage.setLayoutY(y);
+        projectileImage.setLayoutY(spawnY);
 
         double scaleDuration = durationMs * 0.2;
         double moveDuration = durationMs - scaleDuration;
@@ -235,8 +245,12 @@ public class AnimationEngine {
         label.setTextFill(color);
         label.setEffect(new DropShadow(4, Color.BLACK));
         
-        double x = onHost ? WIZARD_OFFSET_X + WIZARD_SIZE / 2.0 + 50 : SCREEN_WIDTH - WIZARD_OFFSET_X - WIZARD_SIZE / 2.0 + 50;
-        double y = SCREEN_HEIGHT - WIZARD_SIZE / 2.0;
+        double hostCenterX = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
+        double enemyCenterX = SCREEN_WIDTH - WIZARD_OFFSET_X - (WIZARD_SIZE / 2.0);
+        double wizardCenterY = SCREEN_HEIGHT - WIZARD_OFFSET_Y - (WIZARD_SIZE / 2.0);
+        
+        double x = (onHost ? hostCenterX : enemyCenterX) + TEXT_SPAWN_OFFSET_X;
+        double y = wizardCenterY + TEXT_SPAWN_OFFSET_Y;
 
         label.setLayoutX(x);
         label.setLayoutY(y);
@@ -244,7 +258,7 @@ public class AnimationEngine {
         mainPane.getChildren().add(label);
         
         TranslateTransition tt = new TranslateTransition(Duration.millis(2000), label);
-        tt.setByY(-150);
+        tt.setByY(TEXT_FLOAT_DISTANCE);
         
         FadeTransition ft = new FadeTransition(Duration.millis(2000), label);
         ft.setFromValue(1.0);

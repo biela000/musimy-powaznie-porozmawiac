@@ -36,8 +36,7 @@ public class Application extends javafx.application.Application {
         server.start();
 
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource(START_VIEW));
-
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(fxmlLoader);
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
         stage.setMaximized(true);

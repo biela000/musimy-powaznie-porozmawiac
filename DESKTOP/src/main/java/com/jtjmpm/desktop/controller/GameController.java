@@ -174,7 +174,7 @@ public class GameController {
             ApiSocketClient.getInstance().setOnMessageCallback(null);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(LOBBY_VIEW));
-            Scene scene = new Scene(loader.load());
+            Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
             Stage stage = (Stage) lobbyInfoLabel.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
