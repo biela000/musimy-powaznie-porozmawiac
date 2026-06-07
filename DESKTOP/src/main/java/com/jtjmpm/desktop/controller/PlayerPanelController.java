@@ -11,8 +11,6 @@ import javafx.scene.paint.Color;
 
 public class PlayerPanelController {
 
-    private static final double MAX_HP = 100.0;
-    private static final double MAX_MANA = 100.0;
 
     @FXML private ProgressBar hpBar;
     @FXML private Label hpLabel;
@@ -32,17 +30,17 @@ public class PlayerPanelController {
     }
 
     public void playerStateUpdate(PlayerDTO player) {
-        updateHealthBar(player.hp());
-        updateManaBar(player.mana());
+        updateHealthBar(player.hp(), player.maxHp());
+        updateManaBar(player.mana(), player.maxMana());
     }
 
-    private void updateHealthBar(double myHp) {
-        hpBar.setProgress(myHp / MAX_HP);
-        hpLabel.setText("HP: " + (int)myHp + "/" + (int)MAX_HP);
+    private void updateHealthBar(double myHp, double maxHp) {
+        hpBar.setProgress(myHp / maxHp);
+        hpLabel.setText("HP: " + (int)myHp + "/" + (int)maxHp);
     }
 
-    private void updateManaBar(double myMana) {
-        manaBar.setProgress(myMana / MAX_MANA);
-        manaLabel.setText("Mana: " + (int)myMana + "/" + (int)MAX_MANA);
+    private void updateManaBar(double myMana, double maxMana) {
+        manaBar.setProgress(myMana / maxMana);
+        manaLabel.setText("Mana: " + (int)myMana + "/" + (int)maxMana);
     }
 }

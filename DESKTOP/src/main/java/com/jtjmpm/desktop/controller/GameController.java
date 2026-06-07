@@ -53,8 +53,8 @@ public class GameController {
 
     private AnimationEngine animationEngine;
 
-    private double hostHp = 100.0;
-    private double enemyHp = 100.0;
+    private double hostHp = -1.0;
+    private double enemyHp = -1.0;
 
     @FXML
     public void initialize() {
@@ -142,6 +142,9 @@ public class GameController {
         PlayerDTO hostPlayer = gameState.players().get(hostId);
         PlayerDTO enemyPlayer = Objects.requireNonNull(GameStateUtils.getEnemy(gameState.players().values(), hostId));
         
+        if (hostHp < 0) hostHp = hostPlayer.maxHp();
+        if (enemyHp < 0) enemyHp = enemyPlayer.maxHp();
+
         if (hostPlayer.hp() < hostHp && hostPlayer.hp() > 0) {
             animationEngine.playHit(true);
         } else if (hostPlayer.hp() <= 0 && hostHp > 0) {

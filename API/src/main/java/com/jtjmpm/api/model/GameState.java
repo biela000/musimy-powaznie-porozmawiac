@@ -29,13 +29,13 @@ public class GameState {
     public GameState(String name, String hostId) {
         this.name = name;
         this.hostId = hostId;
-        players.put(hostId, new Player(hostId));
+        players.put(hostId, new Player(hostId, 10000, 100));
     }
 
     // SYNCHRONIZED LOGIC
     public synchronized boolean addPlayer(String guestId) {
         if (players.size() < LOBBY_SIZE) {
-            players.put(guestId, new Player(guestId));
+            players.put(guestId, new Player(guestId, 10000, 100));
             return true;
         }
         return false;

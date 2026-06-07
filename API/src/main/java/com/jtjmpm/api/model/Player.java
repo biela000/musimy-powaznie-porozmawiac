@@ -11,10 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Player {
-    public static final double MAX_HP = 10000;
-    public static final double MAX_MANA = 100;
-
     private final String id;
+    private final double maxHp;
+    private final double maxMana;
     private double hp;
     private double mana;
     private boolean ready;
@@ -22,9 +21,11 @@ public class Player {
     private final List<String> spellLoadout = new ArrayList<>();
     private final List<StatusEffect> activeEffects = new ArrayList<>();
 
-    public Player(String id) {
+    public Player(String id, double maxHp, double maxMana) {
         this.id = id;
-        this.hp = MAX_HP;
+        this.maxHp = maxHp;
+        this.maxMana = maxMana;
+        this.hp = maxHp;
         this.mana = 20;
         this.ready = false;
         this.activeEffects.add(new BaseManaRegenEffect(5.0, 0.5)); //..
@@ -36,8 +37,8 @@ public class Player {
 
     public synchronized void modifyHp(double amount) {
         this.hp += amount;
-        if (this.hp > MAX_HP) {
-            this.hp = MAX_HP;
+        if (this.hp > maxHp) {
+            this.hp = maxHp;
         } else if (this.hp < 0) {
             this.hp = 0;
         }
@@ -49,8 +50,8 @@ public class Player {
 
     public synchronized void modifyMana(double amount) {
         this.mana += amount;
-        if (this.mana > MAX_MANA) {
-            this.mana = MAX_MANA;
+        if (this.mana > maxMana) {
+            this.mana = maxMana;
         } else if (this.mana < 0) {
             this.mana = 0;
         }
@@ -102,7 +103,7 @@ public class Player {
 
     public synchronized PlayerDTO toDTO() {
         return new PlayerDTO(
-                this.id, this.hp, this.mana, this.ready,
+                this.id, this.hp, this.mana, this.maxHp, this.maxMana, this.ready,
                 this.activeEffects.stream()
                         .filter(StatusEffect::isVisibleOnUI)
                         .map(effect -> new StatusEffectDTO(effect.getName(), effect.getRemainingDuration()))
