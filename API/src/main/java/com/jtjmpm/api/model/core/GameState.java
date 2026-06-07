@@ -1,4 +1,4 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.core;
 
 import com.jtjmpm.messages.GameStateDTO;
 import com.jtjmpm.messages.PlayerDTO;

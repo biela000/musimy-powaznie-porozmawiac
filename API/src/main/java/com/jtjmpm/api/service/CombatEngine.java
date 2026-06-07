@@ -1,8 +1,7 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.service;
 
-import com.jtjmpm.api.model.GameState;
-import com.jtjmpm.api.model.Player;
-import com.jtjmpm.api.model.Spell;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.CombatEventType;
 import org.springframework.stereotype.Component;

@@ -2,7 +2,7 @@ package com.jtjmpm.api.controller;
 
 import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
-import com.jtjmpm.api.model.SpellRegistry;
+import com.jtjmpm.api.service.SpellRegistry;
 import com.jtjmpm.messages.AvailableSpellsMessage;
 import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.WebSocket;

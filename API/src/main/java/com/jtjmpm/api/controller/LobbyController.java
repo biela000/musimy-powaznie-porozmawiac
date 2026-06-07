@@ -1,8 +1,12 @@
 package com.jtjmpm.api.controller;
 
 import com.google.gson.Gson;
-import com.jtjmpm.api.game.MatchSupervisor;
-import com.jtjmpm.api.model.*;
+import com.jtjmpm.api.service.GameStateStore;
+import com.jtjmpm.api.service.MatchSupervisor;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.core.Player;
+import com.jtjmpm.api.service.SessionRegistry;
+import com.jtjmpm.api.service.SpellRegistry;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
 import org.java_websocket.WebSocket;

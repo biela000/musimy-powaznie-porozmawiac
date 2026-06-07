@@ -1,8 +1,12 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.service;
 
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
-import com.jtjmpm.api.model.*;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.core.MatchStatus;
+import com.jtjmpm.api.model.core.Player;
+import com.jtjmpm.api.model.spell.Spell;
+import com.jtjmpm.api.model.spell.SpellCastResult;
 import com.jtjmpm.messages.*;
 import org.springframework.stereotype.Component;
 

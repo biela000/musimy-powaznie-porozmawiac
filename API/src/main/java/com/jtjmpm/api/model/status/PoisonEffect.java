@@ -1,6 +1,7 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.status;
 
-import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.api.service.CombatEngine;
+import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.messages.CombatEventMessage;
 
 import java.util.List;

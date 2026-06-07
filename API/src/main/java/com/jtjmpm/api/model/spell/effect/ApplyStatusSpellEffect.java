@@ -1,6 +1,9 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.spell.effect;
 
-import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.api.service.CombatEngine;
+import com.jtjmpm.api.model.status.StatusEffect;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.spell.SpellCastResult;
 import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.CombatEventType;
 

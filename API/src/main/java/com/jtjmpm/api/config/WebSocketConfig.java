@@ -1,17 +1,15 @@
 package com.jtjmpm.api.config;
 
 import com.google.gson.Gson;
-import com.jtjmpm.api.controller.GameController;
 import com.jtjmpm.api.controller.MessageDispatcher;
-import com.jtjmpm.api.game.GameHandler;
-import com.jtjmpm.api.model.GameStateStore;
-import com.jtjmpm.api.model.SessionRegistry;
+import com.jtjmpm.api.websocket.GameHandler;
+import com.jtjmpm.api.service.GameStateStore;
+import com.jtjmpm.api.service.SessionRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 
 @Configuration
 @EnableWebSocket

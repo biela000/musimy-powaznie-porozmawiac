@@ -1,10 +1,8 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.spell.effect;
 
-import com.jtjmpm.api.game.CombatEngine;
-import com.jtjmpm.messages.CombatEventMessage;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.jtjmpm.api.service.CombatEngine;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.spell.SpellCastResult;
 
 public class FlatDamageEffect implements SpellEffect {
     private final double baseDamage;

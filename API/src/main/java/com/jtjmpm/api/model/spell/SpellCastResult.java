@@ -1,4 +1,4 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.spell;
 
 import com.jtjmpm.messages.CombatEventMessage;
 

@@ -1,4 +1,4 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.service;
 
 import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;

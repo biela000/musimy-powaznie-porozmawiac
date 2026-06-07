@@ -1,10 +1,9 @@
-package com.jtjmpm.api.game;
+package com.jtjmpm.api.websocket;
 
 import com.google.gson.Gson;
-import com.jtjmpm.*;
 import com.jtjmpm.api.controller.MessageDispatcher;
-import com.jtjmpm.api.model.GameStateStore;
-import com.jtjmpm.api.model.SessionRegistry;
+import com.jtjmpm.api.service.GameStateStore;
+import com.jtjmpm.api.service.SessionRegistry;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.WelcomeMessage;
 import com.jtjmpm.messages.WsMessage;

@@ -1,11 +1,15 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.service;
 
+import com.jtjmpm.api.model.spell.Spell;
+import com.jtjmpm.api.model.spell.effect.ApplyStatusSpellEffect;
+import com.jtjmpm.api.model.spell.effect.FlatDamageEffect;
+import com.jtjmpm.api.model.status.PoisonEffect;
 import com.jtjmpm.messages.SpellDTO;
 import com.jtjmpm.messages.SpellType;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

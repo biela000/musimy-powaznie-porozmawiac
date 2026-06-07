@@ -1,6 +1,8 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.core;
 
-import com.jtjmpm.api.game.CombatEngine;
+import com.jtjmpm.api.service.CombatEngine;
+import com.jtjmpm.api.model.status.BaseManaRegenEffect;
+import com.jtjmpm.api.model.status.StatusEffect;
 import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.PlayerDTO;
 import com.jtjmpm.messages.StatusEffectDTO;

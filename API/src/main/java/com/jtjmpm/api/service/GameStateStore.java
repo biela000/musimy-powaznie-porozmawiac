@@ -1,9 +1,10 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.service;
 
 
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.core.Player;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 

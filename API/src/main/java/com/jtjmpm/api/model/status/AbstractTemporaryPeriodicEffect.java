@@ -1,6 +1,6 @@
-package com.jtjmpm.api.model;
+package com.jtjmpm.api.model.status;
 
-import com.jtjmpm.api.config.GameConstants;
+import com.jtjmpm.api.model.core.GameConstants;
 
 public abstract class AbstractTemporaryPeriodicEffect extends AbstractPeriodicEffect {
 
