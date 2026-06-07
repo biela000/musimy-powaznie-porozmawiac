@@ -77,8 +77,6 @@ public class ReadyController {
         List<SpellDTO> spells = spellsMsg.spells;
         spellsContainer.getChildren().clear();
 
-        // Style przeniesione do global-styles.css
-
 
         for (SpellDTO spell : spells) {
             VBox card = new VBox(5);

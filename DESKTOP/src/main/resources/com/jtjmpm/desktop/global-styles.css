@@ -84,3 +84,11 @@
     -fx-text-fill: #e74c3c;
     -fx-font-weight: bold;
 }
+
+.game-over-label {
+    -fx-text-fill: red;
+    -fx-font-size: 72px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}

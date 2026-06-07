@@ -126,6 +126,9 @@ public class MatchSupervisor {
 
                 gameState.setStatus(MatchStatus.GAME_OVER);
 
+                GameStateUpdateMessage updateMessage = new GameStateUpdateMessage(gameState.toDTO(), outEvents);
+                registry.broadcast(playerIds, gson.toJson(updateMessage));
+
                 if (gameState.isDraw()) {
                     System.out.println("GAME OVER, DRAW");
                     registry.broadcast(playerIds, gson.toJson(new GameOverMessage(null, GameOverReason.DRAW)));

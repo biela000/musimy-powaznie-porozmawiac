@@ -55,6 +55,8 @@ public class GameController {
 
     private double hostHp = -1.0;
     private double enemyHp = -1.0;
+    
+    private boolean isGameOver = false;
 
     @FXML
     public void initialize() {
@@ -88,6 +90,11 @@ public class GameController {
             case MessageType.GAME_STATE_UPDATE:
                 Platform.runLater(() -> {
                     handleGameStateUpdate(gson.fromJson(message, GameStateUpdateMessage.class));
+                });
+                break;
+            case MessageType.GAME_OVER:
+                Platform.runLater(() -> {
+                    handleGameOver(gson.fromJson(message, GameOverMessage.class));
                 });
                 break;
             default:
@@ -189,6 +196,30 @@ public class GameController {
         }
     }
 
+    private void handleGameOver(GameOverMessage message) {
+        isGameOver = true;
+        
+        String hostId = GameStateManager.getInstance().getHostId();
+        String text;
+        if (message.reason == GameOverReason.DRAW) {
+            text = "GAME OVER\nDRAW!";
+        } else if (message.winnerId != null && message.winnerId.equals(hostId)) {
+            text = "GAME OVER\nYOU WON!";
+        } else {
+            text = "GAME OVER\nYOU LOST!";
+        }
+        
+        Label gameOverLabel = new Label(text);
+        gameOverLabel.getStyleClass().add("game-over-label");
+        
+        AnchorPane.setTopAnchor(gameOverLabel, 0.0);
+        AnchorPane.setBottomAnchor(gameOverLabel, 0.0);
+        AnchorPane.setLeftAnchor(gameOverLabel, 0.0);
+        AnchorPane.setRightAnchor(gameOverLabel, 0.0);
+        
+        mainPane.getChildren().add(gameOverLabel);
+    }
+
     @FXML
     private void onBackToMenu() {
         try {
@@ -204,6 +235,8 @@ public class GameController {
     }
 
     private void castSpell(int index) {
+        if (isGameOver) return;
+        
         if (myLoadout != null && myLoadout.size() > index) {
             String spellId = myLoadout.get(index);
             PlayerMoveMessage moveMessage = new PlayerMoveMessage(new ArrayList<>(), index);
