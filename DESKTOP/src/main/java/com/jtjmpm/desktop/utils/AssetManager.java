@@ -1,7 +1,10 @@
 package com.jtjmpm.desktop.utils;
 
+import com.google.gson.Gson;
 import javafx.scene.image.Image;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,20 +54,25 @@ public class AssetManager {
                 deathFrames.add(new Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Death_animation/Death_" + i + ".png")));
             }
 
-            // need to extract later
+            // Load effects dynamically from JSON
+            try (Reader reader = new InputStreamReader(getClass().getResourceAsStream("/effects_index.json"))) {
+                Gson gson = new Gson();
+                EffectIndexEntry[] entries = gson.fromJson(reader, EffectIndexEntry[].class);
+                if (entries != null) {
+                    for (EffectIndexEntry entry : entries) {
+                        loadedEffects.put(entry.name(), loadFrames(entry.pathPattern(), entry.frameCount()));
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to load effects_index.json: " + e.getMessage());
+            }
 
-            loadedEffects.put("epic_explosion", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Explosions/epic_explosion_001/epic_explosion_001_small_orange/frame%04d.png", 13));
-            loadedEffects.put("directional_impact", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Impacts/directional_impact_001/directional_impact_001_small_blue/frame%04d.png", 7));
-            loadedEffects.put("smoke_burst", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Smoke Bursts/symmetrical_smoke_burst_001/symmetrical_smoke_burst_001_small_brown/frame%04d.png", 10));
-            loadedEffects.put("spell_poison", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Fantasy Spells/spell_poison_001/spell_poison_001_small_green/frame%04d.png", 17));
-            loadedEffects.put("burst_splatter", loadFrames("/com/jtjmpm/desktop/EffectsAssetsPack/PNG/Splatters/burst_splatter_001/burst_splatter_001_small_red/frame%04d.png", 10));
-
-            spellEffectBindings.put("Fireball", "epic_explosion");
-            spellEffectBindings.put("Ice Shard", "directional_impact");
-            spellEffectBindings.put("Tornado", "smoke_burst");
-            spellEffectBindings.put("Poison", "spell_poison");
-            spellEffectBindings.put("Water Beam", "burst_splatter");
-            spellEffectBindings.put("Air Slash", "directional_impact");
+            spellEffectBindings.put("Fireball", "epic_explosion_001_small_orange");
+            spellEffectBindings.put("Ice Shard", "directional_impact_001_small_blue");
+            spellEffectBindings.put("Tornado", "symmetrical_smoke_burst_001_small_brown");
+            spellEffectBindings.put("Poison", "spell_poison_001_small_green");
+            spellEffectBindings.put("Water Beam", "burst_splatter_001_small_red");
+            spellEffectBindings.put("Air Slash", "directional_impact_001_small_blue");
 
             String[] colors = {"Blue", "Green", "Orange", "Purple", "Red"};
             for (int i = 0; i < colors.length; i++) {
@@ -104,11 +112,11 @@ public class AssetManager {
     public List<Image> getEffectFrames(String spellId) {
         String effectName = spellEffectBindings.get(spellId);
         if (effectName == null) {
-            effectName = "epic_explosion"; // Domyślny efekt
+            effectName = "epic_explosion_001_small_orange"; // default effect
         }
         List<Image> frames = loadedEffects.get(effectName);
         if (frames == null || frames.isEmpty()) {
-            return loadedEffects.get("epic_explosion");
+            return loadedEffects.get("epic_explosion_001_small_orange");
         }
         return frames;
     }

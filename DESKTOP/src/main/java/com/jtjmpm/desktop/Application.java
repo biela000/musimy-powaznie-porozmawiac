@@ -43,7 +43,7 @@ public class Application extends javafx.application.Application {
         stage.setMaximized(true);
         stage.show();
 
-        stage.setOnCloseRequest(_ -> {
+        stage.setOnCloseRequest(event -> {
             try {
                 server.stop();
             } catch (InterruptedException e) {
