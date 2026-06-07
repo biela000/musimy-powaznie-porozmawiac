@@ -15,6 +15,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import com.jtjmpm.desktop.model.GameStateManager;
+
 public class ApiSocketClient {
     private static final int RECONNECT_DELAY_SECONDS = 5;
 
@@ -27,33 +29,6 @@ public class ApiSocketClient {
     private Consumer<String> onMessageCallback;
     private Runnable onConnected;
     private String serverUrl;
-    private String hostId;
-    private String enemyId;
-    private java.util.List<String> currentLoadout;
-
-    public String getHostId() {
-        return hostId;
-    }
-
-    public void setHostId(String s) {
-        hostId = s;
-    }
-
-    public String getEnemyId() {
-        return enemyId;
-    }
-
-    public void setEnemyId(String s) {
-        enemyId = s;
-    }
-
-    public java.util.List<String> getCurrentLoadout() {
-        return currentLoadout;
-    }
-
-    public void setCurrentLoadout(java.util.List<String> loadout) {
-        this.currentLoadout = loadout;
-    }
 
     public void setServerUrl(String s) {
         serverUrl = s;
@@ -98,7 +73,7 @@ public class ApiSocketClient {
                     } else {
                         WelcomeMessage welcomeMessage = gson.fromJson(message, WelcomeMessage.class);
                         if (welcomeMessage.type.equals(MessageType.WELCOME)) {
-                            setHostId(welcomeMessage.myPlayerId);
+                            GameStateManager.getInstance().setHostId(welcomeMessage.myPlayerId);
                         }
                     }
 

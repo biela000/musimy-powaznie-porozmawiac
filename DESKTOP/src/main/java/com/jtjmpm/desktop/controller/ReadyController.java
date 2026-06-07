@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.jtjmpm.MessageType;
 import com.jtjmpm.messages.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
+import com.jtjmpm.desktop.model.GameStateManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
+import com.jtjmpm.desktop.utils.ViewLoader;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
@@ -124,26 +126,26 @@ public class ReadyController {
         Collection<PlayerDTO> players = update.gameState.players().values();
 
         if (players.size() == 1) {
-            ApiSocketClient.getInstance().setEnemyId(null);
+            GameStateManager.getInstance().setEnemyId(null);
         }
 
         Optional<PlayerDTO> enemy = players.stream()
-                .filter(player -> !player.id().equals(ApiSocketClient.getInstance().getHostId()))
+                .filter(player -> !player.id().equals(GameStateManager.getInstance().getHostId()))
                 .findFirst();
 
-        enemy.ifPresent(player -> ApiSocketClient.getInstance().setEnemyId(player.id()));
+        enemy.ifPresent(player -> GameStateManager.getInstance().setEnemyId(player.id()));
     }
 
     private void updateReadyStatus(GameStateUpdateMessage update) {
-        ApiSocketClient client = ApiSocketClient.getInstance();
+        GameStateManager stateManager = GameStateManager.getInstance();
 
-        PlayerDTO host = update.gameState.players().get(client.getHostId());
+        PlayerDTO host = update.gameState.players().get(stateManager.getHostId());
         boolean isHostReady = host.ready();
 
         boolean isEnemyReady = false;
 
-        if (client.getEnemyId() != null) {
-            PlayerDTO enemy = update.gameState.players().get(client.getEnemyId());
+        if (stateManager.getEnemyId() != null) {
+            PlayerDTO enemy = update.gameState.players().get(stateManager.getEnemyId());
             isEnemyReady = enemy.ready();
         }
 
@@ -163,7 +165,7 @@ public class ReadyController {
 
     @FXML
     private void onReady() {
-        ApiSocketClient.getInstance().setCurrentLoadout(new ArrayList<>(myLoadout));
+        GameStateManager.getInstance().setCurrentLoadout(new ArrayList<>(myLoadout));
         ApiSocketClient.getInstance().send(new ReadyMessage(myLoadout));
     }
 
@@ -171,7 +173,7 @@ public class ReadyController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(GAME_VIEW));
 
-            Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
+            Scene scene = ViewLoader.loadScaledScene(loader);
             Stage stage = (Stage) lobbyLabel.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {

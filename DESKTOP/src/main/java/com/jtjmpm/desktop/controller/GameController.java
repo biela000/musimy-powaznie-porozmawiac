@@ -1,45 +1,57 @@
 package com.jtjmpm.desktop.controller;
 
 import com.google.gson.Gson;
+import com.jtjmpm.desktop.utils.AnimationEngine;
 import com.jtjmpm.desktop.utils.GameStateUtils;
+import com.jtjmpm.desktop.utils.ViewLoader;
 import com.jtjmpm.messages.*;
 import com.jtjmpm.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
+import com.jtjmpm.desktop.model.GameStateManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameController {
     public static final String LOBBY_VIEW = "/com/jtjmpm/desktop/lobby-view.fxml";
 
-    @FXML private javafx.scene.layout.AnchorPane mainPane;
+    @FXML private AnchorPane mainPane;
     @FXML private PlayerPanelController hostPanelController;
     @FXML private PlayerPanelController enemyPanelController;
 
-    @FXML private javafx.scene.image.ImageView hostWizardImage;
-    @FXML private javafx.scene.image.ImageView hostEffectImage;
-    @FXML private javafx.scene.image.ImageView enemyWizardImage;
-    @FXML private javafx.scene.image.ImageView enemyEffectImage;
-    @FXML private javafx.scene.image.ImageView projectileImage;
+    @FXML private ImageView hostWizardImage;
+    @FXML private ImageView hostEffectImage;
+    @FXML private ImageView enemyWizardImage;
+    @FXML private ImageView enemyEffectImage;
+    @FXML private ImageView projectileImage;
 
     @FXML private Label lobbyInfoLabel;
-    @FXML private javafx.scene.control.Button spell1Button;
-    @FXML private javafx.scene.control.Button spell2Button;
-    @FXML private javafx.scene.control.Button spell3Button;
-    @FXML private javafx.scene.control.Button spell4Button;
+    @FXML private Button spell1Button;
+    @FXML private Button spell2Button;
+    @FXML private Button spell3Button;
+    @FXML private Button spell4Button;
 
     private final Gson gson = new Gson();
 
     private GameStateDTO gameState;
-    private java.util.List<String> myLoadout;
+    private List<String> myLoadout;
 
-    private com.jtjmpm.desktop.utils.AnimationEngine animationEngine;
+    private AnimationEngine animationEngine;
 
     private double hostHp = 100.0;
     private double enemyHp = 100.0;
@@ -50,11 +62,11 @@ public class GameController {
         
         enemyWizardImage.setScaleX(-1.0);
 
-        animationEngine = new com.jtjmpm.desktop.utils.AnimationEngine(mainPane, hostWizardImage, hostEffectImage,
+        animationEngine = new AnimationEngine(mainPane, hostWizardImage, hostEffectImage,
                 enemyWizardImage, enemyEffectImage, projectileImage);
         animationEngine.startIdleTimelines();
 
-        myLoadout = ApiSocketClient.getInstance().getCurrentLoadout();
+        myLoadout = GameStateManager.getInstance().getCurrentLoadout();
         if (myLoadout != null && myLoadout.size() == 4) {
             spell1Button.setText(myLoadout.get(0));
             spell2Button.setText(myLoadout.get(1));
@@ -84,7 +96,7 @@ public class GameController {
     }
 
     private void handleMoveResult(MoveResultMessage message){
-        String hostId = ApiSocketClient.getInstance().getHostId();
+        String hostId = GameStateManager.getInstance().getHostId();
         if (hostId == null) {
             System.err.println("Local player id is not set");
             return;
@@ -98,8 +110,8 @@ public class GameController {
             enemyPanelController.moveUpdate(message.result);
         }
 
-        if (message.status != com.jtjmpm.messages.CastStatus.SUCCESS) {
-            animationEngine.showFloatingText("FAILED: " + message.status.name(), javafx.scene.paint.Color.YELLOW, isHost);
+        if (message.status != CastStatus.SUCCESS) {
+            animationEngine.showFloatingText("FAILED: " + message.status.name(), Color.YELLOW, isHost);
             return;
         }
 
@@ -107,17 +119,17 @@ public class GameController {
             int fixedAttackTime = 800;
             int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
             animationEngine.playAttack(true, fixedAttackTime);
-            javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(true, projTime, message.spellId)),
-                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(false, message.spellId)));
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(true, projTime, message.spellId)),
+                    new KeyFrame(Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(false, message.spellId)));
             timeline.play();
         } else {
             int fixedAttackTime = 800;
             int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
             animationEngine.playAttack(false, fixedAttackTime);
-            javafx.animation.Timeline timeline = new javafx.animation.Timeline(
-                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(false, projTime, message.spellId)),
-                    new javafx.animation.KeyFrame(javafx.util.Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(true, message.spellId)));
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(false, projTime, message.spellId)),
+                    new KeyFrame(Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(true, message.spellId)));
             timeline.play();
         }
     }
@@ -125,7 +137,7 @@ public class GameController {
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
         gameState = message.gameState;
 
-        String hostId = ApiSocketClient.getInstance().getHostId();
+        String hostId = GameStateManager.getInstance().getHostId();
 
         PlayerDTO hostPlayer = gameState.players().get(hostId);
         PlayerDTO enemyPlayer = Objects.requireNonNull(GameStateUtils.getEnemy(gameState.players().values(), hostId));
@@ -150,14 +162,14 @@ public class GameController {
         if (message.events != null) {
             for (CombatEventMessage event : message.events) {
                 boolean onHost = event.targetId.equals(hostId);
-                javafx.scene.paint.Color color = javafx.scene.paint.Color.YELLOW;
+                Color color = Color.YELLOW;
                 String text = "";
                 
-                if (event.combatType == com.jtjmpm.messages.CombatEventType.HIT) {
-                    color = javafx.scene.paint.Color.RED;
+                if (event.combatType == CombatEventType.HIT) {
+                    color = Color.RED;
                     text = "-" + (int)event.value;
-                } else if (event.combatType == com.jtjmpm.messages.CombatEventType.HEAL) {
-                    color = javafx.scene.paint.Color.LIMEGREEN;
+                } else if (event.combatType == CombatEventType.HEAL) {
+                    color = Color.LIMEGREEN;
                     text = "+" + (int)event.value;
                 } else {
                     text = event.combatType.name();
@@ -174,7 +186,7 @@ public class GameController {
             ApiSocketClient.getInstance().setOnMessageCallback(null);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(LOBBY_VIEW));
-            Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
+            Scene scene = ViewLoader.loadScaledScene(loader);
             Stage stage = (Stage) lobbyInfoLabel.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
@@ -185,7 +197,7 @@ public class GameController {
     private void castSpell(int index) {
         if (myLoadout != null && myLoadout.size() > index) {
             String spellId = myLoadout.get(index);
-            PlayerMoveMessage moveMessage = new PlayerMoveMessage(new java.util.ArrayList<>(), index);
+            PlayerMoveMessage moveMessage = new PlayerMoveMessage(new ArrayList<>(), index);
             ApiSocketClient.getInstance().send(moveMessage);
             System.out.println("DEV: Sent fake spell cast for " + spellId);
         }
