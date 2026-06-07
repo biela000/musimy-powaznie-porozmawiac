@@ -1,8 +1,8 @@
 package com.jtjmpm.api.service;
 
-import com.jtjmpm.api.model.core.GameConstants;
+import com.jtjmpm.api.model.core .GameConstants;
 import com.jtjmpm.api.model.core.GameState;
-import com.jtjmpm.api.model.core.MatchStatus;
+import com.jtjmpm.messages.MatchStatus;
 import com.jtjmpm.api.model.core.Player;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

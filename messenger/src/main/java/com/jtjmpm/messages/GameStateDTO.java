@@ -5,6 +5,6 @@ import java.util.Map;
 public record GameStateDTO(
         String name,
         String hostId,
-        boolean isGameStarted,
+        MatchStatus status,
         Map<String, PlayerDTO> players
 ) {}

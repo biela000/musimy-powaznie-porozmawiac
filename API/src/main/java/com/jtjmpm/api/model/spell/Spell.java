@@ -8,12 +8,12 @@ public record Spell(
         String name,
         String description,
         SpellType type,
-        int basePower, //TODO change to double
+        int displayPower,
         int manaCost,
         int castDurationMs,
         SpellEffect effect
 ) {
     public SpellDTO toDTO() {
-        return new SpellDTO(name, description, type, basePower, manaCost);
+        return new SpellDTO(name, description, type, displayPower, manaCost);
     }
 }

@@ -1,4 +1,4 @@
-package com.jtjmpm.api.model.core;
+package com.jtjmpm.messages;
 
 public enum MatchStatus {
     LOBBY,

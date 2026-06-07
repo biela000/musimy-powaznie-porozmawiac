@@ -1,6 +1,7 @@
 package com.jtjmpm.api.model.core;
 
 import com.jtjmpm.messages.GameStateDTO;
+import com.jtjmpm.messages.MatchStatus;
 import com.jtjmpm.messages.PlayerDTO;
 
 import java.util.ArrayList;
@@ -15,8 +16,6 @@ public class GameState {
     private String hostId;
     private final Map<String, Player> players = new ConcurrentHashMap<>();
 
-    //TODO implement game start
-    private boolean isGameStarted = false;
 
     private MatchStatus status = MatchStatus.LOBBY;
 
@@ -64,8 +63,10 @@ public class GameState {
     }
 
     public synchronized boolean isReady() {
-        //TODO
-        //check if both players are in the lobby
+        if (players.size() < LOBBY_SIZE) {
+            return false;
+        }
+
         for (Player player : players.values()) {
             if (!player.isReady()) return false;
         }
@@ -104,7 +105,6 @@ public class GameState {
     }
 
     //SIMPLE GETTERS
-    public boolean isGameStarted() { return isGameStarted; }
     public String getHostId() { return hostId; }
 
     public synchronized GameStateDTO toDTO() {
@@ -116,7 +116,7 @@ public class GameState {
         return new GameStateDTO(
                 this.name,
                 this.hostId,
-                this.isGameStarted,
+                this.status,
                 playerDTOs
         );
     }

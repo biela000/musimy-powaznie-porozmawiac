@@ -3,7 +3,7 @@ package com.jtjmpm.api.service;
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
 import com.jtjmpm.api.model.core.GameState;
-import com.jtjmpm.api.model.core.MatchStatus;
+import com.jtjmpm.messages.MatchStatus;
 import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
 import com.jtjmpm.api.model.spell.SpellCastResult;
