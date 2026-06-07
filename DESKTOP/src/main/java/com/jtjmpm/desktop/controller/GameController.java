@@ -188,7 +188,11 @@ public class GameController {
                     color = Color.LIMEGREEN;
                     text = "+" + (int)event.value;
                 } else {
-                    text = event.combatType.name();
+                    text = switch (event.combatType) {
+                        case BLOCKED -> "Blocked";
+                        case STATUS_APPLIED -> "Status applied";
+                        default -> event.combatType.name();
+                    };
                 }
                 
                 animationEngine.showFloatingText(text, color, onHost);
