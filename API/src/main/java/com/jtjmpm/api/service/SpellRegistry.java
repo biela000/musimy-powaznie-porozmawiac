@@ -4,10 +4,7 @@ import com.jtjmpm.api.model.ApplyStatusSpellEffect;
 import com.jtjmpm.api.model.spell.Element;
 import com.jtjmpm.api.model.spell.Spell;
 
-import com.jtjmpm.api.model.spell.effect.FlatDamageEffect;
-import com.jtjmpm.api.model.spell.effect.GambleSpellEffect;
-import com.jtjmpm.api.model.spell.effect.HealSpellEffect;
-import com.jtjmpm.api.model.spell.effect.ManaStealSpellEffect;
+import com.jtjmpm.api.model.spell.effect.*;
 import com.jtjmpm.api.model.status.*;
 import com.jtjmpm.messages.SpellDTO;
 import com.jtjmpm.messages.SpellType;
@@ -83,6 +80,9 @@ public class SpellRegistry {
         addSpell(new Spell("Thorns", "thorns", SpellType.SUPPORT, Element.NATURE, 0, 35, 1000,
                 new ApplyStatusSpellEffect(35, 1000, true,
                         acc -> new ThornsEffect(0.4 * acc, 10))));
+        addSpell(new Spell("Dark Magic", "dark magic", SpellType.OFFENSE, Element.DARK,
+                0, 25, 1000,
+                new DarkMagicSpellEffect(3.0, 25, 1000)));
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }
 

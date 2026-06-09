@@ -13,6 +13,7 @@ public interface StatusEffect {
         return rawDamage;
     }
 
+    default void onSuccessfulSpellCast() {}
     //TODO change these two
     default void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine) {}
 

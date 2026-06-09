@@ -153,6 +153,12 @@ public class Player {
         }
     }
 
+    public synchronized void triggerSuccessfulCastHook() {
+        for (StatusEffect effect : activeEffects) {
+            effect.onSuccessfulSpellCast();
+        }
+    }
+
     public String getId() {
         return id;
     }
