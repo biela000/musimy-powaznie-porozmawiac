@@ -24,7 +24,7 @@
                pickOnBounds="true" preserveRatio="true"/>
 
     <!-- Divider -->
-    <Region styleClass="pixel-divider" maxWidth="Infinity"/>
+    <Region styleClass="pixel-divider" maxWidth="200"/>
 
     <!-- Connection status -->
     <VBox alignment="CENTER" spacing="8.0">
@@ -37,6 +37,6 @@
 
     <!-- Start button -->
     <Button fx:id="startButton" text="[ START ]" onAction="#onStartClicked"
-            maxWidth="Infinity" styleClass="pixel-button"/>
+            maxWidth="200" styleClass="pixel-button"/>
 
 </VBox>

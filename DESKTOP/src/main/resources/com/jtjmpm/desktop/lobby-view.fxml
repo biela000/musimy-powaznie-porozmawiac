@@ -16,23 +16,23 @@
     <!-- Title -->
     <Label text="[ LOBBY ]" styleClass="pixel-title"/>
 
-    <Region styleClass="pixel-divider" maxWidth="Infinity"/>
+    <Region styleClass="pixel-divider" maxWidth="200"/>
 
     <!-- Field label + input -->
     <Label text="LOBBY NAME" styleClass="pixel-label"/>
     <TextField fx:id="lobbyNameInput" promptText="enter lobby name"
-               maxWidth="Infinity" styleClass="pixel-input"/>
+               maxWidth="200" styleClass="pixel-input"/>
 
     <Region prefHeight="4"/>
 
     <!-- Actions -->
     <Button text="[ CREATE LOBBY ]" onAction="#onCreateLobby"
-            maxWidth="Infinity" styleClass="pixel-button"/>
+            maxWidth="200" styleClass="pixel-button"/>
     <Button text="[ JOIN LOBBY ]"   onAction="#onJoinLobby"
-            maxWidth="Infinity" styleClass="pixel-button-secondary"/>
+            maxWidth="200" styleClass="pixel-button-secondary"/>
 
     <!-- Error / status message -->
-    <Label fx:id="statusLabel" text="" styleClass="pixel-error" maxWidth="Infinity"
+    <Label fx:id="statusLabel" text="" styleClass="pixel-error" maxWidth="200"
            style="-fx-alignment: center;"/>
 
 </VBox>

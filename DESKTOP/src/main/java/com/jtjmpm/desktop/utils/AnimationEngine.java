@@ -33,7 +33,7 @@ public class AnimationEngine {
     // projectile image size and offset from the wizard
     public static final double PROJECTILE_IMAGE_SIZE = 100.0;
     public static final double PROJECTILE_SPAWN_OFFSET_X = 100.0;
-    public static final double PROJECTILE_SPAWN_OFFSET_Y = 0.0;
+    public static final double PROJECTILE_SPAWN_OFFSET_Y = 25.0;
 
     // floating text offset from the wizard and its flight distance
     public static final double TEXT_SPAWN_OFFSET_X = 50.0;

@@ -175,7 +175,7 @@ public class GameController {
             }
         }
 
-        int fixedAttackTime = 800;
+        int fixedAttackTime = 1000;
         int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
         animationEngine.playAttack(isHost, fixedAttackTime);
         Timeline timeline = new Timeline(
