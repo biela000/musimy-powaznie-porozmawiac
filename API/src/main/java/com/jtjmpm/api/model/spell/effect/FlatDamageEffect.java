@@ -15,7 +15,7 @@ public class FlatDamageEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine){
-        return new SpellCastResult(castDuration, (outEvents) -> {
+        return new SpellCastResult(castDuration, targetId, (outEvents) -> {
             double actualDamage = Math.round(baseDamage * accuracy);
             combatEngine.applyDamage(state, casterId, targetId, actualDamage, outEvents);
         });

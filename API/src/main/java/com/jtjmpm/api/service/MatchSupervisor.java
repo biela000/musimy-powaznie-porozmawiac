@@ -88,6 +88,7 @@ public class MatchSupervisor {
             MoveResultMessage successMsg = new MoveResultMessage(moveResult, casterId, spell.name(),
                     spell.castDurationMs(), CastStatus.SUCCESS);
             successMsg.accuracyRating = moveResult.getAccuracyRating();
+            successMsg.actualTargetId = result.actualTargetId;
             registry.broadcast(playerIds, gson.toJson(successMsg));
             scheduleImpact(gameState, playerIds, result.delayMs, result.impactActions);
         });

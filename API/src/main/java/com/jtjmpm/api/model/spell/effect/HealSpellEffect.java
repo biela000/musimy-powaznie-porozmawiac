@@ -16,7 +16,7 @@ public class    HealSpellEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine) {
-        return new SpellCastResult(castDuration, outEvents -> {
+        return new SpellCastResult(castDuration, casterId, outEvents -> {
             double finalHeal = baseHeal * accuracy;
             outEvents.add(combatEngine.applyHeal(state, casterId, finalHeal));
         });

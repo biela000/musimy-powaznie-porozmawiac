@@ -178,12 +178,22 @@ public class GameController {
         int fixedAttackTime = 1000;
         int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
         animationEngine.playAttack(isHost, fixedAttackTime);
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.millis(fixedAttackTime),
-                        ae -> animationEngine.playProjectile(isHost, projTime, message.spellId)),
-                new KeyFrame(Duration.millis(message.castDurationMs),
-                        ae -> animationEngine.playEffect(!isHost, message.spellId)));
-        timeline.play();
+
+        boolean targetSelf = message.actualTargetId != null && message.actualTargetId.equals(message.playerId);
+
+        if (targetSelf) {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(message.castDurationMs),
+                            ae -> animationEngine.playEffect(isHost, message.spellId)));
+            timeline.play();
+        } else {
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.millis(fixedAttackTime),
+                            ae -> animationEngine.playProjectile(isHost, projTime, message.spellId)),
+                    new KeyFrame(Duration.millis(message.castDurationMs),
+                            ae -> animationEngine.playEffect(!isHost, message.spellId)));
+            timeline.play();
+        }
     }
 
     // -------------------------------------------------------------------------

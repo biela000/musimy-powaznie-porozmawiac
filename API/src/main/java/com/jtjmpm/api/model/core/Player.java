@@ -36,7 +36,7 @@ public class Player {
         this.id = id;
         this.maxHp = maxHp;
         this.maxMana = maxMana;
-        this.hp = maxHp;
+        this.hp = 100;
         this.mana = 20;
         this.ready = false;
         this.activeEffects.add(new BaseManaRegenEffect(5.0, 0.5)); //..
@@ -103,7 +103,7 @@ public class Player {
 
     /** Resets HP, mana, and status effects to starting values for a new round. Wins are preserved. */
     public synchronized void resetForNewRound() {
-        this.hp = maxHp;
+        this.hp = 100;
         this.mana = 20;
         activeEffects.clear();
         activeEffects.add(new BaseManaRegenEffect(5.0, 0.5));

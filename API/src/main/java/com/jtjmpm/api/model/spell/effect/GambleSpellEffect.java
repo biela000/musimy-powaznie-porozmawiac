@@ -16,9 +16,9 @@ public class GambleSpellEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine) {
-        return new SpellCastResult(castDuration, outEvents -> {
+        String finalTarget = Math.random() < 0.40 ? casterId : targetId;
+        return new SpellCastResult(castDuration, finalTarget, outEvents -> {
             double finalDamage = baseDamage * accuracy;
-            String finalTarget = Math.random() < 0.40 ? casterId : targetId;
             combatEngine.applyDamage(state, casterId, finalTarget, finalDamage, outEvents);
         });
     }

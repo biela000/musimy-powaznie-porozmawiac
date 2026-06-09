@@ -36,7 +36,7 @@ public class ElementalDamageEffect implements SpellEffect {
 
         final double finalComboMultiplier = currentMultiplier;
 
-        return new SpellCastResult(castDuration, outEvents -> {
+        return new SpellCastResult(castDuration, targetId, outEvents -> {
             double finalDamage = baseDamage * accuracy * finalComboMultiplier;
             combatEngine.applyDamage(state, casterId, targetId, finalDamage, outEvents);
             if (this.element == Element.AIR && previousElement == Element.WATER) {

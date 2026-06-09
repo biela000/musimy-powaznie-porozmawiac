@@ -17,7 +17,7 @@ public class ManaStealSpellEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine) {
-        return new SpellCastResult(castDuration, outEvents -> {
+        return new SpellCastResult(castDuration, targetId, outEvents -> {
             Player target = state.getPlayer(targetId);
             if (target != null) {
                 double stealAttempt = baseSteal * accuracy;

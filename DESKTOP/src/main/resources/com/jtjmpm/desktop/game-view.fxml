@@ -22,7 +22,6 @@
     <!-- Title + lobby info -->
     <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <Label text="Arena - 1vs1 Battle" styleClass="title-white-shadow"/>
-        <Label fx:id="lobbyInfoLabel" text="Lobby: --- | Waiting for opponent" styleClass="info-text-shadow"/>
     </VBox>
 
     <!-- Back to Menu (top-right) -->

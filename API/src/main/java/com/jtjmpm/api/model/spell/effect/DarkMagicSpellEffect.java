@@ -21,10 +21,10 @@ public class DarkMagicSpellEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine) {
-        return new SpellCastResult(castDuration, outEvents -> {
+        return new SpellCastResult(castDuration, targetId, outEvents -> {
             Player target = state.getPlayer(targetId);
             if (target != null) {
-                target.getActiveEffects().add(new DarkMagicEffect(damagePerTick, 1.0));
+                target.addEffect(new DarkMagicEffect(damagePerTick, 1.0));
                 outEvents.add(new CombatEventMessage(targetId, CombatEventType.STATUS_APPLIED, 0));
             }
         });

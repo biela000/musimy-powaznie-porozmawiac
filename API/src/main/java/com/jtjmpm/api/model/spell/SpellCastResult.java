@@ -7,10 +7,12 @@ import java.util.function.Consumer;
 
 public class SpellCastResult {
     public int delayMs;
+    public String actualTargetId;
     public Consumer<List<CombatEventMessage>> impactActions;
 
-    public SpellCastResult(int delayMs, Consumer<List<CombatEventMessage>> impactActions) {
+    public SpellCastResult(int delayMs, String actualTargetId, Consumer<List<CombatEventMessage>> impactActions) {
         this.delayMs = delayMs;
+        this.actualTargetId = actualTargetId;
         this.impactActions = impactActions;
     }
 }

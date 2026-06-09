@@ -24,12 +24,12 @@ public class ApplyStatusSpellEffect implements SpellEffect {
 
     @Override
     public SpellCastResult cast(GameState state, String casterId, String targetId, double accuracy, CombatEngine combatEngine) {
-        return new SpellCastResult(castDuration, (outEvents) -> {
-            String finalTargetId = targetCaster ? casterId : targetId;
+        String finalTargetId = targetCaster ? casterId : targetId;
+        return new SpellCastResult(castDuration, finalTargetId, (outEvents) -> {
             Player finalTarget = state.getPlayer(finalTargetId);
             if (finalTarget != null) {
                 StatusEffect freshEffect = effectFactory.apply(accuracy);
-                finalTarget.getActiveEffects().add(freshEffect);
+                finalTarget.addEffect(freshEffect);
                 outEvents.add(new CombatEventMessage(finalTargetId, CombatEventType.STATUS_APPLIED, 0));
             }
         });
