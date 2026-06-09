@@ -286,6 +286,60 @@ public class AnimationEngine {
     }
 
     // -------------------------------------------------------------------------
+    // round reset
+    // -------------------------------------------------------------------------
+
+    /**
+     * Resets wizard state for a new round: clears the "dead" flags, stops any
+     * lingering animations, and restarts the idle timelines.
+     */
+    public void resetForNewRound() {
+        hostDead = false;
+        enemyDead = false;
+
+        if (hostActiveTimeline != null) { hostActiveTimeline.stop(); hostActiveTimeline = null; }
+        if (enemyActiveTimeline != null) { enemyActiveTimeline.stop(); enemyActiveTimeline = null; }
+
+        // Restart idle animations for both wizards.
+        startIdleTimelines();
+    }
+
+    // -------------------------------------------------------------------------
+    // countdown number (3 / 2 / 1)  –  snappy pop-in that fades before the next
+    // -------------------------------------------------------------------------
+
+    public void showCountdownNumber(String text) {
+        Label label = new Label(text);
+        label.setFont(Font.font("System", FontWeight.BOLD, 160));
+        label.setTextFill(Color.WHITE);
+        label.setEffect(new DropShadow(18, Color.BLACK));
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setAlignment(javafx.geometry.Pos.CENTER);
+
+        AnchorPane.setTopAnchor(label, SCREEN_HEIGHT / 2.0 - 110.0);
+        AnchorPane.setLeftAnchor(label, 0.0);
+        AnchorPane.setRightAnchor(label, 0.0);
+
+        label.setScaleX(0.1);
+        label.setScaleY(0.1);
+
+        mainPane.getChildren().add(label);
+
+        ScaleTransition popIn = new ScaleTransition(Duration.millis(250), label);
+        popIn.setToX(1.0);
+        popIn.setToY(1.0);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), label);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setDelay(Duration.millis(550));
+        fadeOut.setOnFinished(e -> mainPane.getChildren().remove(label));
+
+        popIn.play();
+        fadeOut.play();
+    }
+
+    // -------------------------------------------------------------------------
     // centered rating / miss text  –  big, pops in then floats up and fades
     // -------------------------------------------------------------------------
 

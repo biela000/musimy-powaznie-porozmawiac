@@ -17,4 +17,6 @@
     <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="200.0" styleClass="mana-bar"/>
     <Label fx:id="manaLabel" text="Mana: 100/100" styleClass="stat-label"/>
 
+    <Label fx:id="winsLabel" text="○  ○" styleClass="wins-label"/>
+
 </VBox>

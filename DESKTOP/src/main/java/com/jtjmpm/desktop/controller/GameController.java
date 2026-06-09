@@ -5,8 +5,8 @@ import com.jtjmpm.desktop.utils.AnimationEngine;
 import com.jtjmpm.desktop.utils.GameStateUtils;
 import com.jtjmpm.desktop.utils.ShapeDrawer;
 import com.jtjmpm.desktop.utils.ViewLoader;
-import com.jtjmpm.messages.*;
 import com.jtjmpm.*;
+import com.jtjmpm.messages.*;
 import com.jtjmpm.desktop.service.ApiSocketClient;
 import com.jtjmpm.desktop.model.GameStateManager;
 import javafx.application.Platform;
@@ -89,6 +89,10 @@ public class GameController {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Message routing
+    // -------------------------------------------------------------------------
+
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
@@ -105,10 +109,23 @@ public class GameController {
             case MessageType.SHAPE_DRAWN:
                 Platform.runLater(() -> handleShapeDrawn(gson.fromJson(message, ShapeMessage.class)));
                 break;
+            case MessageType.ROUND_OVER:
+                Platform.runLater(() -> handleRoundOver(gson.fromJson(message, RoundOverMessage.class)));
+                break;
+            case MessageType.COUNTDOWN:
+                Platform.runLater(() -> handleCountdown(gson.fromJson(message, CountdownMessage.class)));
+                break;
+            case MessageType.ROUND_START:
+                Platform.runLater(() -> handleRoundStart(gson.fromJson(message, RoundStartMessage.class)));
+                break;
             default:
                 System.out.println("Unknown message type: " + base.type);
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Spell cast result
+    // -------------------------------------------------------------------------
 
     private void handleMoveResult(MoveResultMessage message) {
         String hostId = GameStateManager.getInstance().getHostId();
@@ -119,7 +136,7 @@ public class GameController {
 
         boolean isHost = message.playerId.equals(hostId);
 
-        // draw the gesture and show accuracy rating for the local player
+        // Draw the gesture for the local player's cast.
         if (isHost && message.result != null
                 && message.result.points != null
                 && !message.result.points.isEmpty()) {
@@ -128,11 +145,9 @@ public class GameController {
 
         if (message.status != CastStatus.SUCCESS) {
             if (isHost) {
-                // host miss/fail — centered text, light red
                 String failText = message.status == CastStatus.FAILED_MANA ? "No mana" : "Missed";
                 animationEngine.showCenteredText(failText, Color.web("#FF6B6B"));
             } else {
-                // enemy miss — small floating text near their wizard
                 String statusText = switch (message.status) {
                     case FAILED_MANA     -> "No mana";
                     case FAILED_ACCURACY -> "Missed";
@@ -144,7 +159,7 @@ public class GameController {
             return;
         }
 
-        // on a successful host cast, show the accuracy rating as a centered animation
+        // Accuracy rating for successful host cast.
         if (isHost) {
             String rating = message.accuracyRating != null
                     ? message.accuracyRating
@@ -171,9 +186,17 @@ public class GameController {
         timeline.play();
     }
 
+    // -------------------------------------------------------------------------
+    // Pattern updates
+    // -------------------------------------------------------------------------
+
     private void handleShapeDrawn(ShapeMessage message) {
         ShapeDrawer.drawMove(patternCanvas, message.points, Color.GOLD);
     }
+
+    // -------------------------------------------------------------------------
+    // Game state / HP updates
+    // -------------------------------------------------------------------------
 
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
         gameState = message.gameState;
@@ -228,6 +251,46 @@ public class GameController {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Round system
+    // -------------------------------------------------------------------------
+
+    private void handleRoundOver(RoundOverMessage message) {
+        String hostId = GameStateManager.getInstance().getHostId();
+        if (message.roundWinnerId != null) {
+            boolean hostWon = message.roundWinnerId.equals(hostId);
+            animationEngine.showCenteredText(
+                    hostWon ? "Round Won!" : "Round Lost!",
+                    hostWon ? Color.GOLD : Color.web("#FF6B6B"));
+        }
+        // Death animation was already triggered by the GAME_STATE_UPDATE that preceded this.
+        // The wins panel update is also reflected in that GAME_STATE_UPDATE.
+    }
+
+    private void handleCountdown(CountdownMessage message) {
+        if (message.count == 0) {
+            animationEngine.showCenteredText("Battle!", Color.GOLD);
+        } else {
+            animationEngine.showCountdownNumber(String.valueOf(message.count));
+        }
+    }
+
+    private void handleRoundStart(RoundStartMessage message) {
+        // Restore wizards to idle (they were "dead" last round).
+        animationEngine.resetForNewRound();
+
+        // Clear gesture canvas; draw the new round's pattern.
+        ShapeDrawer.clearCanvas(gestureCanvas);
+        ShapeDrawer.clearCanvas(patternCanvas);
+        if (message.initialPattern != null) {
+            ShapeDrawer.drawMove(patternCanvas, message.initialPattern, Color.GOLD);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Game over (match end)
+    // -------------------------------------------------------------------------
+
     private void handleGameOver(GameOverMessage message) {
         isGameOver = true;
 
@@ -251,6 +314,10 @@ public class GameController {
 
         mainPane.getChildren().add(gameOverLabel);
     }
+
+    // -------------------------------------------------------------------------
+    // Navigation
+    // -------------------------------------------------------------------------
 
     @FXML
     private void onBackToMenu() {

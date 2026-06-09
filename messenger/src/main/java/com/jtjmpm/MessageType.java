@@ -27,6 +27,11 @@ public enum MessageType {
     COMBAT_EVENT,
     GAME_OVER,
 
+    // Round system
+    ROUND_OVER,
+    COUNTDOWN,
+    ROUND_START,
+
     // Errors
     ERROR;
 }

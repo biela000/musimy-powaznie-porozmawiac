@@ -24,6 +24,8 @@ public class Player {
     private final List<String> spellLoadout = new ArrayList<>();
     private final List<StatusEffect> activeEffects = new ArrayList<>();
 
+    private int wins = 0;
+
     private List<Point2D.Double> currentPattern;
     private String currentPatternName;
 
@@ -93,6 +95,17 @@ public class Player {
         activeEffects.removeIf(StatusEffect::isExpired);
     }
 
+    public synchronized int getWins() { return wins; }
+    public synchronized void addWin() { wins++; }
+
+    /** Resets HP, mana, and status effects to starting values for a new round. Wins are preserved. */
+    public synchronized void resetForNewRound() {
+        this.hp = maxHp;
+        this.mana = 20;
+        activeEffects.clear();
+        activeEffects.add(new BaseManaRegenEffect(5.0, 0.5));
+    }
+
     public synchronized List<Point2D.Double> getCurrentPattern() {
         return currentPattern;
     }
@@ -126,7 +139,8 @@ public class Player {
                 this.activeEffects.stream()
                         .filter(StatusEffect::isVisibleOnUI)
                         .map(effect -> new StatusEffectDTO(effect.getName(), effect.getRemainingDuration()))
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                this.wins
         );
     }
 }

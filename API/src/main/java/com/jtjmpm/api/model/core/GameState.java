@@ -81,21 +81,43 @@ public class GameState {
     }
 
     //GETTERS
-    public boolean isGameOver() {
+
+    /** True when at least one player's HP has reached 0, ending the current round. */
+    public boolean isRoundOver() {
         return players.values().stream().anyMatch(player -> player.getHp() <= 0);
     }
 
-    public boolean isDraw() {
+    /** True when all players died simultaneously (draw round). */
+    public boolean isRoundDraw() {
         return players.values().stream().allMatch(player -> player.getHp() <= 0);
     }
 
-    public String getWinnerId() {
+    /** ID of the surviving player when the round ends, or null on a draw. */
+    public String getRoundWinnerId() {
+        if (isRoundDraw()) return null;
         return players.values().stream()
                 .filter(player -> player.getHp() > 0)
                 .findFirst()
                 .map(Player::getId)
                 .orElse(null);
     }
+
+    /** Resets all players to full HP/mana for the next round. Wins are preserved. */
+    public synchronized void resetRound() {
+        for (Player player : players.values()) {
+            player.resetForNewRound();
+        }
+    }
+
+    // Legacy helpers kept for compatibility — semantics now refer to rounds, not the match.
+    /** @deprecated Use {@link #isRoundOver()} instead. */
+    public boolean isGameOver() { return isRoundOver(); }
+
+    /** @deprecated Use {@link #isRoundDraw()} instead. */
+    public boolean isDraw() { return isRoundDraw(); }
+
+    /** @deprecated Use {@link #getRoundWinnerId()} instead. */
+    public String getWinnerId() { return getRoundWinnerId(); }
 
     public synchronized MatchStatus getStatus() {
         return status;

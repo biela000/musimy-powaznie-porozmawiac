@@ -9,5 +9,6 @@ public record PlayerDTO(
         double maxHp,
         double maxMana,
         boolean ready,
-        List<StatusEffectDTO> activeEffects
+        List<StatusEffectDTO> activeEffects,
+        int wins
 ) {}

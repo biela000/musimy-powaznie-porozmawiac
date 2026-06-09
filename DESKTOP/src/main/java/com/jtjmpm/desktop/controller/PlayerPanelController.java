@@ -11,11 +11,21 @@ public class PlayerPanelController {
     @FXML private Label hpLabel;
     @FXML private ProgressBar manaBar;
     @FXML private Label manaLabel;
+    @FXML private Label winsLabel;
 
     public void playerStateUpdate(PlayerDTO player) {
         hpBar.setProgress(player.hp() / player.maxHp());
         hpLabel.setText("HP: " + (int) player.hp() + "/" + (int) player.maxHp());
         manaBar.setProgress(player.mana() / player.maxMana());
         manaLabel.setText("Mana: " + (int) player.mana() + "/" + (int) player.maxMana());
+        winsLabel.setText(winsIndicator(player.wins()));
+    }
+
+    private String winsIndicator(int wins) {
+        return switch (wins) {
+            case 1 -> "●  ○";
+            case 2 -> "●  ●";
+            default -> "○  ○";
+        };
     }
 }

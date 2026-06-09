@@ -13,6 +13,7 @@ import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
+import com.jtjmpm.messages.MatchStatus;
 import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;
 
@@ -121,9 +122,12 @@ public class GameController implements MessageController {
             matchSupervisor.handlePlayerSpellCast(gameState, sessionId, gameState.getEnemy(sessionId).getId(),
                     spell, accuracyScore, new PlayerMoveResult(normalizedPoints, accuracyScore), playerIds);
 
-            PatternGenerator.NamedShape nextShape = pickNewPattern(player.getCurrentPatternName());
-            player.setCurrentPattern(nextShape.points(), nextShape.name());
-            registry.sendToSession(sessionId, gson.toJson(new ShapeMessage(nextShape.points(), nextShape.name())));
+            // Only rotate the pattern while a round is live; between rounds the RoundStartMessage supplies it.
+            if (gameState.getStatus() == MatchStatus.IN_PROGRESS) {
+                PatternGenerator.NamedShape nextShape = pickNewPattern(player.getCurrentPatternName());
+                player.setCurrentPattern(nextShape.points(), nextShape.name());
+                registry.sendToSession(sessionId, gson.toJson(new ShapeMessage(nextShape.points(), nextShape.name())));
+            }
 
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
