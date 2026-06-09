@@ -97,6 +97,11 @@ public class GameController {
                     handleGameOver(gson.fromJson(message, GameOverMessage.class));
                 });
                 break;
+            case MessageType.SHAPE_DRAWN:
+                Platform.runLater(() -> {
+                    handleShapeDrawn(gson.fromJson(message, ShapeMessage.class));
+                });
+                break;
             default:
                 System.out.println("Unknown message type: " + base.type);
         }
@@ -112,9 +117,9 @@ public class GameController {
         boolean isHost = message.playerId.equals(hostId);
         
         if (isHost) {
-            hostPanelController.moveUpdate(message.result);
+            hostPanelController.moveUpdate(message.result, message.accuracyRating);
         } else {
-            enemyPanelController.moveUpdate(message.result);
+            enemyPanelController.moveUpdate(message.result, null);
         }
 
         if (message.status != CastStatus.SUCCESS) {
@@ -198,6 +203,10 @@ public class GameController {
                 animationEngine.showFloatingText(text, color, onHost);
             }
         }
+    }
+
+    private void handleShapeDrawn(ShapeMessage message) {
+        hostPanelController.patternUpdate(message.points, message.shapeName);
     }
 
     private void handleGameOver(GameOverMessage message) {

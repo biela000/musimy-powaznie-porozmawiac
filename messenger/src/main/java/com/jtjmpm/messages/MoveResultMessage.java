@@ -12,6 +12,7 @@ public class MoveResultMessage extends WsMessage {
     public String spellId;
     public int castDurationMs;
     public CastStatus status;
+    public String accuracyRating;
 
     public MoveResultMessage(PlayerMoveResult result, String playerId, String spellId,
                              int castDurationMs, CastStatus status) {

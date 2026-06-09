@@ -7,6 +7,7 @@ import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.PlayerDTO;
 import com.jtjmpm.messages.StatusEffectDTO;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,9 @@ public class Player {
 
     private final List<String> spellLoadout = new ArrayList<>();
     private final List<StatusEffect> activeEffects = new ArrayList<>();
+
+    private List<Point2D.Double> currentPattern;
+    private String currentPatternName;
 
     public Player(String id, double maxHp, double maxMana) {
         this.id = id;
@@ -87,6 +91,19 @@ public class Player {
         }
 
         activeEffects.removeIf(StatusEffect::isExpired);
+    }
+
+    public synchronized List<Point2D.Double> getCurrentPattern() {
+        return currentPattern;
+    }
+
+    public synchronized String getCurrentPatternName() {
+        return currentPatternName;
+    }
+
+    public synchronized void setCurrentPattern(List<Point2D.Double> pattern, String name) {
+        this.currentPattern = pattern;
+        this.currentPatternName = name;
     }
 
     public synchronized List<String> getSpellLoadout() {

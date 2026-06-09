@@ -8,10 +8,12 @@ import java.util.List;
 public class ShapeMessage extends WsMessage {
     public List<Point2D.Double> points;
     public double accuracy;
+    public String shapeName;
 
-    public ShapeMessage(List<Point2D.Double> points, double accuracy) {
+    public ShapeMessage(List<Point2D.Double> points, String shapeName) {
         super(MessageType.SHAPE_DRAWN);
         this.points = points;
-        this.accuracy = accuracy;
+        this.shapeName = shapeName;
+        this.accuracy = 0;
     }
 }

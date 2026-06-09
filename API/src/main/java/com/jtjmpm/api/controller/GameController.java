@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Random;
 
 @Component
 public class GameController implements MessageController {
@@ -38,6 +39,16 @@ public class GameController implements MessageController {
         this.spellRegistry = spellRegistry;
         this.matchSupervisor = matchSupervisor;
         this.combatEngine = combatEngine;
+    }
+
+    private static final int PATTERN_POINTS = 64;
+
+    private PatternGenerator.NamedShape pickNewPattern(String excludeName) {
+        List<PatternGenerator.NamedShape> pool = PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, PATTERN_POINTS);
+        for (PatternGenerator.NamedShape shape : pool) {
+            if (!shape.name().equals(excludeName)) return shape;
+        }
+        return pool.get(0);
     }
 
     @Override
@@ -88,6 +99,9 @@ public class GameController implements MessageController {
             double accuracyScore;
             List<Point2D.Double> normalizedPoints;
 
+            List<Point2D.Double> targetPattern = player.getCurrentPattern();
+            if (targetPattern == null) targetPattern = PatternGenerator.createCircle(64);
+
             if (playerMoveMessage.move == null || playerMoveMessage.move.isEmpty()) {
                 accuracyScore = 1.0;
                 normalizedPoints = new java.util.ArrayList<>();
@@ -98,15 +112,18 @@ public class GameController implements MessageController {
                 normalizedPoints = ShapeNormalizer.preProcess(
                         normalPoints, NORMALIZED_SHAPE_POINT_COUNT, NORMALIZED_SHAPE_TRIM_COUNT
                 );
-                List<Point2D.Double> circlePattern = PatternGenerator.createCircle(64);
-                accuracyScore = GestureToScore.getScore(circlePattern, playerMoveMessage.move);
-                System.out.println("Acurracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
+                accuracyScore = GestureToScore.getScore(targetPattern, playerMoveMessage.move);
+                System.out.println("Accuracy for session: " + sessionId + " equals: " + Math.round(accuracyScore * 100));
             }
 
             List<String> playerIds = store.getPlayerIdsFromLobby(store.getLobbyIdForPlayer(sessionId));
 
             matchSupervisor.handlePlayerSpellCast(gameState, sessionId, gameState.getEnemy(sessionId).getId(),
                     spell, accuracyScore, new PlayerMoveResult(normalizedPoints, accuracyScore), playerIds);
+
+            PatternGenerator.NamedShape nextShape = pickNewPattern(player.getCurrentPatternName());
+            player.setCurrentPattern(nextShape.points(), nextShape.name());
+            registry.sendToSession(sessionId, gson.toJson(new ShapeMessage(nextShape.points(), nextShape.name())));
 
         } catch (Exception e) {
             System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());

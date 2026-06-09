@@ -11,4 +11,11 @@ public class PlayerMoveResult {
         this.points = points;
         this.accuracy = accuracy;
     }
+
+    public String getAccuracyRating() {
+        if (accuracy > 0.75) return "AMAZING";
+        if (accuracy > 0.55) return "GOOD";
+        if (accuracy > 0.35) return "DECENT";
+        return "BAD";
+    }
 }

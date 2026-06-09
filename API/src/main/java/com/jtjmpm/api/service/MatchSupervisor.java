@@ -2,6 +2,7 @@ package com.jtjmpm.api.service;
 
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
+import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.messages.MatchStatus;
 import com.jtjmpm.api.model.core.Player;
@@ -77,8 +78,10 @@ public class MatchSupervisor {
 
             SpellCastResult result = spell.effect().cast(gameState, casterId, targetId, accuracy, combatEngine);
 
-            registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
-                    spell.castDurationMs(), CastStatus.SUCCESS)));
+            MoveResultMessage successMsg = new MoveResultMessage(moveResult, casterId, spell.name(),
+                    spell.castDurationMs(), CastStatus.SUCCESS);
+            successMsg.accuracyRating = moveResult.getAccuracyRating();
+            registry.broadcast(playerIds, gson.toJson(successMsg));
             scheduleImpact(gameState, playerIds, result.delayMs, result.impactActions);
         });
     }
@@ -112,6 +115,15 @@ public class MatchSupervisor {
 
                             registry.broadcast(playerIds, gson.toJson(new StartGameMessage()));
                             System.out.println("Game Started");
+
+                            List<PatternGenerator.NamedShape> pool = PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, 64);
+                            List<Player> players = gameState.getPlayers();
+                            for (int i = 0; i < players.size(); i++) {
+                                PatternGenerator.NamedShape shape = pool.get(i % pool.size());
+                                players.get(i).setCurrentPattern(shape.points(), shape.name());
+                                registry.sendToSession(players.get(i).getId(),
+                                        gson.toJson(new ShapeMessage(shape.points(), shape.name())));
+                            }
                         } else {
                             System.out.println("Game start interrupted");
                         }
