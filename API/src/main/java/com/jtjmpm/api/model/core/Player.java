@@ -1,5 +1,6 @@
 package com.jtjmpm.api.model.core;
 
+import com.jtjmpm.api.model.spell.Element;
 import com.jtjmpm.api.service.CombatEngine;
 import com.jtjmpm.api.model.status.BaseManaRegenEffect;
 import com.jtjmpm.api.model.status.StatusEffect;
@@ -20,6 +21,8 @@ public class Player {
     private double hp;
     private double mana;
     private boolean ready;
+    private Element lastCastElement = Element.NONE;
+    private int elementComboCount = 0;
 
     private final List<String> spellLoadout = new ArrayList<>();
     private final List<StatusEffect> activeEffects = new ArrayList<>();
@@ -126,6 +129,27 @@ public class Player {
     public synchronized void setSpellLoadout(List<String> spellLoadout) {
         if (spellLoadout != null) {
             this.spellLoadout.addAll(spellLoadout);
+        }
+    }
+
+    public synchronized Element getLastCastElement() {
+        return lastCastElement;
+    }
+
+    public synchronized int getElementComboCount() {
+        return elementComboCount;
+    }
+
+    public synchronized void registerSpellCast(Element currentElement) {
+        if (currentElement == Element.ARCANE) {
+            return;
+        }
+
+        if (this.lastCastElement == currentElement) {
+            this.elementComboCount++;
+        } else {
+            this.lastCastElement = currentElement;
+            this.elementComboCount = 1;
         }
     }
 

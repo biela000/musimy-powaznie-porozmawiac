@@ -8,6 +8,7 @@ public record Spell(
         String name,
         String description,
         SpellType type,
+        Element element,
         int displayPower,
         int manaCost,
         int castDurationMs,
