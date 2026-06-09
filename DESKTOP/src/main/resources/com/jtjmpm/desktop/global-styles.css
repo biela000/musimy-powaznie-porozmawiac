@@ -85,6 +85,34 @@
     -fx-font-weight: bold;
 }
 
+/* Spell slot row at the bottom of the game screen */
+.spell-slot-label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 4, 0, 0, 1);
+    -fx-background-color: rgba(0,0,0,0.45);
+    -fx-background-radius: 6px;
+    -fx-padding: 6px 14px;
+}
+
+/* Canvas wrapper */
+.canvas-container {
+    -fx-background-color: rgba(0,0,0,0.45);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+/* "DRAW THIS" heading above the canvases */
+.panel-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 4, 0, 0, 1);
+}
+
 .game-over-label {
     -fx-text-fill: red;
     -fx-font-size: 72px;

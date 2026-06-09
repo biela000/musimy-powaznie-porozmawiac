@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -27,7 +26,6 @@ import javafx.util.Duration;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameController {
@@ -43,15 +41,13 @@ public class GameController {
     @FXML private ImageView enemyEffectImage;
 
     @FXML private Label lobbyInfoLabel;
-    @FXML private Button spell1Button;
-    @FXML private Button spell2Button;
-    @FXML private Button spell3Button;
-    @FXML private Button spell4Button;
+    @FXML private Label spell1Label;
+    @FXML private Label spell2Label;
+    @FXML private Label spell3Label;
+    @FXML private Label spell4Label;
 
     @FXML private Canvas patternCanvas;
     @FXML private Canvas gestureCanvas;
-    @FXML private Label patternNameLabel;
-    @FXML private Label accuracyLabel;
 
     private final Gson gson = new Gson();
 
@@ -77,20 +73,18 @@ public class GameController {
 
         myLoadout = GameStateManager.getInstance().getCurrentLoadout();
         if (myLoadout != null && myLoadout.size() == 4) {
-            spell1Button.setText(myLoadout.get(0));
-            spell2Button.setText(myLoadout.get(1));
-            spell3Button.setText(myLoadout.get(2));
-            spell4Button.setText(myLoadout.get(3));
+            spell1Label.setText("1  " + myLoadout.get(0));
+            spell2Label.setText("2  " + myLoadout.get(1));
+            spell3Label.setText("3  " + myLoadout.get(2));
+            spell4Label.setText("4  " + myLoadout.get(3));
         }
 
         ShapeDrawer.clearCanvas(patternCanvas);
         ShapeDrawer.clearCanvas(gestureCanvas);
 
         List<Point2D.Double> pending = GameStateManager.getInstance().getPendingPatternPoints();
-        String pendingName = GameStateManager.getInstance().getPendingPatternName();
         if (pending != null) {
             ShapeDrawer.drawMove(patternCanvas, pending, Color.GOLD);
-            patternNameLabel.setText(pendingName != null ? pendingName : "");
             GameStateManager.getInstance().clearPendingPattern();
         }
     }
@@ -125,56 +119,60 @@ public class GameController {
 
         boolean isHost = message.playerId.equals(hostId);
 
+        // draw the gesture and show accuracy rating for the local player
         if (isHost && message.result != null
                 && message.result.points != null
                 && !message.result.points.isEmpty()) {
             ShapeDrawer.drawMove(gestureCanvas, message.result.points, Color.AQUA);
-            String rating = message.accuracyRating != null
-                    ? message.accuracyRating
-                    : message.result.getAccuracyRating();
-            accuracyLabel.setText(rating);
-            accuracyLabel.getStyleClass().removeAll("rating-bad", "rating-decent", "rating-good", "rating-amazing");
-            accuracyLabel.getStyleClass().add(switch (rating) {
-                case "AMAZING" -> "rating-amazing";
-                case "GOOD"    -> "rating-good";
-                case "DECENT"  -> "rating-decent";
-                default        -> "rating-bad";
-            });
         }
 
         if (message.status != CastStatus.SUCCESS) {
-            String statusText = switch (message.status) {
-                case FAILED_MANA     -> "Not enough mana";
-                case FAILED_ACCURACY -> "Missed";
-                case FAILED_DEATH    -> "Dead";
-                default              -> "Failed";
-            };
-            animationEngine.showFloatingText(statusText, Color.YELLOW, isHost);
+            if (isHost) {
+                // host miss/fail — centered text, light red
+                String failText = message.status == CastStatus.FAILED_MANA ? "No mana" : "Missed";
+                animationEngine.showCenteredText(failText, Color.web("#FF6B6B"));
+            } else {
+                // enemy miss — small floating text near their wizard
+                String statusText = switch (message.status) {
+                    case FAILED_MANA     -> "No mana";
+                    case FAILED_ACCURACY -> "Missed";
+                    case FAILED_DEATH    -> "Dead";
+                    default              -> "Failed";
+                };
+                animationEngine.showFloatingText(statusText, Color.YELLOW, false);
+            }
             return;
         }
 
+        // on a successful host cast, show the accuracy rating as a centered animation
         if (isHost) {
-            int fixedAttackTime = 800;
-            int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
-            animationEngine.playAttack(true, fixedAttackTime);
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(true, projTime, message.spellId)),
-                    new KeyFrame(Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(false, message.spellId)));
-            timeline.play();
-        } else {
-            int fixedAttackTime = 800;
-            int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
-            animationEngine.playAttack(false, fixedAttackTime);
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.millis(fixedAttackTime), ae -> animationEngine.playProjectile(false, projTime, message.spellId)),
-                    new KeyFrame(Duration.millis(message.castDurationMs), ae -> animationEngine.playEffect(true, message.spellId)));
-            timeline.play();
+            String rating = message.accuracyRating != null
+                    ? message.accuracyRating
+                    : (message.result != null ? message.result.getAccuracyRating() : null);
+            if (rating != null) {
+                Color ratingColor = switch (rating) {
+                    case "AMAZING" -> Color.DEEPSKYBLUE;
+                    case "GOOD"    -> Color.LIMEGREEN;
+                    case "DECENT"  -> Color.YELLOW;
+                    default        -> Color.RED;
+                };
+                animationEngine.showCenteredText(rating, ratingColor);
+            }
         }
+
+        int fixedAttackTime = 800;
+        int projTime = Math.max(50, message.castDurationMs - fixedAttackTime);
+        animationEngine.playAttack(isHost, fixedAttackTime);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.millis(fixedAttackTime),
+                        ae -> animationEngine.playProjectile(isHost, projTime, message.spellId)),
+                new KeyFrame(Duration.millis(message.castDurationMs),
+                        ae -> animationEngine.playEffect(!isHost, message.spellId)));
+        timeline.play();
     }
 
     private void handleShapeDrawn(ShapeMessage message) {
         ShapeDrawer.drawMove(patternCanvas, message.points, Color.GOLD);
-        patternNameLabel.setText(message.shapeName != null ? message.shapeName : "");
     }
 
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
@@ -267,20 +265,4 @@ public class GameController {
             e.printStackTrace();
         }
     }
-
-    private void castSpell(int index) {
-        if (isGameOver) return;
-
-        if (myLoadout != null && myLoadout.size() > index) {
-            String spellId = myLoadout.get(index);
-            PlayerMoveMessage moveMessage = new PlayerMoveMessage(new ArrayList<>(), index);
-            ApiSocketClient.getInstance().send(moveMessage);
-            System.out.println("DEV: Sent fake spell cast for " + spellId);
-        }
-    }
-
-    @FXML private void onSpell1() { castSpell(0); }
-    @FXML private void onSpell2() { castSpell(1); }
-    @FXML private void onSpell3() { castSpell(2); }
-    @FXML private void onSpell4() { castSpell(3); }
 }

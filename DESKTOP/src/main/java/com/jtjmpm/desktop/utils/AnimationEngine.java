@@ -286,6 +286,52 @@ public class AnimationEngine {
     }
 
     // -------------------------------------------------------------------------
+    // centered rating / miss text  –  big, pops in then floats up and fades
+    // -------------------------------------------------------------------------
+
+    public void showCenteredText(String text, Color color) {
+        Label label = new Label(text);
+        label.setFont(Font.font("System", FontWeight.BOLD, 80));
+        label.setTextFill(color);
+        label.setEffect(new DropShadow(12, Color.BLACK));
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setAlignment(javafx.geometry.Pos.CENTER);
+
+        // stretch full width and sit at vertical center so the text is centered
+        AnchorPane.setTopAnchor(label, SCREEN_HEIGHT / 2.0 - 60.0);
+        AnchorPane.setLeftAnchor(label, 0.0);
+        AnchorPane.setRightAnchor(label, 0.0);
+
+        label.setScaleX(0.3);
+        label.setScaleY(0.3);
+
+        mainPane.getChildren().add(label);
+
+        // pop-in scale
+        ScaleTransition popIn = new ScaleTransition(Duration.millis(250), label);
+        popIn.setToX(1.0);
+        popIn.setToY(1.0);
+
+        // float up and fade out after a short hold
+        TranslateTransition floatUp = new TranslateTransition(Duration.millis(1400), label);
+        floatUp.setByY(-120.0);
+        floatUp.setDelay(Duration.millis(600));
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(1400), label);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setDelay(Duration.millis(600));
+
+        popIn.setOnFinished(e -> {
+            ParallelTransition exit = new ParallelTransition(floatUp, fadeOut);
+            exit.setOnFinished(ev -> mainPane.getChildren().remove(label));
+            exit.play();
+        });
+
+        popIn.play();
+    }
+
+    // -------------------------------------------------------------------------
     // floating damage / status text
     // -------------------------------------------------------------------------
 
