@@ -76,6 +76,12 @@ public class AnimationEngine {
 
     public void startIdleTimelines() {
         if (!assets.getIdleFrames().isEmpty()) {
+            // Always stop whatever is currently running before creating new timelines.
+            // Without this, every call leaks the old Timeline which keeps firing forever,
+            // causing multiple animations to compete on the same ImageView simultaneously.
+            if (hostIdleTimeline != null) hostIdleTimeline.stop();
+            if (enemyIdleTimeline != null) enemyIdleTimeline.stop();
+
             hostIdleTimeline = createIdleTimeline(hostWizardImage);
             enemyIdleTimeline = createIdleTimeline(enemyWizardImage);
             hostIdleTimeline.play();
