@@ -1,18 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="16" stylesheets="@global-styles.css" xmlns:fx="http://javafx.com/fxml"
+<VBox alignment="CENTER" spacing="16"
+      stylesheets="@global-styles.css"
+      style="-fx-background-color: #0f0f23;"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.jtjmpm.desktop.controller.LobbyController"
-      prefWidth="360" prefHeight="300">
-    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+      prefWidth="380" prefHeight="320">
 
-    <Label text="Lobby Name:"/>
-    <TextField fx:id="lobbyNameInput" promptText="Enter lobby name"/>
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
 
-    <Button text="Create Lobby" onAction="#onCreateLobby" maxWidth="Infinity" styleClass="action-button"/>
-    <Button text="Join Lobby"   onAction="#onJoinLobby"   maxWidth="Infinity" styleClass="action-button"/>
+    <!-- Title -->
+    <Label text="[ LOBBY ]" styleClass="pixel-title"/>
 
-    <Label fx:id="statusLabel" styleClass="error-text"/>
+    <Region styleClass="pixel-divider" maxWidth="Infinity"/>
+
+    <!-- Field label + input -->
+    <Label text="LOBBY NAME" styleClass="pixel-label"/>
+    <TextField fx:id="lobbyNameInput" promptText="enter lobby name"
+               maxWidth="Infinity" styleClass="pixel-input"/>
+
+    <Region prefHeight="4"/>
+
+    <!-- Actions -->
+    <Button text="[ CREATE LOBBY ]" onAction="#onCreateLobby"
+            maxWidth="Infinity" styleClass="pixel-button"/>
+    <Button text="[ JOIN LOBBY ]"   onAction="#onJoinLobby"
+            maxWidth="Infinity" styleClass="pixel-button-secondary"/>
+
+    <!-- Error / status message -->
+    <Label fx:id="statusLabel" text="" styleClass="pixel-error" maxWidth="Infinity"
+           style="-fx-alignment: center;"/>
+
 </VBox>

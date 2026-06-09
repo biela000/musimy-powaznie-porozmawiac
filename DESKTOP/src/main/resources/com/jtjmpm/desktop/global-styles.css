@@ -1,8 +1,281 @@
-.title-purple {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: purple;
+/* ================================================================
+   PIXEL / TERMINAL DESIGN SYSTEM
+   Mirrors the mobile app aesthetic:
+     background  #0f0f23  (deep navy)
+     text        #f0e68c  (terminal amber / khaki)
+     divider     #2a2a4a
+     font        Courier New (monospace)
+   ================================================================ */
+
+/* ---- root / page backgrounds ---- */
+.pixel-root {
+    -fx-background-color: #0f0f23;
 }
+
+/* ---- typography ---- */
+.pixel-title {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0e68c;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 6, 0, 2, 2);
+}
+
+.pixel-subtitle {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0e68c;
+}
+
+.pixel-label {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f0e68c;
+}
+
+/* status / info — teal */
+.pixel-status {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 13px;
+    -fx-text-fill: #40e0d0;
+    -fx-font-weight: bold;
+}
+
+/* error text — soft red */
+.pixel-error {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 13px;
+    -fx-text-fill: #e05050;
+    -fx-font-weight: bold;
+}
+
+/* ready indicators */
+.pixel-status-ready {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 13px;
+    -fx-text-fill: #2ecc71;
+    -fx-font-weight: bold;
+}
+
+.pixel-status-not-ready {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 13px;
+    -fx-text-fill: #e05050;
+    -fx-font-weight: bold;
+}
+
+/* ---- text input ---- */
+.pixel-input {
+    -fx-background-color: black, #1a1a3a;
+    -fx-background-insets: 0, 3 0 0 3;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #f0e68c;
+    -fx-border-width: 2;
+    -fx-border-insets: 3 0 0 3;
+    -fx-border-radius: 0;
+    -fx-text-fill: #f0e68c;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-prompt-text-fill: #555577;
+    -fx-highlight-fill: #f0e68c;
+    -fx-highlight-text-fill: #0f0f23;
+    -fx-pref-height: 44px;
+}
+
+.pixel-input:focused {
+    -fx-border-color: #ffffff;
+}
+
+/* ---- primary button — gold face (matches mobile "connect") ---- */
+.pixel-button {
+    -fx-background-color: #7a6200, black;
+    -fx-background-insets: 0 5 5 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #f0e68c;
+    -fx-border-width: 2;
+    -fx-border-insets: 2 7 9 2;
+    -fx-border-radius: 0;
+    -fx-text-fill: #f0e68c;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-min-height: 44px;
+}
+
+.pixel-button:hover {
+    -fx-background-color: #9a7e00, black;
+    -fx-background-insets: 0 5 5 0, 0;
+}
+
+.pixel-button:pressed {
+    -fx-background-color: #5a4800, black;
+    -fx-background-insets: 5 0 0 5, 0;
+    -fx-border-insets: 7 2 2 7;
+}
+
+.pixel-button:disabled {
+    -fx-background-color: #3a3000, black;
+    -fx-background-insets: 0 5 5 0, 0;
+    -fx-text-fill: #888855;
+    -fx-border-color: #888855;
+    -fx-cursor: default;
+}
+
+/* ---- secondary button — teal face (matches mobile "scan") ---- */
+.pixel-button-secondary {
+    -fx-background-color: #0d5a5a, black;
+    -fx-background-insets: 0 5 5 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #40e0d0;
+    -fx-border-width: 2;
+    -fx-border-insets: 2 7 9 2;
+    -fx-border-radius: 0;
+    -fx-text-fill: #40e0d0;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-min-height: 44px;
+}
+
+.pixel-button-secondary:hover {
+    -fx-background-color: #0f7070, black;
+    -fx-background-insets: 0 5 5 0, 0;
+}
+
+.pixel-button-secondary:pressed {
+    -fx-background-color: #094040, black;
+    -fx-background-insets: 5 0 0 5, 0;
+    -fx-border-insets: 7 2 2 7;
+}
+
+/* ---- danger button — red face ---- */
+.pixel-button-danger {
+    -fx-background-color: #8b1a1a, black;
+    -fx-background-insets: 0 5 5 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #e05050;
+    -fx-border-width: 2;
+    -fx-border-insets: 2 7 9 2;
+    -fx-border-radius: 0;
+    -fx-text-fill: #e05050;
+    -fx-font-family: "Courier New";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-min-height: 44px;
+}
+
+.pixel-button-danger:hover {
+    -fx-background-color: #b02020, black;
+    -fx-background-insets: 0 5 5 0, 0;
+}
+
+.pixel-button-danger:pressed {
+    -fx-background-color: #6a1010, black;
+    -fx-background-insets: 5 0 0 5, 0;
+    -fx-border-insets: 7 2 2 7;
+}
+
+/* ---- spell selection card (unselected) ---- */
+.pixel-spell-card {
+    -fx-background-color: #1a1a3a, black;
+    -fx-background-insets: 0 4 4 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #2a2a6a;
+    -fx-border-width: 2;
+    -fx-border-insets: 1 5 7 1;
+    -fx-border-radius: 0;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+
+.pixel-spell-card:hover {
+    -fx-background-color: #252550, black;
+    -fx-background-insets: 0 4 4 0, 0;
+    -fx-border-color: #4a4a9a;
+}
+
+/* ---- spell selection card (selected) ---- */
+.pixel-spell-card-selected {
+    -fx-background-color: #0f2a1a, black;
+    -fx-background-insets: 0 4 4 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-border-color: #2ecc71;
+    -fx-border-width: 2;
+    -fx-border-insets: 1 5 7 1;
+    -fx-border-radius: 0;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(46,204,113,0.30), 10, 0, 0, 0);
+}
+
+/* ---- spell card text ---- */
+.pixel-card-title {
+    -fx-font-family: "Courier New";
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #f0e68c;
+}
+
+.pixel-card-type {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 10px;
+    -fx-text-fill: #40e0d0;
+}
+
+.pixel-card-dmg {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e05050;
+}
+
+/* ---- scroll pane wrapper (transparent) ---- */
+.pixel-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: #2a2a4a;
+    -fx-border-width: 1;
+    -fx-border-radius: 0;
+}
+
+.pixel-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.pixel-scroll-pane .scroll-bar {
+    -fx-background-color: #0f0f23;
+}
+
+.pixel-scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #2a2a4a;
+    -fx-background-radius: 0;
+}
+
+.pixel-scroll-pane .scroll-bar .track {
+    -fx-background-color: #1a1a3a;
+    -fx-background-radius: 0;
+}
+
+/* ---- thin horizontal divider ---- */
+.pixel-divider {
+    -fx-background-color: #2a2a4a;
+    -fx-min-height: 2px;
+    -fx-max-height: 2px;
+    -fx-pref-height: 2px;
+}
+
+/* ================================================================
+   GAME VIEW — classes used only in game-view.fxml / player-panel
+   ================================================================ */
 
 .title-white-shadow {
     -fx-font-size: 24px;
@@ -11,81 +284,12 @@
     -fx-effect: dropshadow(gaussian, black, 4, 1.0, 0, 0);
 }
 
-.subtitle {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-}
-
-.info-text {
-    -fx-font-size: 14px;
-}
-
 .info-text-shadow {
     -fx-font-size: 14px;
     -fx-text-fill: #cccccc;
     -fx-effect: dropshadow(gaussian, black, 2, 1.0, 0, 0);
 }
 
-.error-text {
-    -fx-text-fill: red;
-    -fx-font-weight: bold;
-}
-
-.action-button {
-    -fx-font-size: 14px;
-    -fx-padding: 10px 20px;
-}
-
-.spell-button {
-    -fx-font-size: 16px;
-    -fx-padding: 10px 25px;
-}
-
-.transparent-scrollpane {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-}
-
-/* Karty wyboru czarów (Ready View) */
-.spell-card {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #bdc3c7;
-    -fx-border-width: 2px;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
-}
-
-.spell-card-selected {
-    -fx-background-color: #eafaf1;
-    -fx-border-color: #2ecc71;
-    -fx-border-width: 2px;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 10px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(46,204,113,0.4), 8, 0, 0, 0);
-}
-
-.spell-card-title {
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-text-fill: #333333; /* Wymuszenie widocznego, ciemnego koloru */
-}
-
-.spell-card-type {
-    -fx-text-fill: #7f8c8d;
-    -fx-font-size: 10px;
-}
-
-.spell-card-dmg {
-    -fx-text-fill: #e74c3c;
-    -fx-font-weight: bold;
-}
-
-/* Spell slot row at the bottom of the game screen */
 .spell-slot-label {
     -fx-text-fill: white;
     -fx-font-size: 16px;
@@ -96,7 +300,6 @@
     -fx-padding: 6px 14px;
 }
 
-/* Canvas wrapper */
 .canvas-container {
     -fx-background-color: rgba(0,0,0,0.45);
     -fx-background-radius: 8px;
@@ -105,7 +308,6 @@
     -fx-border-width: 1px;
 }
 
-/* "DRAW THIS" heading above the canvases */
 .panel-title {
     -fx-text-fill: white;
     -fx-font-size: 18px;
@@ -113,10 +315,30 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 4, 0, 0, 1);
 }
 
+.action-button {
+    -fx-font-size: 13px;
+    -fx-padding: 6px 14px;
+    -fx-background-color: rgba(0,0,0,0.55);
+    -fx-text-fill: #cccccc;
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: rgba(0,0,0,0.75);
+    -fx-text-fill: white;
+}
+
 .game-over-label {
-    -fx-text-fill: red;
+    -fx-text-fill: #f0e68c;
+    -fx-font-family: "Courier New";
     -fx-font-size: 72px;
     -fx-font-weight: bold;
     -fx-text-alignment: center;
     -fx-alignment: center;
+    -fx-background-color: rgba(0,0,0,0.75);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.9), 8, 0, 0, 0);
 }

@@ -81,22 +81,21 @@ public class ReadyController {
         List<SpellDTO> spells = spellsMsg.spells;
         spellsContainer.getChildren().clear();
 
-
         for (SpellDTO spell : spells) {
             VBox card = new VBox(5);
-            card.setPrefWidth(140);
+            card.setPrefWidth(148);
             card.setPrefHeight(100);
-            card.getStyleClass().add("spell-card");
+            card.getStyleClass().add("pixel-spell-card");
 
             Label nameLabel = new Label(spell.name());
-            nameLabel.getStyleClass().add("spell-card-title");
+            nameLabel.getStyleClass().add("pixel-card-title");
 
             String typeStr = spell.type() != null ? spell.type().toString() : "UNKNOWN";
             Label typeLabel = new Label(typeStr);
-            typeLabel.getStyleClass().add("spell-card-type");
+            typeLabel.getStyleClass().add("pixel-card-type");
 
             Label dmgLabel = new Label("DMG: " + spell.displayPower());
-            dmgLabel.getStyleClass().add("spell-card-dmg");
+            dmgLabel.getStyleClass().add("pixel-card-dmg");
 
             card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);
 
@@ -105,15 +104,15 @@ public class ReadyController {
 
                 if (myLoadout.contains(spellId)) {
                     myLoadout.remove(spellId);
-                    card.getStyleClass().remove("spell-card-selected");
-                    if (!card.getStyleClass().contains("spell-card")) {
-                        card.getStyleClass().add("spell-card");
+                    card.getStyleClass().remove("pixel-spell-card-selected");
+                    if (!card.getStyleClass().contains("pixel-spell-card")) {
+                        card.getStyleClass().add("pixel-spell-card");
                     }
                 } else if (myLoadout.size() < 4) {
                     myLoadout.add(spellId);
-                    card.getStyleClass().remove("spell-card");
-                    if (!card.getStyleClass().contains("spell-card-selected")) {
-                        card.getStyleClass().add("spell-card-selected");
+                    card.getStyleClass().remove("pixel-spell-card");
+                    if (!card.getStyleClass().contains("pixel-spell-card-selected")) {
+                        card.getStyleClass().add("pixel-spell-card-selected");
                     }
                 }
 
@@ -151,18 +150,23 @@ public class ReadyController {
             isEnemyReady = enemy.ready();
         }
 
-        hostStatusLabel.setText("Host: " + playerStatusText.get(isHostReady));
-        enemyStatusLabel.setText("Enemy: " + playerStatusText.get(isEnemyReady));
+        hostStatusLabel.setText("HOST   :  " + (isHostReady ? "READY" : "NOT READY"));
+        hostStatusLabel.getStyleClass().removeAll("pixel-status-ready", "pixel-status-not-ready");
+        hostStatusLabel.getStyleClass().add(isHostReady ? "pixel-status-ready" : "pixel-status-not-ready");
+
+        enemyStatusLabel.setText("ENEMY  :  " + (isEnemyReady ? "READY" : "NOT READY"));
+        enemyStatusLabel.getStyleClass().removeAll("pixel-status-ready", "pixel-status-not-ready");
+        enemyStatusLabel.getStyleClass().add(isEnemyReady ? "pixel-status-ready" : "pixel-status-not-ready");
 
         if (isHostReady && isEnemyReady) {
-            startingSoonLabel.setText("STARTING SOON...");
+            startingSoonLabel.setText(">> STARTING SOON...");
         } else {
             startingSoonLabel.setText("");
         }
     }
 
     public void setLobbyName(String name) {
-        lobbyLabel.setText("Lobby: " + name);
+        lobbyLabel.setText("[ " + name.toUpperCase() + " ]");
     }
 
     @FXML
