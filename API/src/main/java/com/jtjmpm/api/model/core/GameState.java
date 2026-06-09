@@ -17,7 +17,7 @@ public class GameState {
     private final Map<String, Player> players = new ConcurrentHashMap<>();
 
 
-    private MatchStatus status = MatchStatus.LOBBY;
+    private volatile MatchStatus status = MatchStatus.LOBBY;
 
     private final String name;
 
@@ -91,12 +91,12 @@ public class GameState {
                 .orElse(null);
     }
 
-    public MatchStatus getStatus() {
+    public synchronized MatchStatus getStatus() {
         return status;
     }
 
     // SETTER
-    public void setStatus(MatchStatus status) {
+    public synchronized void setStatus(MatchStatus status) {
         this.status = status;
     }
 

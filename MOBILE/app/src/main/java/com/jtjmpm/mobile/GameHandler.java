@@ -9,13 +9,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class GameHandler {
-    private static GameHandler instance;
+    private static volatile GameHandler instance;
     private WebSocketClient client;
     private GameHandler() {}
 
     public static GameHandler getInstance() {
         if (instance == null) {
-            instance = new GameHandler();
+            synchronized (GameHandler.class) {
+                if (instance == null) {
+                    instance = new GameHandler();
+                }
+            }
         }
         return instance;
     }

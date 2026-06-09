@@ -20,7 +20,7 @@ import com.jtjmpm.desktop.model.GameStateManager;
 public class ApiSocketClient {
     private static final int RECONNECT_DELAY_SECONDS = 5;
 
-    private static ApiSocketClient instance;
+    private static volatile ApiSocketClient instance;
 
     private final Gson gson = new Gson();
     private WebSocketClient client;
@@ -40,7 +40,11 @@ public class ApiSocketClient {
 
     public static ApiSocketClient getInstance() {
         if (instance == null) {
-            instance = new ApiSocketClient();
+            synchronized (ApiSocketClient.class) {
+                if (instance == null) {
+                    instance = new ApiSocketClient();
+                }
+            }
         }
         return instance;
     }

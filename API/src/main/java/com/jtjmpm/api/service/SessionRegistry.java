@@ -25,7 +25,11 @@ public class SessionRegistry {
     public void sendToSession(String sessionId, String json) {
         WebSocket ws = sessions.get(sessionId);
         if (ws != null && ws.isOpen()) {
-            ws.send(json);
+            try {
+                ws.send(json);
+            } catch (Exception e) {
+                sessions.remove(sessionId, ws);
+            }
         }
     }
 

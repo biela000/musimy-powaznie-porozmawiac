@@ -3,17 +3,21 @@ package com.jtjmpm.desktop.model;
 import java.util.List;
 
 public class GameStateManager {
-    private static GameStateManager instance;
+    private static volatile GameStateManager instance;
 
-    private String hostId;
-    private String enemyId;
-    private List<String> currentLoadout;
+    private volatile String hostId;
+    private volatile String enemyId;
+    private volatile List<String> currentLoadout;
 
     private GameStateManager() {}
 
     public static GameStateManager getInstance() {
         if (instance == null) {
-            instance = new GameStateManager();
+            synchronized (GameStateManager.class) {
+                if (instance == null) {
+                    instance = new GameStateManager();
+                }
+            }
         }
         return instance;
     }

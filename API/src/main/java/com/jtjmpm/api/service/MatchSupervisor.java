@@ -10,6 +10,8 @@ import com.jtjmpm.api.model.spell.SpellCastResult;
 import com.jtjmpm.messages.*;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PreDestroy;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,11 @@ public class MatchSupervisor {
         this.registry = registry;
         this.gson = gson;
         this.combatEngine = combatEngine;
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        scheduler.shutdownNow();
     }
 
     // This could be in GameController, but its probably a bit cleaner here

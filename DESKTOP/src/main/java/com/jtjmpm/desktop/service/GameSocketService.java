@@ -11,9 +11,9 @@ import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
 
 public class GameSocketService extends WebSocketServer {
-    private WebSocket connectedClient = null;
+    private volatile WebSocket connectedClient = null;
     private final Gson gson = new Gson();
-    private static GameSocketService instance;
+    private static volatile GameSocketService instance;
     private static int port = 8080;
 
     private Runnable onClientConnected;
@@ -25,7 +25,11 @@ public class GameSocketService extends WebSocketServer {
 
     public static GameSocketService getInstance() {
         if (instance == null) {
-            instance = new GameSocketService();
+            synchronized (GameSocketService.class) {
+                if (instance == null) {
+                    instance = new GameSocketService();
+                }
+            }
         }
         return instance;
     }
@@ -35,7 +39,7 @@ public class GameSocketService extends WebSocketServer {
     }
 
     @Override
-    public void onOpen(WebSocket conn, ClientHandshake handshake) {
+    public synchronized void onOpen(WebSocket conn, ClientHandshake handshake) {
         if (connectedClient != null) {
             conn.close(4001, "Server already has a client.");
             System.out.println("Rejected extra connection from: " + conn.getRemoteSocketAddress());
@@ -49,7 +53,7 @@ public class GameSocketService extends WebSocketServer {
     }
 
     @Override
-    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+    public synchronized void onClose(WebSocket conn, int code, String reason, boolean remote) {
         if (conn == connectedClient) {
             connectedClient = null;
             System.out.println("Client disconnected: " + reason);

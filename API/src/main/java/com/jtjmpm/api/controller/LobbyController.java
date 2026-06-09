@@ -13,6 +13,7 @@ import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;
 
 import com.jtjmpm.MessageType;
+import jakarta.annotation.PreDestroy;
 
 import java.util.Collections;
 import java.util.List;
@@ -114,6 +115,11 @@ public class LobbyController implements MessageController {
 
     private void handleLeave(WebSocket conn, String rawJson) {
         System.out.println("Player with session ID: " + SocketUtils.getSessionId(conn) + " is leaving his lobby");
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        scheduler.shutdownNow();
     }
 
     private void handleToggleReady(WebSocket conn, String rawJson) {

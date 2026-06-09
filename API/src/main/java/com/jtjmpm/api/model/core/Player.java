@@ -76,10 +76,10 @@ public class Player {
     }
 
     public synchronized List<StatusEffect> getActiveEffects() {
-        return activeEffects;
+        return Collections.unmodifiableList(new ArrayList<>(activeEffects));
     }
 
-    public void processEffects(GameState gameState, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
+    public synchronized void processEffects(GameState gameState, CombatEngine combatEngine, List<CombatEventMessage> outEvents) {
         for (StatusEffect effect : activeEffects) {
             effect.onTick(gameState, this.getId(), combatEngine, outEvents);
 

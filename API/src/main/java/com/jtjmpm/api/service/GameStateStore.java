@@ -19,8 +19,7 @@ public class GameStateStore {
     public boolean createLobby(String lobbyName, String sessionId){
         GameState newState = new GameState(lobbyName, sessionId);
 
-        if (lobbies.containsKey(lobbyName)) return false;
-        lobbies.put(lobbyName, newState);
+        if (lobbies.putIfAbsent(lobbyName, newState) != null) return false;
         sessionToLobby.put(sessionId, lobbyName);
         return true;
     }
