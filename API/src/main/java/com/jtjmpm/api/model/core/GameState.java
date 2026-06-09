@@ -62,6 +62,12 @@ public class GameState {
         return new ArrayList<>(players.values());
     }
 
+    public synchronized void resetAllPlayersReady() {
+        for (Player player : players.values()) {
+            player.setReady(false);
+        }
+    }
+
     public synchronized boolean isReady() {
         if (players.size() < LOBBY_SIZE) {
             return false;

@@ -60,6 +60,10 @@ public class ReadyController {
                 });
                 break;
             case MessageType.GAME_START:
+                StartGameMessage startMsg = gson.fromJson(message, StartGameMessage.class);
+                if (startMsg.initialPattern != null) {
+                    GameStateManager.getInstance().setPendingPattern(startMsg.initialPattern, startMsg.initialPatternName);
+                }
                 Platform.runLater(this::navigateToGame);
                 break;
             case MessageType.AVAILABLE_SPELLS:

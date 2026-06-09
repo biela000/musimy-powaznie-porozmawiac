@@ -113,7 +113,6 @@ public class MatchSupervisor {
                         if (gameState.isReady() && gameState.getStatus() == MatchStatus.LOBBY) {
                             gameState.setStatus(MatchStatus.IN_PROGRESS);
 
-                            registry.broadcast(playerIds, gson.toJson(new StartGameMessage()));
                             System.out.println("Game Started");
 
                             List<PatternGenerator.NamedShape> pool = PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, 64);
@@ -122,7 +121,7 @@ public class MatchSupervisor {
                                 PatternGenerator.NamedShape shape = pool.get(i % pool.size());
                                 players.get(i).setCurrentPattern(shape.points(), shape.name());
                                 registry.sendToSession(players.get(i).getId(),
-                                        gson.toJson(new ShapeMessage(shape.points(), shape.name())));
+                                        gson.toJson(new StartGameMessage(shape.points(), shape.name())));
                             }
                         } else {
                             System.out.println("Game start interrupted");

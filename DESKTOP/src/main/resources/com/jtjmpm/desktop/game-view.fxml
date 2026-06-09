@@ -3,7 +3,6 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -20,19 +19,23 @@
             prefHeight="768.0" prefWidth="1366.0"
             style="-fx-background-image: url('/com/jtjmpm/desktop/NightForest/Image.png'); -fx-background-size: cover; -fx-background-position: center bottom;">
 
+    <!-- Title -->
     <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <Label text="Arena - 1vs1 Battle" styleClass="title-white-shadow"/>
         <Label fx:id="lobbyInfoLabel" text="Lobby: --- | Waiting for opponent" styleClass="info-text-shadow"/>
     </VBox>
 
-    <VBox alignment="TOP_CENTER" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0">
+    <!-- Host HP/Mana panel (top-left) -->
+    <VBox alignment="TOP_LEFT" AnchorPane.topAnchor="100.0" AnchorPane.leftAnchor="20.0">
         <fx:include fx:id="hostPanel" source="player-panel.fxml" />
     </VBox>
 
-    <VBox alignment="TOP_CENTER" AnchorPane.topAnchor="100.0" AnchorPane.rightAnchor="20.0">
+    <!-- Enemy HP/Mana panel (top-right) -->
+    <VBox alignment="TOP_RIGHT" AnchorPane.topAnchor="100.0" AnchorPane.rightAnchor="20.0">
         <fx:include fx:id="enemyPanel" source="player-panel.fxml" />
     </VBox>
 
+    <!-- Wizard images -->
     <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="100.0">
         <ImageView fx:id="hostWizardImage" fitWidth="550" fitHeight="550" preserveRatio="true" />
         <ImageView fx:id="hostEffectImage" fitWidth="220" fitHeight="220" preserveRatio="true" />
@@ -43,6 +46,27 @@
         <ImageView fx:id="enemyEffectImage" fitWidth="220" fitHeight="220" preserveRatio="true" />
     </StackPane>
 
+    <!-- Centered combat panel (pattern + gesture) -->
+    <VBox alignment="CENTER" spacing="10.0"
+          AnchorPane.topAnchor="100.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0">
+        <Label text="DRAW THIS" styleClass="panel-title"/>
+        <Label fx:id="patternNameLabel" text="" styleClass="stat-label"/>
+        <HBox alignment="CENTER" spacing="50.0">
+            <VBox alignment="CENTER" spacing="4.0" styleClass="canvas-container">
+                <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+                <Canvas fx:id="patternCanvas" width="240.0" height="240.0"/>
+            </VBox>
+            <VBox alignment="CENTER" spacing="4.0" styleClass="canvas-container">
+                <padding><Insets top="10" bottom="10" left="10" right="10"/></padding>
+                <Canvas fx:id="gestureCanvas" width="240.0" height="240.0"/>
+            </VBox>
+        </HBox>
+        <Label fx:id="accuracyLabel" text="---" styleClass="accuracy-label"/>
+    </VBox>
+
+    <!-- Spell buttons -->
     <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <HBox alignment="CENTER" spacing="20.0">
             <Button fx:id="spell1Button" text="Spell 1" onAction="#onSpell1" styleClass="spell-button"/>

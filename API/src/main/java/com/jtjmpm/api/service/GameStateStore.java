@@ -36,18 +36,26 @@ public class GameStateStore {
         return false;
     }
 
-    public void removeSession(String sessionId) {
+    /**
+     * Removes the session from its lobby. If the lobby still has players, resets all their
+     * ready states and returns the lobby GameState so the caller can broadcast the update.
+     * Returns null if the lobby is now empty or the session wasn't in one.
+     */
+    public GameState removeSession(String sessionId) {
         String lobbyId = sessionToLobby.remove(sessionId);
+        if (lobbyId == null) return null;
 
-        if (lobbyId != null) {
-            GameState state = lobbies.get(lobbyId);
-            if (state != null) {
-                state.removePlayer(sessionId);
+        GameState state = lobbies.get(lobbyId);
+        if (state == null) return null;
 
-                if (state != null && state.getPlayers().isEmpty()) {
-                    lobbies.remove(lobbyId);
-                }
+        synchronized (state) {
+            state.removePlayer(sessionId);
+            if (state.getPlayers().isEmpty()) {
+                lobbies.remove(lobbyId);
+                return null;
             }
+            state.resetAllPlayersReady();
+            return state;
         }
     }
 

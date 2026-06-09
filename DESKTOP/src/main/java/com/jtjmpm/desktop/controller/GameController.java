@@ -3,6 +3,7 @@ package com.jtjmpm.desktop.controller;
 import com.google.gson.Gson;
 import com.jtjmpm.desktop.utils.AnimationEngine;
 import com.jtjmpm.desktop.utils.GameStateUtils;
+import com.jtjmpm.desktop.utils.ShapeDrawer;
 import com.jtjmpm.desktop.utils.ViewLoader;
 import com.jtjmpm.messages.*;
 import com.jtjmpm.*;
@@ -12,6 +13,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -22,6 +24,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -46,6 +49,11 @@ public class GameController {
     @FXML private Button spell3Button;
     @FXML private Button spell4Button;
 
+    @FXML private Canvas patternCanvas;
+    @FXML private Canvas gestureCanvas;
+    @FXML private Label patternNameLabel;
+    @FXML private Label accuracyLabel;
+
     private final Gson gson = new Gson();
 
     private GameStateDTO gameState;
@@ -55,13 +63,13 @@ public class GameController {
 
     private double hostHp = -1.0;
     private double enemyHp = -1.0;
-    
+
     private boolean isGameOver = false;
 
     @FXML
     public void initialize() {
         ApiSocketClient.getInstance().setOnMessageCallback(this::handleApiMessage);
-        
+
         enemyWizardImage.setScaleX(-1.0);
 
         animationEngine = new AnimationEngine(mainPane, hostWizardImage, hostEffectImage,
@@ -75,39 +83,41 @@ public class GameController {
             spell3Button.setText(myLoadout.get(2));
             spell4Button.setText(myLoadout.get(3));
         }
-    }
 
+        ShapeDrawer.clearCanvas(patternCanvas);
+        ShapeDrawer.clearCanvas(gestureCanvas);
+
+        List<Point2D.Double> pending = GameStateManager.getInstance().getPendingPatternPoints();
+        String pendingName = GameStateManager.getInstance().getPendingPatternName();
+        if (pending != null) {
+            ShapeDrawer.drawMove(patternCanvas, pending, Color.GOLD);
+            patternNameLabel.setText(pendingName != null ? pendingName : "");
+            GameStateManager.getInstance().clearPendingPattern();
+        }
+    }
 
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
 
         switch (base.type) {
             case MessageType.MOVE_RESULT:
-                Platform.runLater(() -> {
-                    handleMoveResult(gson.fromJson(message, MoveResultMessage.class));
-                });
+                Platform.runLater(() -> handleMoveResult(gson.fromJson(message, MoveResultMessage.class)));
                 break;
             case MessageType.GAME_STATE_UPDATE:
-                Platform.runLater(() -> {
-                    handleGameStateUpdate(gson.fromJson(message, GameStateUpdateMessage.class));
-                });
+                Platform.runLater(() -> handleGameStateUpdate(gson.fromJson(message, GameStateUpdateMessage.class)));
                 break;
             case MessageType.GAME_OVER:
-                Platform.runLater(() -> {
-                    handleGameOver(gson.fromJson(message, GameOverMessage.class));
-                });
+                Platform.runLater(() -> handleGameOver(gson.fromJson(message, GameOverMessage.class)));
                 break;
             case MessageType.SHAPE_DRAWN:
-                Platform.runLater(() -> {
-                    handleShapeDrawn(gson.fromJson(message, ShapeMessage.class));
-                });
+                Platform.runLater(() -> handleShapeDrawn(gson.fromJson(message, ShapeMessage.class)));
                 break;
             default:
                 System.out.println("Unknown message type: " + base.type);
         }
     }
 
-    private void handleMoveResult(MoveResultMessage message){
+    private void handleMoveResult(MoveResultMessage message) {
         String hostId = GameStateManager.getInstance().getHostId();
         if (hostId == null) {
             System.err.println("Local player id is not set");
@@ -115,19 +125,30 @@ public class GameController {
         }
 
         boolean isHost = message.playerId.equals(hostId);
-        
-        if (isHost) {
-            hostPanelController.moveUpdate(message.result, message.accuracyRating);
-        } else {
-            enemyPanelController.moveUpdate(message.result, null);
+
+        if (isHost && message.result != null
+                && message.result.points != null
+                && !message.result.points.isEmpty()) {
+            ShapeDrawer.drawMove(gestureCanvas, message.result.points, Color.AQUA);
+            String rating = message.accuracyRating != null
+                    ? message.accuracyRating
+                    : message.result.getAccuracyRating();
+            accuracyLabel.setText(rating);
+            accuracyLabel.getStyleClass().removeAll("rating-bad", "rating-decent", "rating-good", "rating-amazing");
+            accuracyLabel.getStyleClass().add(switch (rating) {
+                case "AMAZING" -> "rating-amazing";
+                case "GOOD"    -> "rating-good";
+                case "DECENT"  -> "rating-decent";
+                default        -> "rating-bad";
+            });
         }
 
         if (message.status != CastStatus.SUCCESS) {
             String statusText = switch (message.status) {
-                case FAILED_MANA -> "Not enough mana";
+                case FAILED_MANA     -> "Not enough mana";
                 case FAILED_ACCURACY -> "Missed";
-                case FAILED_DEATH -> "Dead";
-                default -> "Failed";
+                case FAILED_DEATH    -> "Dead";
+                default              -> "Failed";
             };
             animationEngine.showFloatingText(statusText, Color.YELLOW, isHost);
             return;
@@ -152,6 +173,11 @@ public class GameController {
         }
     }
 
+    private void handleShapeDrawn(ShapeMessage message) {
+        ShapeDrawer.drawMove(patternCanvas, message.points, Color.GOLD);
+        patternNameLabel.setText(message.shapeName != null ? message.shapeName : "");
+    }
+
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
         gameState = message.gameState;
 
@@ -159,7 +185,7 @@ public class GameController {
 
         PlayerDTO hostPlayer = gameState.players().get(hostId);
         PlayerDTO enemyPlayer = Objects.requireNonNull(GameStateUtils.getEnemy(gameState.players().values(), hostId));
-        
+
         if (hostHp < 0) hostHp = hostPlayer.maxHp();
         if (enemyHp < 0) enemyHp = enemyPlayer.maxHp();
 
@@ -184,34 +210,30 @@ public class GameController {
             for (CombatEventMessage event : message.events) {
                 boolean onHost = event.targetId.equals(hostId);
                 Color color = Color.YELLOW;
-                String text = "";
-                
+                String text;
+
                 if (event.combatType == CombatEventType.HIT) {
                     color = Color.RED;
-                    text = "-" + (int)event.value;
+                    text = "-" + (int) event.value;
                 } else if (event.combatType == CombatEventType.HEAL) {
                     color = Color.LIMEGREEN;
-                    text = "+" + (int)event.value;
+                    text = "+" + (int) event.value;
                 } else {
                     text = switch (event.combatType) {
-                        case BLOCKED -> "Blocked";
+                        case BLOCKED        -> "Blocked";
                         case STATUS_APPLIED -> "Status applied";
-                        default -> event.combatType.name();
+                        default             -> event.combatType.name();
                     };
                 }
-                
+
                 animationEngine.showFloatingText(text, color, onHost);
             }
         }
     }
 
-    private void handleShapeDrawn(ShapeMessage message) {
-        hostPanelController.patternUpdate(message.points, message.shapeName);
-    }
-
     private void handleGameOver(GameOverMessage message) {
         isGameOver = true;
-        
+
         String hostId = GameStateManager.getInstance().getHostId();
         String text;
         if (message.reason == GameOverReason.DRAW) {
@@ -221,15 +243,15 @@ public class GameController {
         } else {
             text = "GAME OVER\nYOU LOST!";
         }
-        
+
         Label gameOverLabel = new Label(text);
         gameOverLabel.getStyleClass().add("game-over-label");
-        
+
         AnchorPane.setTopAnchor(gameOverLabel, 0.0);
         AnchorPane.setBottomAnchor(gameOverLabel, 0.0);
         AnchorPane.setLeftAnchor(gameOverLabel, 0.0);
         AnchorPane.setRightAnchor(gameOverLabel, 0.0);
-        
+
         mainPane.getChildren().add(gameOverLabel);
     }
 
@@ -249,7 +271,7 @@ public class GameController {
 
     private void castSpell(int index) {
         if (isGameOver) return;
-        
+
         if (myLoadout != null && myLoadout.size() > index) {
             String spellId = myLoadout.get(index);
             PlayerMoveMessage moveMessage = new PlayerMoveMessage(new ArrayList<>(), index);
@@ -258,15 +280,8 @@ public class GameController {
         }
     }
 
-    @FXML
-    private void onSpell1() { castSpell(0); }
-
-    @FXML
-    private void onSpell2() { castSpell(1); }
-
-    @FXML
-    private void onSpell3() { castSpell(2); }
-
-    @FXML
-    private void onSpell4() { castSpell(3); }
+    @FXML private void onSpell1() { castSpell(0); }
+    @FXML private void onSpell2() { castSpell(1); }
+    @FXML private void onSpell3() { castSpell(2); }
+    @FXML private void onSpell4() { castSpell(3); }
 }

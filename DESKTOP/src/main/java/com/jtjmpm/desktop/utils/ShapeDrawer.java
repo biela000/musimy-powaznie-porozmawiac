@@ -50,12 +50,12 @@ public class ShapeDrawer {
 
         gc.beginPath();
         double firstX = (points.getFirst().getX() - minX) * scale + offsetX;
-        double firstY = (points.getFirst().getY() - minY) * scale + offsetY;
+        double firstY = (maxY - points.getFirst().getY()) * scale + offsetY;
         gc.moveTo(firstX, firstY);
 
         for (int i = 1; i < points.size(); i++) {
             double x = (points.get(i).getX() - minX) * scale + offsetX;
-            double y = (points.get(i).getY() - minY) * scale + offsetY;
+            double y = (maxY - points.get(i).getY()) * scale + offsetY;
             gc.lineTo(x, y);
         }
 

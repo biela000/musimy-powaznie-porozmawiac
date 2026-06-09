@@ -13,6 +13,7 @@ import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;
 
 import com.jtjmpm.MessageType;
+import com.jtjmpm.api.model.core.GameState;
 import jakarta.annotation.PreDestroy;
 
 import java.util.Collections;
@@ -114,7 +115,14 @@ public class LobbyController implements MessageController {
     }
 
     private void handleLeave(WebSocket conn, String rawJson) {
-        System.out.println("Player with session ID: " + SocketUtils.getSessionId(conn) + " is leaving his lobby");
+        String sessionId = SocketUtils.getSessionId(conn);
+        System.out.println("Player with session ID: " + sessionId + " is leaving his lobby");
+
+        GameState remaining = store.removeSession(sessionId);
+        if (remaining != null) {
+            List<String> playerIds = remaining.getPlayers().stream().map(Player::getId).toList();
+            registry.broadcast(playerIds, gson.toJson(new GameStateUpdateMessage(remaining.toDTO(), Collections.emptyList())));
+        }
     }
 
     @PreDestroy
@@ -134,6 +142,11 @@ public class LobbyController implements MessageController {
 
             Player player = lobby.getPlayer(sessionId);
             if (player == null) return;
+
+            if (lobby.getPlayers().size() < GameState.LOBBY_SIZE) {
+                System.err.println("Ready toggle rejected, lobby not full for session: " + sessionId);
+                return;
+            }
 
             List<String> spells = readyMsg.selectedSpells;
 

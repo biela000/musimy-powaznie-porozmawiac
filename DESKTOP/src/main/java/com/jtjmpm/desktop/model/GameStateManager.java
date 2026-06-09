@@ -1,5 +1,6 @@
 package com.jtjmpm.desktop.model;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 
 public class GameStateManager {
@@ -8,6 +9,8 @@ public class GameStateManager {
     private volatile String hostId;
     private volatile String enemyId;
     private volatile List<String> currentLoadout;
+    private volatile List<Point2D.Double> pendingPatternPoints;
+    private volatile String pendingPatternName;
 
     private GameStateManager() {}
 
@@ -44,5 +47,23 @@ public class GameStateManager {
 
     public void setCurrentLoadout(List<String> currentLoadout) {
         this.currentLoadout = currentLoadout;
+    }
+
+    public List<Point2D.Double> getPendingPatternPoints() {
+        return pendingPatternPoints;
+    }
+
+    public String getPendingPatternName() {
+        return pendingPatternName;
+    }
+
+    public void setPendingPattern(List<Point2D.Double> points, String name) {
+        this.pendingPatternPoints = points;
+        this.pendingPatternName = name;
+    }
+
+    public void clearPendingPattern() {
+        this.pendingPatternPoints = null;
+        this.pendingPatternName = null;
     }
 }

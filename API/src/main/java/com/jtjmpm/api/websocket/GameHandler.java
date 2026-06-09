@@ -2,9 +2,12 @@ package com.jtjmpm.api.websocket;
 
 import com.google.gson.Gson;
 import com.jtjmpm.api.controller.MessageDispatcher;
+import com.jtjmpm.api.model.core.GameState;
+import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.service.GameStateStore;
 import com.jtjmpm.api.service.SessionRegistry;
 import com.jtjmpm.api.utils.SocketUtils;
+import com.jtjmpm.messages.GameStateUpdateMessage;
 import com.jtjmpm.messages.WelcomeMessage;
 import com.jtjmpm.messages.WsMessage;
 import org.java_websocket.WebSocket;
@@ -12,6 +15,8 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
+import java.util.Collections;
+import java.util.List;
 
 public class GameHandler extends WebSocketServer {
     private final SessionRegistry registry;
@@ -45,8 +50,7 @@ public class GameHandler extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         String sessionId = SocketUtils.getSessionId(conn);
         registry.unregister(sessionId);
-        store.removeSession(sessionId);
-
+        broadcastLobbyUpdateAfterLeave(store.removeSession(sessionId));
         System.out.println("Connection closed, session ID: " + sessionId);
     }
 
@@ -55,9 +59,15 @@ public class GameHandler extends WebSocketServer {
         if (conn != null) {
             String sessionId = SocketUtils.getSessionId(conn);
             registry.unregister(sessionId);
-            store.removeSession(sessionId);
+            broadcastLobbyUpdateAfterLeave(store.removeSession(sessionId));
             System.err.println("Connection failed, session ID: " + sessionId + " " + ex.getMessage());
         }
+    }
+
+    private void broadcastLobbyUpdateAfterLeave(GameState remaining) {
+        if (remaining == null) return;
+        List<String> ids = remaining.getPlayers().stream().map(Player::getId).toList();
+        registry.broadcast(ids, gson.toJson(new GameStateUpdateMessage(remaining.toDTO(), Collections.emptyList())));
     }
 
     @Override

@@ -2,32 +2,19 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.geometry.Insets?>
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10.0" stylesheets="@player-panel.css" fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
-    <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="250.0" styleClass="hp-bar"/>
-    <Label fx:id="hpLabel" text="HP: 100/100" styleClass="stat-label"/>
 
-    <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="250.0" styleClass="mana-bar"/>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="6.0"
+      stylesheets="@player-panel.css"
+      fx:controller="com.jtjmpm.desktop.controller.PlayerPanelController">
+
+    <padding><Insets top="8" bottom="8" left="8" right="8"/></padding>
+
+    <ProgressBar fx:id="hpBar" progress="1.0" prefWidth="200.0" styleClass="hp-bar"/>
+    <Label fx:id="hpLabel" text="HP: 200/200" styleClass="stat-label"/>
+
+    <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="200.0" styleClass="mana-bar"/>
     <Label fx:id="manaLabel" text="Mana: 100/100" styleClass="stat-label"/>
 
-    <Label text="DRAW THIS" styleClass="panel-title"/>
-    <Label fx:id="patternNameLabel" text="" styleClass="stat-label"/>
-    <VBox maxWidth="250.0" maxHeight="250.0" styleClass="canvas-container">
-        <padding>
-            <Insets top="5" bottom="5" left="5" right="5"/>
-        </padding>
-        <Canvas fx:id="patternCanvas" width="150.0" height="150.0" />
-    </VBox>
-
-    <Label text="LAST GESTURE" styleClass="panel-title"/>
-    <VBox maxWidth="250.0" maxHeight="250.0" styleClass="canvas-container">
-        <padding>
-            <Insets top="5" bottom="5" left="5" right="5"/>
-        </padding>
-        <Canvas fx:id="gestureCanvas" width="150.0" height="150.0" />
-    </VBox>
-
-    <Label fx:id="accuracyLabel" text="---" styleClass="accuracy-label"/>
 </VBox>
