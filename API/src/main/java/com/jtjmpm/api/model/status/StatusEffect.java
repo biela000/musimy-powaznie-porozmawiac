@@ -13,6 +13,7 @@ public interface StatusEffect {
         return rawDamage;
     }
 
+    default void onSuccessfulSpellCast() {}
     //TODO change these two
     default void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine) {}
 
@@ -30,6 +31,10 @@ public interface StatusEffect {
 
     default int getRemainingDuration() {
         return -1;
+    }
+
+    default double modifyOutgoingDamage(double rawDamage) {
+        return rawDamage;
     }
     // if we want effects to do other things like modify output damage or input damage etc. we can delcare methods for that here
 

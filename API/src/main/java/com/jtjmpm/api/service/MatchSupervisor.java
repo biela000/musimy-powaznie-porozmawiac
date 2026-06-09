@@ -81,7 +81,7 @@ public class MatchSupervisor {
                         spell.castDurationMs(), CastStatus.FAILED_ACCURACY)));
                 return;
             }
-
+            caster.triggerSuccessfulCastHook();
             SpellCastResult result = spell.effect().cast(gameState, casterId, targetId, accuracy, combatEngine);
 
             MoveResultMessage successMsg = new MoveResultMessage(moveResult, casterId, spell.name(),
