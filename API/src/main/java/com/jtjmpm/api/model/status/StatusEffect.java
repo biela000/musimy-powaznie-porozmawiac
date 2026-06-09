@@ -31,6 +31,10 @@ public interface StatusEffect {
     default int getRemainingDuration() {
         return -1;
     }
+
+    default double modifyOutgoingDamage(double rawDamage) {
+        return rawDamage;
+    }
     // if we want effects to do other things like modify output damage or input damage etc. we can delcare methods for that here
 
     String getName();
