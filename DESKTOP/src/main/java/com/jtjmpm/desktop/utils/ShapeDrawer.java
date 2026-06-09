@@ -58,8 +58,15 @@ public class ShapeDrawer {
             double y = (maxY - points.get(i).getY()) * scale + offsetY;
             gc.lineTo(x, y);
         }
-
         gc.stroke();
+
+        // Draw a bright dot on the starting point so the user can see where to begin.
+        final double DOT_RADIUS = 7.0;
+        gc.setFill(Color.LIMEGREEN);
+        gc.fillOval(firstX - DOT_RADIUS, firstY - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2);
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(1.5);
+        gc.strokeOval(firstX - DOT_RADIUS, firstY - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2);
     }
 }
 
