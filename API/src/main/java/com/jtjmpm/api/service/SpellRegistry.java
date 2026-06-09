@@ -6,6 +6,7 @@ import com.jtjmpm.api.model.spell.Spell;
 import com.jtjmpm.api.model.spell.effect.FlatDamageEffect;
 import com.jtjmpm.api.model.spell.effect.GambleSpellEffect;
 import com.jtjmpm.api.model.spell.effect.HealSpellEffect;
+import com.jtjmpm.api.model.spell.effect.ManaStealSpellEffect;
 import com.jtjmpm.api.model.status.*;
 import com.jtjmpm.messages.SpellDTO;
 import com.jtjmpm.messages.SpellType;
@@ -75,6 +76,12 @@ public class SpellRegistry {
         addSpell(new Spell("Blindness", "blindness", SpellType.SUPPORT, 0, 35, 1000,
                 new ApplyStatusSpellEffect(35, 1000, false,
                         acc -> new BlindnessEffect(5))));
+        addSpell(new Spell("Mana Steal", "mana steal", SpellType.OFFENSE, 0, 15, 1000,
+                new ManaStealSpellEffect(25, 15, 1000)));
+
+        addSpell(new Spell("Thorns", "thorns", SpellType.SUPPORT, 0, 35, 1000,
+                new ApplyStatusSpellEffect(35, 1000, true,
+                        acc -> new ThornsEffect(0.4 * acc, 10))));
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }
 

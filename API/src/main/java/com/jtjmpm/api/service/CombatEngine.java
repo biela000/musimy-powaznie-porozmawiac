@@ -35,6 +35,10 @@ public class CombatEngine {
             effect.onAttackLanded(hitEvent, gameState, casterId, this);
         }
 
+        for (StatusEffect effect : target.getActiveEffects()) {
+            effect.onDamageTaken(modifiedDamage, gameState, targetId, casterId, this);
+        }
+
         return hitEvent;
     }
 
