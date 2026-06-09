@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 public class GameHandler {
     private static volatile GameHandler instance;
     private WebSocketClient client;
+
     private GameHandler() {}
 
     public static GameHandler getInstance() {
@@ -32,13 +33,14 @@ public class GameHandler {
             client = new WebSocketClient(new URI("ws://" + url)) {
                 @Override
                 public void onOpen(ServerHandshake handshake) {
-                    if (onConnected != null) {
-                        onConnected.run();
-                    }
+                    if (onConnected != null) onConnected.run();
                 }
 
                 @Override
                 public void onMessage(String message) {
+                    // The mobile session is not associated with any lobby on the server,
+                    // so incoming messages (e.g. WELCOME) require no action here.
+                    Log.d("GameHandler", "Message: " + message);
                 }
 
                 @Override
@@ -47,9 +49,7 @@ public class GameHandler {
 
                 @Override
                 public void onError(Exception ex) {
-                    if (onError != null) {
-                        onError.run();
-                    }
+                    if (onError != null) onError.run();
                 }
             };
 

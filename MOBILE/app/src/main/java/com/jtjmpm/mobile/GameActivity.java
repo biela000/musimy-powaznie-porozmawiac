@@ -4,10 +4,12 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     private int activeSpellIndex = -1;
     private SensorManager sensorManager;
     private Sensor rotationSensor;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,8 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         rotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         int[] buttonIds = {R.id.spellButton1, R.id.spellButton2, R.id.spellButton3, R.id.spellButton4};
         for (int i = 0; i < buttonIds.length; i++) {
@@ -60,6 +65,7 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
             case MotionEvent.ACTION_CANCEL:
                 stopSensor();
                 sendMove();
+                vibrateOnCast();
                 break;
         }
         return false;
@@ -98,6 +104,16 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    /** Short buzz at the moment the gesture is released — confirms the spell was thrown. */
+    private void vibrateOnCast() {
+        if (vibrator == null || !vibrator.hasVibrator()) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(120, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(120);
+        }
+    }
 
     @Override
     protected void onPause() {
