@@ -6,22 +6,34 @@ import com.jtjmpm.messages.CombatEventMessage;
 
 import java.util.List;
 
-public class VampirismEffect extends AbstractTemporaryPeriodicEffect {
+public class VampirismEffect implements StatusEffect {
     private final double accuracy;
+    private int remainingDurationTicks;
 
     public VampirismEffect(double durationInSeconds, double accuracy) {
-        super(1.0, durationInSeconds);
         this.accuracy = accuracy;
+        this.remainingDurationTicks = (int) (durationInSeconds * com.jtjmpm.api.model.core.GameConstants.TICKS_PER_SECOND);
     }
 
     @Override
-    protected void applyEffectLogic(GameState state, String targetId, CombatEngine engine, List<CombatEventMessage> outEvents) {
-    }
-
-    @Override
-    public void onAttackLanded(CombatEventMessage event, GameState state, String myId, CombatEngine engine) {
+    public void onAttackLanded(CombatEventMessage event, GameState state, String myId, CombatEngine engine, java.util.List<CombatEventMessage> outEvents) {
         double healAmount = event.value * 0.5 * accuracy;
-        engine.applyHeal(state, myId, healAmount);
+        outEvents.add(engine.applyHeal(state, myId, healAmount));
+    }
+
+    @Override
+    public void decreaseDuration() {
+        remainingDurationTicks--;
+    }
+
+    @Override
+    public boolean isExpired() {
+        return remainingDurationTicks <= 0;
+    }
+
+    @Override
+    public int getRemainingDuration() {
+        return remainingDurationTicks / com.jtjmpm.api.model.core.GameConstants.TICKS_PER_SECOND;
     }
 
     @Override

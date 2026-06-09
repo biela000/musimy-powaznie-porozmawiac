@@ -15,9 +15,9 @@ public interface StatusEffect {
 
     default void onSuccessfulSpellCast() {}
     //TODO change these two
-    default void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine) {}
+    default void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine, List<CombatEventMessage> outEvents) {}
 
-    default void onAttackLanded(CombatEventMessage event, GameState state, String myId, CombatEngine engine) {}
+    default void onAttackLanded(CombatEventMessage event, GameState state, String myId, CombatEngine engine, List<CombatEventMessage> outEvents) {}
 
     default boolean isVisibleOnUI() {
         return true;

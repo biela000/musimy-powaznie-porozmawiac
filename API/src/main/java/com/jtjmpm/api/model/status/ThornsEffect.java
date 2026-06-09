@@ -15,10 +15,10 @@ public class ThornsEffect implements StatusEffect {
     }
 
     @Override
-    public void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine) {
+    public void onDamageTaken(double finalDamage, GameState state, String myId, String attackerId, CombatEngine engine, java.util.List<com.jtjmpm.messages.CombatEventMessage> outEvents) {
         if (finalDamage > 0 && attackerId != null && !attackerId.equals(myId)) {
             double reflectedDamage = finalDamage * reflectPercentage;
-            engine.applyStatusDamage(state, attackerId, reflectedDamage);
+            outEvents.add(engine.applyStatusDamage(state, attackerId, reflectedDamage));
         }
     }
 

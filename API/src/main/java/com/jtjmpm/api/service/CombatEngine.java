@@ -12,7 +12,7 @@ public class CombatEngine {
 
     // processing status buffs, debuffs, blocks etc. will go in these methods
 
-    public CombatEventMessage applyDamage(GameState gameState, String casterId, String targetId, double rawDamage) {
+    public void applyDamage(GameState gameState, String casterId, String targetId, double rawDamage, java.util.List<CombatEventMessage> outEvents) {
         Player caster = gameState.getPlayer(casterId);
         Player target = gameState.getPlayer(targetId);
 
@@ -30,16 +30,15 @@ public class CombatEngine {
         System.out.println("Player: " + casterId + " did " + modifiedDamage + " damage to: " + targetId);
 
         CombatEventMessage hitEvent = new CombatEventMessage(targetId, CombatEventType.HIT, modifiedDamage);
+        outEvents.add(hitEvent);
 
         for (StatusEffect effect : caster.getActiveEffects()) {
-            effect.onAttackLanded(hitEvent, gameState, casterId, this);
+            effect.onAttackLanded(hitEvent, gameState, casterId, this, outEvents);
         }
 
         for (StatusEffect effect : target.getActiveEffects()) {
-            effect.onDamageTaken(modifiedDamage, gameState, targetId, casterId, this);
+            effect.onDamageTaken(modifiedDamage, gameState, targetId, casterId, this, outEvents);
         }
-
-        return hitEvent;
     }
 
     public CombatEventMessage applyStatusDamage(GameState gameState, String targetId, double rawDamage) {
