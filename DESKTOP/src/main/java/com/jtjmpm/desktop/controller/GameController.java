@@ -41,7 +41,6 @@ public class GameController {
     @FXML private ImageView hostEffectImage;
     @FXML private ImageView enemyWizardImage;
     @FXML private ImageView enemyEffectImage;
-    @FXML private ImageView projectileImage;
 
     @FXML private Label lobbyInfoLabel;
     @FXML private Button spell1Button;
@@ -73,7 +72,7 @@ public class GameController {
         enemyWizardImage.setScaleX(-1.0);
 
         animationEngine = new AnimationEngine(mainPane, hostWizardImage, hostEffectImage,
-                enemyWizardImage, enemyEffectImage, projectileImage);
+                enemyWizardImage, enemyEffectImage);
         animationEngine.startIdleTimelines();
 
         myLoadout = GameStateManager.getInstance().getCurrentLoadout();

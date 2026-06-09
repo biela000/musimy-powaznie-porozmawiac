@@ -77,6 +77,4 @@
         <Button text="Return to Menu" onAction="#onBackToMenu" styleClass="action-button"/>
     </VBox>
 
-    <ImageView fx:id="projectileImage" visible="false" fitWidth="100" fitHeight="100" preserveRatio="true"/>
-
 </AnchorPane>

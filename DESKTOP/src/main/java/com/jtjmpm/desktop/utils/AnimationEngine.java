@@ -45,10 +45,14 @@ public class AnimationEngine {
     private final ImageView hostEffectImage;
     private final ImageView enemyWizardImage;
     private final ImageView enemyEffectImage;
-    private final ImageView projectileImage;
 
     private Timeline hostIdleTimeline;
     private Timeline enemyIdleTimeline;
+
+    // tracks the currently-running sprite timeline for each wizard so we can
+    // stop it cleanly before starting a new one
+    private Timeline hostActiveTimeline;
+    private Timeline enemyActiveTimeline;
 
     private boolean hostDead = false;
     private boolean enemyDead = false;
@@ -56,15 +60,19 @@ public class AnimationEngine {
     private final Random random = new Random();
     private final AssetManager assets = AssetManager.getInstance();
 
-    public AnimationEngine(AnchorPane mainPane, ImageView hostWizardImage, ImageView hostEffectImage,
-                           ImageView enemyWizardImage, ImageView enemyEffectImage, ImageView projectileImage) {
+    public AnimationEngine(AnchorPane mainPane,
+                           ImageView hostWizardImage, ImageView hostEffectImage,
+                           ImageView enemyWizardImage, ImageView enemyEffectImage) {
         this.mainPane = mainPane;
         this.hostWizardImage = hostWizardImage;
         this.hostEffectImage = hostEffectImage;
         this.enemyWizardImage = enemyWizardImage;
         this.enemyEffectImage = enemyEffectImage;
-        this.projectileImage = projectileImage;
     }
+
+    // -------------------------------------------------------------------------
+    // idle
+    // -------------------------------------------------------------------------
 
     public void startIdleTimelines() {
         if (!assets.getIdleFrames().isEmpty()) {
@@ -90,15 +98,40 @@ public class AnimationEngine {
         return timeline;
     }
 
+    // -------------------------------------------------------------------------
+    // wizard sprite helpers
+    // -------------------------------------------------------------------------
+
+    /** Stops whatever sprite animation is running on this wizard and records the new one. */
+    private void setActiveTimeline(boolean isHost, Timeline newTimeline) {
+        if (isHost) {
+            if (hostActiveTimeline != null) hostActiveTimeline.stop();
+            hostActiveTimeline = newTimeline;
+        } else {
+            if (enemyActiveTimeline != null) enemyActiveTimeline.stop();
+            enemyActiveTimeline = newTimeline;
+        }
+    }
+
+    private void resumeIdle(boolean isHost) {
+        if (isHost ? hostDead : enemyDead) return;
+        Timeline idle = isHost ? hostIdleTimeline : enemyIdleTimeline;
+        if (idle != null) idle.play();
+    }
+
+    // -------------------------------------------------------------------------
+    // wizard animations
+    // -------------------------------------------------------------------------
+
     public void playAttack(boolean isHost, int durationMs) {
         if (isHost ? hostDead : enemyDead) return;
 
         ImageView wizard = isHost ? hostWizardImage : enemyWizardImage;
         Timeline idle = isHost ? hostIdleTimeline : enemyIdleTimeline;
-
         if (idle != null) idle.stop();
-        
-        List<Image> selectedAttack = random.nextBoolean() ? assets.getAttackFrames() : assets.getAttack2Frames();
+
+        List<Image> selectedAttack = random.nextBoolean()
+                ? assets.getAttackFrames() : assets.getAttack2Frames();
 
         Timeline attack = new Timeline();
         double frameDuration = (double) durationMs / selectedAttack.size();
@@ -109,9 +142,8 @@ public class AnimationEngine {
                     ae -> wizard.setImage(selectedAttack.get(index))
             ));
         }
-        attack.setOnFinished(e -> {
-            if (!(isHost ? hostDead : enemyDead) && idle != null) idle.play();
-        });
+        attack.setOnFinished(e -> resumeIdle(isHost));
+        setActiveTimeline(isHost, attack);
         attack.play();
     }
 
@@ -120,9 +152,8 @@ public class AnimationEngine {
 
         ImageView wizard = isHost ? hostWizardImage : enemyWizardImage;
         Timeline idle = isHost ? hostIdleTimeline : enemyIdleTimeline;
-
         if (idle != null) idle.stop();
-        
+
         Timeline hit = new Timeline();
         List<Image> hitFrames = assets.getHitFrames();
         for (int i = 0; i < hitFrames.size(); i++) {
@@ -132,9 +163,8 @@ public class AnimationEngine {
                     ae -> wizard.setImage(hitFrames.get(index))
             ));
         }
-        hit.setOnFinished(e -> {
-            if (!(isHost ? hostDead : enemyDead) && idle != null) idle.play();
-        });
+        hit.setOnFinished(e -> resumeIdle(isHost));
+        setActiveTimeline(isHost, hit);
         hit.play();
     }
 
@@ -144,9 +174,8 @@ public class AnimationEngine {
 
         ImageView wizard = isHost ? hostWizardImage : enemyWizardImage;
         Timeline idle = isHost ? hostIdleTimeline : enemyIdleTimeline;
-
         if (idle != null) idle.stop();
-        
+
         Timeline death = new Timeline();
         List<Image> deathFrames = assets.getDeathFrames();
         for (int i = 0; i < deathFrames.size(); i++) {
@@ -156,8 +185,13 @@ public class AnimationEngine {
                     ae -> wizard.setImage(deathFrames.get(index))
             ));
         }
-        death.play(); // Stops at the last frame
+        setActiveTimeline(isHost, death);
+        death.play(); // stops at the last frame
     }
+
+    // -------------------------------------------------------------------------
+    // spell effect (impact on target)
+    // -------------------------------------------------------------------------
 
     public void playEffect(boolean onHost, String spellId) {
         ImageView effectView = onHost ? hostEffectImage : enemyEffectImage;
@@ -180,90 +214,106 @@ public class AnimationEngine {
         timeline.play();
     }
 
-    public void playProjectile(boolean fromHost, int durationMs, String spellId) {
-        projectileImage.setTranslateX(0); 
-        projectileImage.setVisible(true);
-        projectileImage.setScaleX(0.01);
-        projectileImage.setScaleY(0.01);
-        
-        double targetScaleX = fromHost ? 1.0 : -1.0;
-        
-        List<Image> frames = assets.getProjectileFrames(spellId);
+    // -------------------------------------------------------------------------
+    // projectile  –  each call creates its own ImageView so multiple
+    // simultaneous projectiles are fully independent and pass through each other
+    // -------------------------------------------------------------------------
 
-        double hostCenterX = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
+    public void playProjectile(boolean fromHost, int durationMs, String spellId) {
+        List<Image> frames = assets.getProjectileFrames(spellId);
+        if (frames == null || frames.isEmpty()) return;
+
+        // create a fresh node for this projectile
+        ImageView proj = new ImageView();
+        proj.setFitWidth(PROJECTILE_IMAGE_SIZE);
+        proj.setFitHeight(PROJECTILE_IMAGE_SIZE);
+        proj.setPreserveRatio(true);
+        proj.setScaleX(0.01);
+        proj.setScaleY(0.01);
+
+        double targetScaleX = fromHost ? 1.0 : -1.0;
+
+        double hostCenterX  = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
         double enemyCenterX = SCREEN_WIDTH - WIZARD_OFFSET_X - (WIZARD_SIZE / 2.0);
         double wizardCenterY = SCREEN_HEIGHT - WIZARD_OFFSET_Y - (WIZARD_SIZE / 2.0);
 
-        double hostSpawnX = hostCenterX + PROJECTILE_SPAWN_OFFSET_X - (PROJECTILE_IMAGE_SIZE / 2.0);
+        double hostSpawnX  = hostCenterX  + PROJECTILE_SPAWN_OFFSET_X - (PROJECTILE_IMAGE_SIZE / 2.0);
         double enemySpawnX = enemyCenterX - PROJECTILE_SPAWN_OFFSET_X - (PROJECTILE_IMAGE_SIZE / 2.0);
-        double spawnY = wizardCenterY + PROJECTILE_SPAWN_OFFSET_Y - (PROJECTILE_IMAGE_SIZE / 2.0);
+        double spawnY      = wizardCenterY + PROJECTILE_SPAWN_OFFSET_Y - (PROJECTILE_IMAGE_SIZE / 2.0);
 
         double startX = fromHost ? hostSpawnX : enemySpawnX;
-        double endX = fromHost ? enemySpawnX : hostSpawnX;
+        double endX   = fromHost ? enemySpawnX : hostSpawnX;
 
-        projectileImage.setLayoutX(startX);
-        projectileImage.setLayoutY(spawnY);
+        proj.setLayoutX(startX);
+        proj.setLayoutY(spawnY);
+
+        mainPane.getChildren().add(proj);
 
         double scaleDuration = durationMs * 0.2;
-        double moveDuration = durationMs - scaleDuration;
+        double moveDuration  = durationMs - scaleDuration;
 
-        ScaleTransition st = new ScaleTransition(Duration.millis(scaleDuration), projectileImage);
+        ScaleTransition st = new ScaleTransition(Duration.millis(scaleDuration), proj);
         st.setToX(targetScaleX);
         st.setToY(1.0);
 
-        TranslateTransition tt = new TranslateTransition(Duration.millis(moveDuration), projectileImage);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(moveDuration), proj);
         tt.setFromX(0);
         tt.setToX(endX - startX);
         tt.setDelay(Duration.millis(scaleDuration));
-        tt.setOnFinished(e -> projectileImage.setVisible(false));
-        
-        st.play();
-        tt.play();
+        tt.setOnFinished(e -> mainPane.getChildren().remove(proj));
 
-        Timeline animation = new Timeline();
-        animation.setCycleCount(Timeline.INDEFINITE);
+        // sprite animation (loops until movement ends)
+        Timeline spriteAnim = new Timeline();
+        spriteAnim.setCycleCount(Timeline.INDEFINITE);
         for (int i = 0; i < frames.size(); i++) {
             final int index = i;
-            animation.getKeyFrames().add(new KeyFrame(
+            spriteAnim.getKeyFrames().add(new KeyFrame(
                     Duration.millis(i * 100),
-                    ae -> projectileImage.setImage(frames.get(index))
+                    ae -> proj.setImage(frames.get(index))
             ));
         }
-        animation.getKeyFrames().add(new KeyFrame(Duration.millis(frames.size() * 100)));
-        animation.play();
-        
+        spriteAnim.getKeyFrames().add(new KeyFrame(Duration.millis(frames.size() * 100)));
+
+        st.play();
+        tt.play();
+        spriteAnim.play();
+
         tt.statusProperty().addListener((obs, oldStatus, newStatus) -> {
             if (newStatus == javafx.animation.Animation.Status.STOPPED) {
-                animation.stop();
+                spriteAnim.stop();
             }
         });
     }
+
+    // -------------------------------------------------------------------------
+    // floating damage / status text
+    // -------------------------------------------------------------------------
 
     public void showFloatingText(String text, Color color, boolean onHost) {
         Label label = new Label(text);
         label.setFont(Font.font("System", FontWeight.BOLD, 30));
         label.setTextFill(color);
         label.setEffect(new DropShadow(4, Color.BLACK));
-        
-        double hostCenterX = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
+
+        double hostCenterX  = WIZARD_OFFSET_X + (WIZARD_SIZE / 2.0);
         double enemyCenterX = SCREEN_WIDTH - WIZARD_OFFSET_X - (WIZARD_SIZE / 2.0);
         double wizardCenterY = SCREEN_HEIGHT - WIZARD_OFFSET_Y - (WIZARD_SIZE / 2.0);
-        
+
         double x = (onHost ? hostCenterX : enemyCenterX) + (onHost ? TEXT_SPAWN_OFFSET_X : -TEXT_SPAWN_OFFSET_X);
         double y = wizardCenterY + TEXT_SPAWN_OFFSET_Y;
 
         label.setLayoutX(x);
         label.setLayoutY(y);
-        
+
         mainPane.getChildren().add(label);
-        
+
         TranslateTransition tt = new TranslateTransition(Duration.millis(2000), label);
         tt.setByY(TEXT_FLOAT_DISTANCE);
-        
+
         FadeTransition ft = new FadeTransition(Duration.millis(2000), label);
         ft.setFromValue(1.0);
         ft.setToValue(0.0);
-        
+
         ParallelTransition pt = new ParallelTransition(tt, ft);
         pt.setOnFinished(e -> mainPane.getChildren().remove(label));
         pt.play();
