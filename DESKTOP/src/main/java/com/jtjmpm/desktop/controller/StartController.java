@@ -30,7 +30,7 @@ import java.util.Enumeration;
 
 public class StartController {
     private final static String LOBBY_VIEW = "/com/jtjmpm/desktop/lobby-view.fxml";
-    private final static String API_URL = "ws://127.0.0.1:3000";
+    private final static String API_URL = "wss://musimy-powaznie-porozmawiac-production.up.railway.app";
 
     @FXML
     private Button startButton;
