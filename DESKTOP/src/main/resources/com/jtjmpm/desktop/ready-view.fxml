@@ -38,10 +38,10 @@
 
     <!-- Ready button -->
     <Button fx:id="readyButton" text="[ READY ]" onAction="#onReady"
-            maxWidth="200" disable="true" styleClass="pixel-button"/>
+            minWidth="200" disable="true" styleClass="pixel-button"/>
 
     <!-- Starting soon hint -->
-    <Label fx:id="startingSoonLabel" text="" styleClass="pixel-status" maxWidth="200"
+    <Label fx:id="startingSoonLabel" text="" styleClass="pixel-status" minHeight="30"
            style="-fx-alignment: center;"/>
 
 </VBox>

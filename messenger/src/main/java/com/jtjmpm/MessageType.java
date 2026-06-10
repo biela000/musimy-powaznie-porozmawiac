@@ -26,6 +26,7 @@ public enum MessageType {
     GAME_STATE_UPDATE,
     COMBAT_EVENT,
     GAME_OVER,
+    RESTART_MATCH,
 
     // Round system
     ROUND_OVER,

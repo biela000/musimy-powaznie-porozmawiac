@@ -88,7 +88,7 @@ public class AssetManager {
             spellEffectBindings.put("Lightning Bolt", "lightning_strike_001_small_violet");
             spellEffectBindings.put("Laser Beam", "scifi_warp_003_small_blue");
             spellEffectBindings.put("Meteor", "epic_explosion_001_small_orange");
-            spellEffectBindings.put("Poison Dart", "spell_poison_001_small_green");
+            spellEffectBindings.put("Toxic Dart", "spell_poison_001_small_green");
 
             String[] colors = {"Blue", "Green", "Orange", "Purple", "Red"};
             for (int i = 0; i < colors.length; i++) {
@@ -121,7 +121,7 @@ public class AssetManager {
             spellColors.put("Lightning Bolt", 3); // Purple
             spellColors.put("Laser Beam", 0); // Blue
             spellColors.put("Meteor", 2); // Orange
-            spellColors.put("Poison Dart", 1); // Green
+            spellColors.put("Toxic Dart", 1); // Green
         } catch (Exception e) {
             e.printStackTrace();
         }

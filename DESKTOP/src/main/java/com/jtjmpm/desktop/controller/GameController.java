@@ -60,6 +60,7 @@ public class GameController {
     private double enemyHp = -1.0;
 
     private boolean isGameOver = false;
+    private javafx.scene.layout.VBox gameOverBox;
 
     @FXML
     public void initialize() {
@@ -209,6 +210,21 @@ public class GameController {
     // -------------------------------------------------------------------------
 
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
+        if (message.gameState.status() == com.jtjmpm.messages.MatchStatus.LOBBY) {
+            javafx.application.Platform.runLater(() -> {
+                try {
+                    ApiSocketClient.getInstance().setOnMessageCallback(null);
+                    javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/jtjmpm/desktop/ready-view.fxml"));
+                    javafx.scene.Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
+                    javafx.stage.Stage stage = (javafx.stage.Stage) mainPane.getScene().getWindow();
+                    stage.setScene(scene);
+                } catch (java.io.IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            return;
+        }
+
         gameState = message.gameState;
 
         String hostId = GameStateManager.getInstance().getHostId();
@@ -286,6 +302,12 @@ public class GameController {
     }
 
     private void handleRoundStart(RoundStartMessage message) {
+        if (gameOverBox != null) {
+            mainPane.getChildren().remove(gameOverBox);
+            gameOverBox = null;
+        }
+        isGameOver = false;
+
         // Restore wizards to idle (they were "dead" last round).
         animationEngine.resetForNewRound();
 
@@ -316,13 +338,25 @@ public class GameController {
 
         Label gameOverLabel = new Label(text);
         gameOverLabel.getStyleClass().add("game-over-label");
+        
+        javafx.scene.control.Button restartButton = new javafx.scene.control.Button("Return");
+        restartButton.setStyle("-fx-font-size: 24px; -fx-padding: 10px 20px;");
+        restartButton.setOnAction(e -> {
+            ApiSocketClient.getInstance().send(new com.jtjmpm.messages.RestartMatchMessage());
+        });
 
-        AnchorPane.setTopAnchor(gameOverLabel, 0.0);
-        AnchorPane.setBottomAnchor(gameOverLabel, 0.0);
-        AnchorPane.setLeftAnchor(gameOverLabel, 0.0);
-        AnchorPane.setRightAnchor(gameOverLabel, 0.0);
+        gameOverBox = new javafx.scene.layout.VBox(20);
+        gameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
+        gameOverBox.getChildren().addAll(gameOverLabel, restartButton);
+        // User requested no background for the Game Over label/vbox
+        gameOverBox.setStyle("-fx-background-color: transparent;");
 
-        mainPane.getChildren().add(gameOverLabel);
+        AnchorPane.setTopAnchor(gameOverBox, 0.0);
+        AnchorPane.setBottomAnchor(gameOverBox, 0.0);
+        AnchorPane.setLeftAnchor(gameOverBox, 0.0);
+        AnchorPane.setRightAnchor(gameOverBox, 0.0);
+
+        mainPane.getChildren().add(gameOverBox);
     }
 
     // -------------------------------------------------------------------------

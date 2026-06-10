@@ -59,6 +59,12 @@ public class ReadyController {
                     updateReadyStatus(update);
                 });
                 break;
+            case MessageType.COUNTDOWN:
+                com.jtjmpm.messages.CountdownMessage countdown = gson.fromJson(message, com.jtjmpm.messages.CountdownMessage.class);
+                if (countdown.count > 0) {
+                    Platform.runLater(() -> startingSoonLabel.setText(">> STARTING IN " + countdown.count + "..."));
+                }
+                break;
             case MessageType.GAME_START:
                 StartGameMessage startMsg = gson.fromJson(message, StartGameMessage.class);
                 if (startMsg.initialPattern != null) {

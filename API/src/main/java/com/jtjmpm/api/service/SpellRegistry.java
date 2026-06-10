@@ -45,7 +45,7 @@ public class SpellRegistry {
                 0, 25, 1500,
                 new ApplyStatusSpellEffect(1500, false,
                         acc -> new PoisonEffect(5, 1, 5))));
-        addSpell(new Spell("Gamble", "gamble", SpellType.OFFENSE,Element.DARK,  80, 40, 1000,
+        addSpell(new Spell("Gamble", "gamble", SpellType.OFFENSE,Element.DARK,  80, 100, 1000,
                 new GambleSpellEffect(80, 1000)));
 
         addSpell(new Spell("Heal", "heal", SpellType.SUPPORT,Element.NATURE , 40, 30, 1000,
@@ -74,8 +74,8 @@ public class SpellRegistry {
         addSpell(new Spell("Blindness", "blindness", SpellType.SUPPORT, Element.DARK, 0, 35, 1700,
                 new ApplyStatusSpellEffect(1700, false,
                         acc -> new BlindnessEffect(5))));
-        addSpell(new Spell("Mana Steal", "mana steal", SpellType.OFFENSE, Element.DARK, 0, 15, 1600,
-                new ManaStealSpellEffect(25, 1600)));
+        addSpell(new Spell("Mana Steal", "mana steal", SpellType.OFFENSE, Element.DARK, 0, 20, 1600,
+                new ManaStealSpellEffect(60, 1600)));
 
         addSpell(new Spell("Thorns", "thorns", SpellType.SUPPORT, Element.NATURE, 0, 35, 1000,
                 new ApplyStatusSpellEffect(1000, true,
@@ -92,11 +92,11 @@ public class SpellRegistry {
                 50, 45, 1500,
                 new FlatDamageEffect(50, 1500)));
         addSpell(new Spell("Meteor", "meteor", SpellType.OFFENSE, Element.FIRE,
-                100, 80, 3500,
-                new FlatDamageEffect(100, 3500)));
-        addSpell(new Spell("Poison Dart", "poison dart", SpellType.OFFENSE, Element.NATURE,
-                10, 5, 1500,
-                new FlatDamageEffect(10, 1500)));
+                100, 80, 7000,
+                new FlatDamageEffect(100, 7000)));
+        addSpell(new Spell("Toxic Dart", "toxic dart", SpellType.OFFENSE, Element.NATURE,
+                25, 5, 1500,
+                new FlatDamageEffect(25, 1500)));
         System.out.println("Loaded " + spells.size() + " spells to the registry");
     }
 

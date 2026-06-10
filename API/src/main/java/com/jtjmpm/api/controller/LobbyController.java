@@ -46,7 +46,8 @@ public class LobbyController implements MessageController {
                 MessageType.CREATE_LOBBY,
                 MessageType.JOIN_LOBBY,
                 MessageType.LEAVE_LOBBY,
-                MessageType.TOGGLE_READY
+                MessageType.TOGGLE_READY,
+                MessageType.RESTART_MATCH
         );
     }
 
@@ -59,6 +60,7 @@ public class LobbyController implements MessageController {
             case MessageType.JOIN_LOBBY -> handleJoin(conn, rawJson);
             case MessageType.LEAVE_LOBBY -> handleLeave(conn, rawJson);
             case MessageType.TOGGLE_READY -> handleToggleReady(conn, rawJson);
+            case MessageType.RESTART_MATCH -> handleRestartMatch(conn, rawJson);
         }
     }
 
@@ -170,6 +172,25 @@ public class LobbyController implements MessageController {
 
         } catch (Exception e) {
             System.err.println("Error while toggling ready state from session: " + sessionId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void handleRestartMatch(WebSocket conn, String rawJson) {
+        String sessionId = SocketUtils.getSessionId(conn);
+        try {
+            GameState lobby = store.getPlayersLobby(sessionId);
+            if (lobby == null) return;
+            
+            synchronized (lobby) {
+                if (lobby.getStatus() == com.jtjmpm.messages.MatchStatus.GAME_OVER) {
+                    List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
+                    matchSupervisor.restartMatch(lobby, playerIds);
+                } else {
+                    System.err.println("Cannot restart match from session " + sessionId + " because state is " + lobby.getStatus());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error while restarting match from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
         }
     }

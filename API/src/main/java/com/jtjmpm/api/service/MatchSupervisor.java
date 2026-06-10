@@ -23,8 +23,8 @@ import java.util.function.Consumer;
 @Component
 public class MatchSupervisor {
 
-    /** Rounds a player must win to win the match (best-of-5 → first to 3). */
-    private static final int WINS_TO_WIN = 3;
+    /** Rounds a player must win to win the match (best-of-3 → first to 2). */
+    private static final int WINS_TO_WIN = 2;
 
     /** Delay after all-ready before the navigation message is sent (gives clients time to settle). */
     private final static int START_GAME_DELAY_SECONDS = 1;
@@ -128,15 +128,15 @@ public class MatchSupervisor {
                             // Pattern-less StartGameMessage triggers navigation on the desktop.
                             registry.broadcast(playerIds, gson.toJson(new StartGameMessage()));
 
-                            // Countdown ticks (game screen will be visible by the time these arrive).
+                            // Countdown ticks (delayed to give the game view time to load).
                             scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(3))),
-                                    1, TimeUnit.SECONDS);
-                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(2))),
                                     2, TimeUnit.SECONDS);
-                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(1))),
+                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(2))),
                                     3, TimeUnit.SECONDS);
+                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(1))),
+                                    4, TimeUnit.SECONDS);
 
-                            // At t+4s: flip to IN_PROGRESS, send "Battle!" + per-player patterns.
+                            // At t+5s: flip to IN_PROGRESS, send "Battle!" + per-player patterns.
                             scheduler.schedule(() -> {
                                 synchronized (gameState) {
                                     if (gameState.getStatus() != MatchStatus.BETWEEN_ROUNDS) return;
@@ -155,7 +155,7 @@ public class MatchSupervisor {
                                                 gson.toJson(new RoundStartMessage(shape.points(), shape.name())));
                                     }
                                 }
-                            }, 4, TimeUnit.SECONDS);
+                            }, 5, TimeUnit.SECONDS);
                         } else {
                             System.out.println("Game start interrupted");
                         }
@@ -218,6 +218,28 @@ public class MatchSupervisor {
                 System.out.println("Round over — scheduling next round. Winner of round: " + roundWinnerId);
                 scheduleRoundStart(gameState, playerIds);
             }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Restart Match sequence
+    // -------------------------------------------------------------------------
+
+    public void restartMatch(GameState gameState, List<String> playerIds) {
+        synchronized (gameState) {
+            System.out.println("Match returning to lobby: " + gameState.getName());
+            
+            // Reset players' wins and match state
+            for (Player player : gameState.getPlayers()) {
+                player.setWins(0);
+                player.clearSpellLoadout();
+            }
+            
+            gameState.resetAllPlayersReady();
+            gameState.setStatus(MatchStatus.LOBBY);
+            gameState.resetRound();
+            
+            registry.broadcast(playerIds, gson.toJson(new GameStateUpdateMessage(gameState.toDTO(), Collections.emptyList())));
         }
     }
 

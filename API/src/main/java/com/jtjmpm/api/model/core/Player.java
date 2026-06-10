@@ -99,6 +99,7 @@ public class Player {
     }
 
     public synchronized int getWins() { return wins; }
+    public synchronized void setWins(int wins) { this.wins = wins; }
     public synchronized void addWin() { wins++; }
 
     /** Resets HP, mana, and status effects to starting values for a new round. Wins are preserved. */
@@ -128,8 +129,13 @@ public class Player {
 
     public synchronized void setSpellLoadout(List<String> spellLoadout) {
         if (spellLoadout != null) {
+            this.spellLoadout.clear();
             this.spellLoadout.addAll(spellLoadout);
         }
+    }
+    
+    public synchronized void clearSpellLoadout() {
+        this.spellLoadout.clear();
     }
 
     public synchronized Element getLastCastElement() {
