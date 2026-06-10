@@ -25,4 +25,9 @@ public class PoisonEffect extends AbstractTemporaryPeriodicEffect {
     public String getName() {
         return "POISON";
     }
+
+    @Override
+    public boolean isPositive() {
+        return false;
+    }
 }

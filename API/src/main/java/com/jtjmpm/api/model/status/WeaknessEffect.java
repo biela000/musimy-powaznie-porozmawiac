@@ -36,4 +36,9 @@ public class WeaknessEffect implements StatusEffect {
     public String getName() {
         return "WEAKNESS";
     }
+
+    @Override
+    public boolean isPositive() {
+        return false;
+    }
 }

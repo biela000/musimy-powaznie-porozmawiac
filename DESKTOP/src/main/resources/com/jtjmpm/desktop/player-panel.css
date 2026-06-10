@@ -20,11 +20,12 @@
     -fx-text-fill: white;
 }
 
-.canvas-container {
-    -fx-border-color: #444444;
-    -fx-border-width: 2px;
-    -fx-background-color: #cccccc;
-    -fx-alignment: center;
+.effects-container {
+    -fx-background-color: rgba(0,0,0,0.45);
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(255,255,255,0.15);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
 }
 
 .accuracy-label {

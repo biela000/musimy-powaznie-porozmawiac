@@ -168,7 +168,7 @@ public class Player {
                 this.id, this.hp, this.mana, this.maxHp, this.maxMana, this.ready,
                 this.activeEffects.stream()
                         .filter(StatusEffect::isVisibleOnUI)
-                        .map(effect -> new StatusEffectDTO(effect.getName(), effect.getRemainingDuration()))
+                        .map(effect -> new StatusEffectDTO(effect.getName(), effect.getRemainingDuration(), effect.isPositive()))
                         .collect(Collectors.toList()),
                 this.wins
         );

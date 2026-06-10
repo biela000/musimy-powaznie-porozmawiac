@@ -23,6 +23,10 @@ public interface StatusEffect {
         return true;
     }
 
+    default boolean isPositive() {
+        return true;
+    }
+
     default void decreaseDuration() {}
 
     default boolean isExpired() {

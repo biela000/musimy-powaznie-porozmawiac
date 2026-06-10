@@ -26,6 +26,11 @@ public class BlindnessEffect implements StatusEffect {
     }
 
     @Override
+    public boolean isPositive() {
+        return false;
+    }
+
+    @Override
     public boolean isVisibleOnUI() {
         return true;
     }

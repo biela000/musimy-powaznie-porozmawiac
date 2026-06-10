@@ -35,4 +35,9 @@ public class DarkMagicEffect extends AbstractPeriodicEffect {
     public String getName() {
         return "DARK_MAGIC";
     }
+
+    @Override
+    public boolean isPositive() {
+        return false;
+    }
 }

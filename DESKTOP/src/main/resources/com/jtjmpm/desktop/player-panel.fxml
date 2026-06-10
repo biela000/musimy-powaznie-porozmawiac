@@ -19,4 +19,12 @@
 
     <Label fx:id="winsLabel" text="○  ○" styleClass="wins-label"/>
 
+    <VBox styleClass="effects-container" prefHeight="100.0" prefWidth="200.0">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox fx:id="activeEffectsContainer" alignment="CENTER" spacing="4.0" style="-fx-background-color: transparent;">
+                <padding><Insets top="4" bottom="4" left="8" right="8"/></padding>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
 </VBox>
