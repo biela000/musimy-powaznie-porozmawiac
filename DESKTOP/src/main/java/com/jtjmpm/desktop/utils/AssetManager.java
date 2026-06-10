@@ -73,6 +73,18 @@ public class AssetManager {
             spellEffectBindings.put("Poison", "spell_poison_001_small_green");
             spellEffectBindings.put("Water Beam", "burst_splatter_001_small_red");
             spellEffectBindings.put("Air Slash", "directional_impact_001_small_blue");
+            // New Spells Effects
+            spellEffectBindings.put("Gamble", "scifi_spark_burst_001_small_yellow");
+            spellEffectBindings.put("Heal", "spell_heal_001_small_red");
+            spellEffectBindings.put("Healing Aura", "round_heart_burst_001_small_red");
+            spellEffectBindings.put("Weakness", "stylized_skull_smoke_burst_001_small_white");
+            spellEffectBindings.put("Shield", "spell_defense_up_001_small_blue");
+            spellEffectBindings.put("Damage Up", "spell_attack_up_001_small_red");
+            spellEffectBindings.put("Vampirism", "spell_absorb_001_small_violet");
+            spellEffectBindings.put("Blindness", "symmetrical_smoke_burst_001_small_brown");
+            spellEffectBindings.put("Mana Steal", "scifi_warp_003_small_blue");
+            spellEffectBindings.put("Thorns", "spell_haste_001_small_green");
+            spellEffectBindings.put("Dark Magic", "spell_death_001_small_red");
 
             String[] colors = {"Blue", "Green", "Orange", "Purple", "Red"};
             for (int i = 0; i < colors.length; i++) {
@@ -90,6 +102,18 @@ public class AssetManager {
             spellColors.put("Poison", 1); // Green
             spellColors.put("Water Beam", 0); // Blue
             spellColors.put("Air Slash", 2); // Orange
+            // New Spells Fireball Colors
+            spellColors.put("Gamble", 3); // Purple
+            spellColors.put("Heal", 1); // Green
+            spellColors.put("Healing Aura", 1); // Green
+            spellColors.put("Weakness", 3); // Purple
+            spellColors.put("Shield", 0); // Blue
+            spellColors.put("Damage Up", 4); // Red
+            spellColors.put("Vampirism", 4); // Red
+            spellColors.put("Blindness", 3); // Purple
+            spellColors.put("Mana Steal", 0); // Blue
+            spellColors.put("Thorns", 1); // Green
+            spellColors.put("Dark Magic", 3); // Purple
         } catch (Exception e) {
             e.printStackTrace();
         }
