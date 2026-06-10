@@ -36,6 +36,7 @@ public class ReadyController {
     @FXML private TilePane spellsContainer;
 
     @FXML private Button readyButton;
+    @FXML private Button returnMenuButton;
 
     private final List<String> myLoadout = new ArrayList<>();
 
@@ -77,6 +78,9 @@ public class ReadyController {
                 Platform.runLater(() -> {
                     renderSpells(spellsMsg);
                 });
+                break;
+            case MessageType.LOBBY_DESTROYED:
+                Platform.runLater(this::navigateToMenu);
                 break;
             default:
                 System.out.println("Unknown message type: " + base.type);
@@ -169,6 +173,8 @@ public class ReadyController {
         enemyStatusLabel.getStyleClass().removeAll("pixel-status-ready", "pixel-status-not-ready");
         enemyStatusLabel.getStyleClass().add(isEnemyReady ? "pixel-status-ready" : "pixel-status-not-ready");
 
+        returnMenuButton.setDisable(isHostReady);
+
         if (isHostReady && isEnemyReady) {
             startingSoonLabel.setText(">> STARTING SOON...");
         } else {
@@ -184,6 +190,24 @@ public class ReadyController {
     private void onReady() {
         GameStateManager.getInstance().setCurrentLoadout(new ArrayList<>(myLoadout));
         ApiSocketClient.getInstance().send(new ReadyMessage(myLoadout));
+    }
+
+    @FXML
+    private void onReturnToMenu() {
+        ApiSocketClient.getInstance().send(new WsMessage(MessageType.LEAVE_LOBBY));
+        navigateToMenu();
+    }
+
+    private void navigateToMenu() {
+        try {
+            ApiSocketClient.getInstance().setOnMessageCallback(null);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jtjmpm/desktop/lobby-view.fxml"));
+            Scene scene = ViewLoader.loadScaledScene(loader);
+            Stage stage = (Stage) lobbyLabel.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void navigateToGame() {

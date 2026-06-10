@@ -46,6 +46,7 @@ public class LobbyController implements MessageController {
                 MessageType.CREATE_LOBBY,
                 MessageType.JOIN_LOBBY,
                 MessageType.LEAVE_LOBBY,
+                MessageType.DESTROY_LOBBY,
                 MessageType.TOGGLE_READY,
                 MessageType.RESTART_MATCH
         );
@@ -59,6 +60,7 @@ public class LobbyController implements MessageController {
             case MessageType.CREATE_LOBBY -> handleCreate(conn, rawJson);
             case MessageType.JOIN_LOBBY -> handleJoin(conn, rawJson);
             case MessageType.LEAVE_LOBBY -> handleLeave(conn, rawJson);
+            case MessageType.DESTROY_LOBBY -> handleDestroyLobby(conn, rawJson);
             case MessageType.TOGGLE_READY -> handleToggleReady(conn, rawJson);
             case MessageType.RESTART_MATCH -> handleRestartMatch(conn, rawJson);
         }
@@ -124,6 +126,17 @@ public class LobbyController implements MessageController {
         if (remaining != null) {
             List<String> playerIds = remaining.getPlayers().stream().map(Player::getId).toList();
             registry.broadcast(playerIds, gson.toJson(new GameStateUpdateMessage(remaining.toDTO(), Collections.emptyList())));
+        }
+    }
+
+    private void handleDestroyLobby(WebSocket conn, String rawJson) {
+        String sessionId = SocketUtils.getSessionId(conn);
+        System.out.println("Player with session ID: " + sessionId + " is destroying his lobby");
+
+        List<String> playerIds = store.destroyLobbyAndGetPlayers(sessionId);
+        if (!playerIds.isEmpty()) {
+            WsMessage destroyMsg = new WsMessage(MessageType.LOBBY_DESTROYED);
+            registry.broadcast(playerIds, gson.toJson(destroyMsg));
         }
     }
 

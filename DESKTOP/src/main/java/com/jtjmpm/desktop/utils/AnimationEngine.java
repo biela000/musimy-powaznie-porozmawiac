@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -59,6 +60,8 @@ public class AnimationEngine {
 
     private final Random random = new Random();
     private final AssetManager assets = AssetManager.getInstance();
+
+    private final List<Timeline> effectTimelines = new ArrayList<>();
 
     public AnimationEngine(AnchorPane mainPane,
                            ImageView hostWizardImage, ImageView hostEffectImage,
@@ -217,6 +220,8 @@ public class AnimationEngine {
                 Duration.millis(finalFrames.size() * 50),
                 ae -> effectView.setImage(null)
         ));
+        timeline.setOnFinished(e -> effectTimelines.remove(timeline));
+        effectTimelines.add(timeline);
         timeline.play();
     }
 

@@ -25,6 +25,7 @@ import javafx.util.Duration;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +56,7 @@ public class GameController {
     private List<String> myLoadout;
 
     private AnimationEngine animationEngine;
+    private final List<Timeline> activeTimelines = new ArrayList<>();
 
     private double hostHp = -1.0;
     private double enemyHp = -1.0;
@@ -118,6 +120,9 @@ public class GameController {
                 break;
             case MessageType.ROUND_START:
                 Platform.runLater(() -> handleRoundStart(gson.fromJson(message, RoundStartMessage.class)));
+                break;
+            case MessageType.LOBBY_DESTROYED:
+                Platform.runLater(this::navigateToMenu);
                 break;
             default:
                 System.out.println("Unknown message type: " + base.type);
@@ -186,6 +191,8 @@ public class GameController {
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.millis(message.castDurationMs),
                             ae -> animationEngine.playEffect(isHost, message.spellId)));
+            timeline.setOnFinished(e -> activeTimelines.remove(timeline));
+            activeTimelines.add(timeline);
             timeline.play();
         } else {
             Timeline timeline = new Timeline(
@@ -193,6 +200,8 @@ public class GameController {
                             ae -> animationEngine.playProjectile(isHost, projTime, message.spellId)),
                     new KeyFrame(Duration.millis(message.castDurationMs),
                             ae -> animationEngine.playEffect(!isHost, message.spellId)));
+            timeline.setOnFinished(e -> activeTimelines.remove(timeline));
+            activeTimelines.add(timeline);
             timeline.play();
         }
     }
@@ -339,15 +348,25 @@ public class GameController {
         Label gameOverLabel = new Label(text);
         gameOverLabel.getStyleClass().add("game-over-label");
         
-        javafx.scene.control.Button restartButton = new javafx.scene.control.Button("Return");
+        javafx.scene.control.Button restartButton = new javafx.scene.control.Button("Return to lobby");
         restartButton.setStyle("-fx-font-size: 24px; -fx-padding: 10px 20px;");
         restartButton.setOnAction(e -> {
             ApiSocketClient.getInstance().send(new com.jtjmpm.messages.RestartMatchMessage());
         });
 
+        javafx.scene.control.Button returnToMenuButton = new javafx.scene.control.Button("Return to menu");
+        returnToMenuButton.setStyle("-fx-font-size: 24px; -fx-padding: 10px 20px; -fx-text-fill: #ff4c4c;");
+        returnToMenuButton.setOnAction(e -> {
+            ApiSocketClient.getInstance().send(new WsMessage(MessageType.DESTROY_LOBBY));
+        });
+
+        javafx.scene.layout.HBox buttonsBox = new javafx.scene.layout.HBox(20);
+        buttonsBox.setAlignment(javafx.geometry.Pos.CENTER);
+        buttonsBox.getChildren().addAll(restartButton, returnToMenuButton);
+
         gameOverBox = new javafx.scene.layout.VBox(20);
         gameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
-        gameOverBox.getChildren().addAll(gameOverLabel, restartButton);
+        gameOverBox.getChildren().addAll(gameOverLabel, buttonsBox);
         // User requested no background for the Game Over label/vbox
         gameOverBox.setStyle("-fx-background-color: transparent;");
 
@@ -365,12 +384,16 @@ public class GameController {
 
     @FXML
     private void onBackToMenu() {
+        ApiSocketClient.getInstance().send(new WsMessage(MessageType.DESTROY_LOBBY));
+    }
+
+    private void navigateToMenu() {
         try {
             ApiSocketClient.getInstance().setOnMessageCallback(null);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(LOBBY_VIEW));
             Scene scene = ViewLoader.loadScaledScene(loader);
-            Stage stage = (Stage) lobbyInfoLabel.getScene().getWindow();
+            Stage stage = (Stage) mainPane.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

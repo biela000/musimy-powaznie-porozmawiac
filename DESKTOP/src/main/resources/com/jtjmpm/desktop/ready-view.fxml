@@ -40,6 +40,10 @@
     <Button fx:id="readyButton" text="[ READY ]" onAction="#onReady"
             minWidth="200" disable="true" styleClass="pixel-button"/>
 
+    <!-- Return to menu button -->
+    <Button fx:id="returnMenuButton" text="[ RETURN TO MENU ]" onAction="#onReturnToMenu"
+            minWidth="200" styleClass="pixel-button-danger"/>
+
     <!-- Starting soon hint -->
     <Label fx:id="startingSoonLabel" text="" styleClass="pixel-status" minHeight="30"
            style="-fx-alignment: center;"/>

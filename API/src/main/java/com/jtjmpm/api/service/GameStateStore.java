@@ -59,6 +59,24 @@ public class GameStateStore {
         }
     }
 
+    public List<String> destroyLobbyAndGetPlayers(String sessionId) {
+        String lobbyId = sessionToLobby.get(sessionId);
+        if (lobbyId == null) return java.util.Collections.emptyList();
+
+        GameState state = lobbies.remove(lobbyId);
+        if (state == null) return java.util.Collections.emptyList();
+
+        List<String> playerIds = new java.util.ArrayList<>();
+        synchronized (state) {
+            for (Player player : state.getPlayers()) {
+                String id = player.getId();
+                sessionToLobby.remove(id);
+                playerIds.add(id);
+            }
+        }
+        return playerIds;
+    }
+
     //GETTERS
 
     public String getLobbyIdForPlayer(String sessionID) {
