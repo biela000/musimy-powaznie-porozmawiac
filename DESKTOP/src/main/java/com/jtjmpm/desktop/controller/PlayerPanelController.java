@@ -38,9 +38,10 @@ public class PlayerPanelController {
 
     private String winsIndicator(int wins) {
         return switch (wins) {
-            case 1 -> "●  ○";
-            case 2 -> "●  ●";
-            default -> "○  ○";
+            case 1 -> "●  ○  ○";
+            case 2 -> "●  ●  ○";
+            case 3 -> "●  ●  ●";
+            default -> "○  ○  ○";
         };
     }
 }

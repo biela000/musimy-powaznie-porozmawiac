@@ -17,7 +17,7 @@
     <ProgressBar fx:id="manaBar" progress="1.0" prefWidth="200.0" styleClass="mana-bar"/>
     <Label fx:id="manaLabel" text="Mana: 100/100" styleClass="stat-label"/>
 
-    <Label fx:id="winsLabel" text="○  ○" styleClass="wins-label"/>
+    <Label fx:id="winsLabel" text="○  ○  ○" styleClass="wins-label"/>
 
     <VBox styleClass="effects-container" prefHeight="200.0" prefWidth="200.0">
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background: transparent; -fx-background-color: transparent;">

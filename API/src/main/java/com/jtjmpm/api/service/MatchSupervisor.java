@@ -23,8 +23,8 @@ import java.util.function.Consumer;
 @Component
 public class MatchSupervisor {
 
-    /** Rounds a player must win to win the match (best-of-3 → first to 2). */
-    private static final int WINS_TO_WIN = 2;
+    /** Rounds a player must win to win the match (best-of-5 → first to 3). */
+    private static final int WINS_TO_WIN = 3;
 
     /** Delay after all-ready before the navigation message is sent (gives clients time to settle). */
     private final static int START_GAME_DELAY_SECONDS = 1;
@@ -76,7 +76,7 @@ public class MatchSupervisor {
 
             combatEngine.applyManaUsage(gameState, casterId, spell.manaCost());
 
-            if (target == null || accuracy < 0.5) {
+            if (target == null || accuracy < 0.35) {
                 registry.broadcast(playerIds, gson.toJson(new MoveResultMessage(moveResult, casterId, spell.name(),
                         spell.castDurationMs(), CastStatus.FAILED_ACCURACY)));
                 return;
