@@ -32,7 +32,7 @@ public class Player {
     private List<Point2D.Double> currentPattern;
     private String currentPatternName;
 
-    private static final double STARTING_MANA = 20;
+    private static final double STARTING_MANA = GameConstants.STARTING_MANA;
 
     public Player(String id, double maxHp, double maxMana) {
         this.id = id;

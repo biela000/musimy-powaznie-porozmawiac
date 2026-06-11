@@ -16,9 +16,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import com.jtjmpm.desktop.model.GameStateManager;
+import com.jtjmpm.desktop.utils.DesktopConstants;
 
 public class ApiSocketClient {
-    private static final int RECONNECT_DELAY_SECONDS = 5;
+    private static final int RECONNECT_DELAY_SECONDS = DesktopConstants.RECONNECT_DELAY_SECONDS;
 
     private static volatile ApiSocketClient instance;
 

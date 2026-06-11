@@ -8,6 +8,7 @@ import com.jtjmpm.api.model.PatternEngine.GestureToScore;
 import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
 import com.jtjmpm.api.model.PatternEngine.RotationVectorParser;
 import com.jtjmpm.api.model.PatternEngine.ShapeNormalizer;
+import com.jtjmpm.api.model.core.GameConstants;
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
@@ -22,8 +23,8 @@ import java.util.List;
 
 @Component
 public class GameController implements MessageController {
-    private static final int NORMALIZED_SHAPE_POINT_COUNT = 64;
-    private static final int NORMALIZED_SHAPE_TRIM_COUNT = 3;
+    private static final int NORMALIZED_SHAPE_POINT_COUNT = GameConstants.NORMALIZED_SHAPE_POINT_COUNT;
+    private static final int NORMALIZED_SHAPE_TRIM_COUNT = GameConstants.NORMALIZED_SHAPE_TRIM_COUNT;
 
     private final GameStateStore store;
     private final SessionRegistry registry;

@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameState {
-    public static final int LOBBY_SIZE = 2;
+    public static final int LOBBY_SIZE = GameConstants.LOBBY_SIZE;
 
-    private static final double PLAYER_MAX_HP = 200;
-    private static final double PLAYER_MAX_MANA = 100;
+    private static final double PLAYER_MAX_HP = GameConstants.PLAYER_MAX_HP;
+    private static final double PLAYER_MAX_MANA = GameConstants.PLAYER_MAX_MANA;
 
     private String hostId;
     private final Map<String, Player> players = new ConcurrentHashMap<>();

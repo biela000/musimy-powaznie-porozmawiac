@@ -1,5 +1,9 @@
 package com.jtjmpm.api.model.PatternEngine;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.jtjmpm.api.model.core.GameConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -7,13 +11,19 @@ import java.util.List;
 
 public class PatternPreviewApp extends JFrame {
 
-    private static final int POINTS      = 64;
-    private static final int CANVAS_SIZE = 420;
-    private static final int PADDING     = 40;
+    private static final JsonObject CONFIG = GameConstants.PATTERN_PREVIEW;
 
-    private static final Color EASY_COLOR   = new Color(55, 155, 75);
-    private static final Color MEDIUM_COLOR = new Color(210, 140, 20);
-    private static final Color HARD_COLOR   = new Color(195, 45, 45);
+    private static final int POINTS      = CONFIG.get("points").getAsInt();
+    private static final int CANVAS_SIZE = CONFIG.get("canvasSize").getAsInt();
+    private static final int PADDING     = CONFIG.get("padding").getAsInt();
+
+    private static final Color EASY_COLOR   = colorFromJson(CONFIG.getAsJsonArray("easyColor"));
+    private static final Color MEDIUM_COLOR = colorFromJson(CONFIG.getAsJsonArray("mediumColor"));
+    private static final Color HARD_COLOR   = colorFromJson(CONFIG.getAsJsonArray("hardColor"));
+
+    private static Color colorFromJson(JsonArray rgb) {
+        return new Color(rgb.get(0).getAsInt(), rgb.get(1).getAsInt(), rgb.get(2).getAsInt());
+    }
 
     private PatternGenerator.Difficulty currentDifficulty = PatternGenerator.Difficulty.EASY;
     private List<PatternGenerator.NamedShape> pool        = List.of();

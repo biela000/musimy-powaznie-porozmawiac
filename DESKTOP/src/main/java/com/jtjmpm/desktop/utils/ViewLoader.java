@@ -15,8 +15,8 @@ import javafx.scene.layout.Pane;
 
 public class ViewLoader {
 
-    public static final double TARGET_WIDTH = 1366.0;
-    public static final double TARGET_HEIGHT = 768.0;
+    public static final double TARGET_WIDTH = DesktopConstants.TARGET_WIDTH;
+    public static final double TARGET_HEIGHT = DesktopConstants.TARGET_HEIGHT;
 
     public static Scene loadScaledScene(FXMLLoader loader) throws IOException {
         Parent root = loader.load();

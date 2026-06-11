@@ -1,6 +1,5 @@
 package com.jtjmpm.api.service;
 
-import com.jtjmpm.api.model.core .GameConstants;
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.messages.MatchStatus;
 import com.jtjmpm.api.model.core.Player;
@@ -22,7 +21,7 @@ public class GameTickService {
         this.combatEngine = combatEngine;
     }
 
-    @Scheduled(fixedRate = 1000 / GameConstants.TICKS_PER_SECOND)
+    @Scheduled(fixedRateString = "#{1000 / T(com.jtjmpm.api.model.core.GameConstants).TICKS_PER_SECOND}")
     public void processServerTick() {
         List<GameState> activeGames = store.getAllLobbies();
 

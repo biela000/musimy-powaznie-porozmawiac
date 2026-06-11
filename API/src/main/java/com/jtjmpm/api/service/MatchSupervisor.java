@@ -3,6 +3,7 @@ package com.jtjmpm.api.service;
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
 import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
+import com.jtjmpm.api.model.core.GameConstants;
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
@@ -23,9 +24,9 @@ import java.util.function.Consumer;
 @Component
 public class MatchSupervisor {
 
-    private static final int WINS_TO_WIN = 2;
+    private static final int WINS_TO_WIN = GameConstants.WINS_TO_WIN;
 
-    private static final int START_GAME_DELAY_SECONDS = 1;
+    private static final int START_GAME_DELAY_SECONDS = GameConstants.START_GAME_DELAY_SECONDS;
 
     private final SessionRegistry registry;
     private final Gson gson;

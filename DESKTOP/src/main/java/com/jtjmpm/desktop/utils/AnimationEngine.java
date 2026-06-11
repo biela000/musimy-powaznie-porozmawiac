@@ -24,20 +24,20 @@ import javafx.geometry.Pos;
 
 public class AnimationEngine {
 
-    public static final double SCREEN_WIDTH = 1366.0;
-    public static final double SCREEN_HEIGHT = 768.0;
+    public static final double SCREEN_WIDTH = DesktopConstants.SCREEN_WIDTH;
+    public static final double SCREEN_HEIGHT = DesktopConstants.SCREEN_HEIGHT;
 
-    public static final double WIZARD_SIZE = 550.0;
-    public static final double WIZARD_OFFSET_X = 100.0;
-    public static final double WIZARD_OFFSET_Y = 0.0;
+    public static final double WIZARD_SIZE = DesktopConstants.WIZARD_SIZE;
+    public static final double WIZARD_OFFSET_X = DesktopConstants.WIZARD_OFFSET_X;
+    public static final double WIZARD_OFFSET_Y = DesktopConstants.WIZARD_OFFSET_Y;
 
-    public static final double PROJECTILE_IMAGE_SIZE = 100.0;
-    public static final double PROJECTILE_SPAWN_OFFSET_X = 100.0;
-    public static final double PROJECTILE_SPAWN_OFFSET_Y = 25.0;
+    public static final double PROJECTILE_IMAGE_SIZE = DesktopConstants.PROJECTILE_IMAGE_SIZE;
+    public static final double PROJECTILE_SPAWN_OFFSET_X = DesktopConstants.PROJECTILE_SPAWN_OFFSET_X;
+    public static final double PROJECTILE_SPAWN_OFFSET_Y = DesktopConstants.PROJECTILE_SPAWN_OFFSET_Y;
 
-    public static final double TEXT_SPAWN_OFFSET_X = 50.0;
-    public static final double TEXT_SPAWN_OFFSET_Y = 0.0;
-    public static final double TEXT_FLOAT_DISTANCE = -150.0;
+    public static final double TEXT_SPAWN_OFFSET_X = DesktopConstants.TEXT_SPAWN_OFFSET_X;
+    public static final double TEXT_SPAWN_OFFSET_Y = DesktopConstants.TEXT_SPAWN_OFFSET_Y;
+    public static final double TEXT_FLOAT_DISTANCE = DesktopConstants.TEXT_FLOAT_DISTANCE;
 
     private final AnchorPane mainPane;
     private final ImageView hostWizardImage;

@@ -32,9 +32,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import com.jtjmpm.desktop.utils.DesktopConstants;
 
 public class GameController {
-    public static final String LOBBY_VIEW = "/com/jtjmpm/desktop/lobby-view.fxml";
+    public static final String LOBBY_VIEW = DesktopConstants.LOBBY_VIEW;
 
     @FXML private AnchorPane mainPane;
     @FXML private PlayerPanelController hostPanelController;

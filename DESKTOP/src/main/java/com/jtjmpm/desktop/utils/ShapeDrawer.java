@@ -10,7 +10,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
 public class ShapeDrawer {
-    public static final int PADDING = 30;
+    public static final int PADDING = DesktopConstants.SHAPE_DRAWER_PADDING;
 
     public static void clearCanvas(Canvas canvas) {
         canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

@@ -1,0 +1,18 @@
+{
+  "screenWidth": 1366.0,
+  "screenHeight": 768.0,
+  "wizardSize": 550.0,
+  "wizardOffsetX": 100.0,
+  "wizardOffsetY": 0.0,
+  "projectileImageSize": 100.0,
+  "projectileSpawnOffsetX": 100.0,
+  "projectileSpawnOffsetY": 25.0,
+  "textSpawnOffsetX": 50.0,
+  "textSpawnOffsetY": 0.0,
+  "textFloatDistance": -150.0,
+  "shapeDrawerPadding": 30,
+  "reconnectDelaySeconds": 5,
+  "lobbyView": "/com/jtjmpm/desktop/lobby-view.fxml",
+  "targetWidth": 1366.0,
+  "targetHeight": 768.0
+}
