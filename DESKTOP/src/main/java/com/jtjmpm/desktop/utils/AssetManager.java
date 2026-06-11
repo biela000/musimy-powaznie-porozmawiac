@@ -21,7 +21,7 @@ public class AssetManager {
     private final List<Image> deathFrames = new ArrayList<>();
     private final Map<String, List<Image>> loadedEffects = new HashMap<>();
     private final Map<String, String> spellEffectBindings = new HashMap<>();
-    
+
     private final List<List<Image>> fireballFramesList = new ArrayList<>();
     private final Map<String, Integer> spellColors = new HashMap<>();
 
@@ -54,7 +54,6 @@ public class AssetManager {
                 deathFrames.add(new Image(getClass().getResourceAsStream("/com/jtjmpm/desktop/WizardPack/Wizard Pack/Death_animation/Death_" + i + ".png")));
             }
 
-            // Load effects dynamically from JSON
             try (Reader reader = new InputStreamReader(getClass().getResourceAsStream("/effects_index.json"))) {
                 Gson gson = new Gson();
                 EffectIndexEntry[] entries = gson.fromJson(reader, EffectIndexEntry[].class);
@@ -73,7 +72,7 @@ public class AssetManager {
             spellEffectBindings.put("Poison", "spell_poison_001_small_green");
             spellEffectBindings.put("Water Beam", "burst_splatter_001_small_red");
             spellEffectBindings.put("Air Slash", "directional_impact_001_small_blue");
-            // New Spells Effects
+
             spellEffectBindings.put("Gamble", "scifi_spark_burst_001_small_yellow");
             spellEffectBindings.put("Heal", "spell_heal_001_small_red");
             spellEffectBindings.put("Healing Aura", "round_heart_burst_001_small_red");
@@ -99,29 +98,29 @@ public class AssetManager {
                 }
                 fireballFramesList.add(fFrames);
             }
-            
-            spellColors.put("Fireball", 4); // Red
-            spellColors.put("Ice Shard", 0); // Blue
-            spellColors.put("Tornado", 3); // Purple
-            spellColors.put("Poison", 1); // Green
-            spellColors.put("Water Beam", 0); // Blue
-            spellColors.put("Air Slash", 2); // Orange
-            // New Spells Fireball Colors
-            spellColors.put("Gamble", 3); // Purple
-            spellColors.put("Heal", 1); // Green
-            spellColors.put("Healing Aura", 1); // Green
-            spellColors.put("Weakness", 3); // Purple
-            spellColors.put("Shield", 0); // Blue
-            spellColors.put("Damage Up", 4); // Red
-            spellColors.put("Vampirism", 4); // Red
-            spellColors.put("Blindness", 3); // Purple
-            spellColors.put("Mana Steal", 0); // Blue
-            spellColors.put("Thorns", 1); // Green
-            spellColors.put("Dark Magic", 3); // Purple
-            spellColors.put("Lightning Bolt", 3); // Purple
-            spellColors.put("Laser Beam", 0); // Blue
-            spellColors.put("Meteor", 2); // Orange
-            spellColors.put("Toxic Dart", 1); // Green
+
+            spellColors.put("Fireball", 4);
+            spellColors.put("Ice Shard", 0);
+            spellColors.put("Tornado", 3);
+            spellColors.put("Poison", 1);
+            spellColors.put("Water Beam", 0);
+            spellColors.put("Air Slash", 2);
+
+            spellColors.put("Gamble", 3);
+            spellColors.put("Heal", 1);
+            spellColors.put("Healing Aura", 1);
+            spellColors.put("Weakness", 3);
+            spellColors.put("Shield", 0);
+            spellColors.put("Damage Up", 4);
+            spellColors.put("Vampirism", 4);
+            spellColors.put("Blindness", 3);
+            spellColors.put("Mana Steal", 0);
+            spellColors.put("Thorns", 1);
+            spellColors.put("Dark Magic", 3);
+            spellColors.put("Lightning Bolt", 3);
+            spellColors.put("Laser Beam", 0);
+            spellColors.put("Meteor", 2);
+            spellColors.put("Toxic Dart", 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,7 +143,7 @@ public class AssetManager {
     public List<Image> getEffectFrames(String spellId) {
         String effectName = spellEffectBindings.get(spellId);
         if (effectName == null) {
-            effectName = "epic_explosion_001_small_orange"; // default effect
+            effectName = "epic_explosion_001_small_orange";
         }
         List<Image> frames = loadedEffects.get(effectName);
         if (frames == null || frames.isEmpty()) {

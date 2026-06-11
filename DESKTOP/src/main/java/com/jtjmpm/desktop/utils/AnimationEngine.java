@@ -19,24 +19,22 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javafx.animation.Animation;
+import javafx.geometry.Pos;
 
 public class AnimationEngine {
 
-    // default screen resolution
     public static final double SCREEN_WIDTH = 1366.0;
     public static final double SCREEN_HEIGHT = 768.0;
 
-    // wizard image size & offset from the screen edges
     public static final double WIZARD_SIZE = 550.0;
     public static final double WIZARD_OFFSET_X = 100.0;
     public static final double WIZARD_OFFSET_Y = 0.0;
 
-    // projectile image size and offset from the wizard
     public static final double PROJECTILE_IMAGE_SIZE = 100.0;
     public static final double PROJECTILE_SPAWN_OFFSET_X = 100.0;
     public static final double PROJECTILE_SPAWN_OFFSET_Y = 25.0;
 
-    // floating text offset from the wizard and its flight distance
     public static final double TEXT_SPAWN_OFFSET_X = 50.0;
     public static final double TEXT_SPAWN_OFFSET_Y = 0.0;
     public static final double TEXT_FLOAT_DISTANCE = -150.0;
@@ -50,8 +48,6 @@ public class AnimationEngine {
     private Timeline hostIdleTimeline;
     private Timeline enemyIdleTimeline;
 
-    // tracks the currently-running sprite timeline for each wizard so we can
-    // stop it cleanly before starting a new one
     private Timeline hostActiveTimeline;
     private Timeline enemyActiveTimeline;
 
@@ -73,15 +69,9 @@ public class AnimationEngine {
         this.enemyEffectImage = enemyEffectImage;
     }
 
-    // -------------------------------------------------------------------------
-    // idle
-    // -------------------------------------------------------------------------
-
     public void startIdleTimelines() {
         if (!assets.getIdleFrames().isEmpty()) {
-            // Always stop whatever is currently running before creating new timelines.
-            // Without this, every call leaks the old Timeline which keeps firing forever,
-            // causing multiple animations to compete on the same ImageView simultaneously.
+
             if (hostIdleTimeline != null) hostIdleTimeline.stop();
             if (enemyIdleTimeline != null) enemyIdleTimeline.stop();
 
@@ -107,11 +97,6 @@ public class AnimationEngine {
         return timeline;
     }
 
-    // -------------------------------------------------------------------------
-    // wizard sprite helpers
-    // -------------------------------------------------------------------------
-
-    /** Stops whatever sprite animation is running on this wizard and records the new one. */
     private void setActiveTimeline(boolean isHost, Timeline newTimeline) {
         if (isHost) {
             if (hostActiveTimeline != null) hostActiveTimeline.stop();
@@ -127,10 +112,6 @@ public class AnimationEngine {
         Timeline idle = isHost ? hostIdleTimeline : enemyIdleTimeline;
         if (idle != null) idle.play();
     }
-
-    // -------------------------------------------------------------------------
-    // wizard animations
-    // -------------------------------------------------------------------------
 
     public void playAttack(boolean isHost, int durationMs) {
         if (isHost ? hostDead : enemyDead) return;
@@ -195,12 +176,8 @@ public class AnimationEngine {
             ));
         }
         setActiveTimeline(isHost, death);
-        death.play(); // stops at the last frame
+        death.play();
     }
-
-    // -------------------------------------------------------------------------
-    // spell effect (impact on target)
-    // -------------------------------------------------------------------------
 
     public void playEffect(boolean onHost, String spellId) {
         ImageView effectView = onHost ? hostEffectImage : enemyEffectImage;
@@ -225,16 +202,10 @@ public class AnimationEngine {
         timeline.play();
     }
 
-    // -------------------------------------------------------------------------
-    // projectile  –  each call creates its own ImageView so multiple
-    // simultaneous projectiles are fully independent and pass through each other
-    // -------------------------------------------------------------------------
-
     public void playProjectile(boolean fromHost, int durationMs, String spellId) {
         List<Image> frames = assets.getProjectileFrames(spellId);
         if (frames == null || frames.isEmpty()) return;
 
-        // create a fresh node for this projectile
         ImageView proj = new ImageView();
         proj.setFitWidth(PROJECTILE_IMAGE_SIZE);
         proj.setFitHeight(PROJECTILE_IMAGE_SIZE);
@@ -273,7 +244,6 @@ public class AnimationEngine {
         tt.setDelay(Duration.millis(scaleDuration));
         tt.setOnFinished(e -> mainPane.getChildren().remove(proj));
 
-        // sprite animation (loops until movement ends)
         Timeline spriteAnim = new Timeline();
         spriteAnim.setCycleCount(Timeline.INDEFINITE);
         for (int i = 0; i < frames.size(); i++) {
@@ -290,20 +260,12 @@ public class AnimationEngine {
         spriteAnim.play();
 
         tt.statusProperty().addListener((obs, oldStatus, newStatus) -> {
-            if (newStatus == javafx.animation.Animation.Status.STOPPED) {
+            if (newStatus == Animation.Status.STOPPED) {
                 spriteAnim.stop();
             }
         });
     }
 
-    // -------------------------------------------------------------------------
-    // round reset
-    // -------------------------------------------------------------------------
-
-    /**
-     * Resets wizard state for a new round: clears the "dead" flags, stops any
-     * lingering animations, and restarts the idle timelines.
-     */
     public void resetForNewRound() {
         hostDead = false;
         enemyDead = false;
@@ -311,13 +273,8 @@ public class AnimationEngine {
         if (hostActiveTimeline != null) { hostActiveTimeline.stop(); hostActiveTimeline = null; }
         if (enemyActiveTimeline != null) { enemyActiveTimeline.stop(); enemyActiveTimeline = null; }
 
-        // Restart idle animations for both wizards.
         startIdleTimelines();
     }
-
-    // -------------------------------------------------------------------------
-    // countdown number (3 / 2 / 1)  –  snappy pop-in that fades before the next
-    // -------------------------------------------------------------------------
 
     public void showCountdownNumber(String text) {
         Label label = new Label(text);
@@ -325,7 +282,7 @@ public class AnimationEngine {
         label.setTextFill(Color.WHITE);
         label.setEffect(new DropShadow(18, Color.BLACK));
         label.setMaxWidth(Double.MAX_VALUE);
-        label.setAlignment(javafx.geometry.Pos.CENTER);
+        label.setAlignment(Pos.CENTER);
 
         AnchorPane.setTopAnchor(label, SCREEN_HEIGHT / 2.0 - 110.0);
         AnchorPane.setLeftAnchor(label, 0.0);
@@ -350,19 +307,14 @@ public class AnimationEngine {
         fadeOut.play();
     }
 
-    // -------------------------------------------------------------------------
-    // centered rating / miss text  –  big, pops in then floats up and fades
-    // -------------------------------------------------------------------------
-
     public void showCenteredText(String text, Color color) {
         Label label = new Label(text);
         label.setFont(Font.font("System", FontWeight.BOLD, 80));
         label.setTextFill(color);
         label.setEffect(new DropShadow(12, Color.BLACK));
         label.setMaxWidth(Double.MAX_VALUE);
-        label.setAlignment(javafx.geometry.Pos.CENTER);
+        label.setAlignment(Pos.CENTER);
 
-        // stretch full width and sit at vertical center so the text is centered
         AnchorPane.setTopAnchor(label, SCREEN_HEIGHT / 2.0 - 60.0);
         AnchorPane.setLeftAnchor(label, 0.0);
         AnchorPane.setRightAnchor(label, 0.0);
@@ -372,12 +324,10 @@ public class AnimationEngine {
 
         mainPane.getChildren().add(label);
 
-        // pop-in scale
         ScaleTransition popIn = new ScaleTransition(Duration.millis(250), label);
         popIn.setToX(1.0);
         popIn.setToY(1.0);
 
-        // float up and fade out after a short hold
         TranslateTransition floatUp = new TranslateTransition(Duration.millis(1400), label);
         floatUp.setByY(-120.0);
         floatUp.setDelay(Duration.millis(600));
@@ -395,10 +345,6 @@ public class AnimationEngine {
 
         popIn.play();
     }
-
-    // -------------------------------------------------------------------------
-    // floating damage / status text
-    // -------------------------------------------------------------------------
 
     public void showFloatingText(String text, Color color, boolean onHost) {
         Label label = new Label(text);

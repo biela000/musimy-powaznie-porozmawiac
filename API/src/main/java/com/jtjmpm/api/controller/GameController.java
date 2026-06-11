@@ -13,18 +13,17 @@ import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
 import com.jtjmpm.api.utils.SocketUtils;
 import com.jtjmpm.messages.*;
-import com.jtjmpm.messages.MatchStatus;
 import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class GameController implements MessageController {
-    private final static int NORMALIZED_SHAPE_POINT_COUNT = 64;
-    private final static int NORMALIZED_SHAPE_TRIM_COUNT = 3;
+    private static final int NORMALIZED_SHAPE_POINT_COUNT = 64;
+    private static final int NORMALIZED_SHAPE_TRIM_COUNT = 3;
 
     private final GameStateStore store;
     private final SessionRegistry registry;
@@ -42,10 +41,9 @@ public class GameController implements MessageController {
         this.combatEngine = combatEngine;
     }
 
-    private static final int PATTERN_POINTS = 64;
-
     private PatternGenerator.NamedShape pickNewPattern(String excludeName) {
-        List<PatternGenerator.NamedShape> pool = PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, PATTERN_POINTS);
+        List<PatternGenerator.NamedShape> pool =
+                PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, NORMALIZED_SHAPE_POINT_COUNT);
         for (PatternGenerator.NamedShape shape : pool) {
             if (!shape.name().equals(excludeName)) return shape;
         }
@@ -101,11 +99,11 @@ public class GameController implements MessageController {
             List<Point2D.Double> normalizedPoints;
 
             List<Point2D.Double> targetPattern = player.getCurrentPattern();
-            if (targetPattern == null) targetPattern = PatternGenerator.createCircle(64);
+            if (targetPattern == null) targetPattern = PatternGenerator.createCircle(NORMALIZED_SHAPE_POINT_COUNT);
 
             if (playerMoveMessage.move == null || playerMoveMessage.move.isEmpty()) {
                 accuracyScore = 1.0;
-                normalizedPoints = new java.util.ArrayList<>();
+                normalizedPoints = new ArrayList<>();
                 System.out.println("DEV BYPASS: Accuracy set to 100% for session: " + sessionId);
             } else {
                 RotationVectorParser parser = new RotationVectorParser();
@@ -122,7 +120,6 @@ public class GameController implements MessageController {
             matchSupervisor.handlePlayerSpellCast(gameState, sessionId, gameState.getEnemy(sessionId).getId(),
                     spell, accuracyScore, new PlayerMoveResult(normalizedPoints, accuracyScore), playerIds);
 
-            // Only rotate the pattern while a round is live; between rounds the RoundStartMessage supplies it.
             if (gameState.getStatus() == MatchStatus.IN_PROGRESS) {
                 PatternGenerator.NamedShape nextShape = pickNewPattern(player.getCurrentPatternName());
                 player.setCurrentPattern(nextShape.points(), nextShape.name());
@@ -130,7 +127,7 @@ public class GameController implements MessageController {
             }
 
         } catch (Exception e) {
-            System.err.println("Error while calcultaing score from session: " + sessionId + ": " + e.getMessage());
+            System.err.println("Error while calculating score from session: " + sessionId + ": " + e.getMessage());
             e.printStackTrace();
         }
     }

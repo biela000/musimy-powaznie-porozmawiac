@@ -32,14 +32,14 @@ public class Player {
     private List<Point2D.Double> currentPattern;
     private String currentPatternName;
 
+    private static final double STARTING_MANA = 20;
+
     public Player(String id, double maxHp, double maxMana) {
         this.id = id;
         this.maxHp = maxHp;
         this.maxMana = maxMana;
-        this.hp = maxHp;
-        this.mana = 20;
         this.ready = false;
-        this.activeEffects.add(new BaseManaRegenEffect(5.0, 0.5)); //..
+        resetForNewRound();
     }
 
     public synchronized double getHp() {
@@ -76,10 +76,6 @@ public class Player {
         this.ready = ready;
     }
 
-    public synchronized void toggleReady() {
-        ready = !ready;
-    }
-
     public synchronized void addEffect(StatusEffect effect) {
         activeEffects.add(effect);
     }
@@ -102,10 +98,9 @@ public class Player {
     public synchronized void setWins(int wins) { this.wins = wins; }
     public synchronized void addWin() { wins++; }
 
-    /** Resets HP, mana, and status effects to starting values for a new round. Wins are preserved. */
     public synchronized void resetForNewRound() {
         this.hp = maxHp;
-        this.mana = 20;
+        this.mana = STARTING_MANA;
         activeEffects.clear();
         activeEffects.add(new BaseManaRegenEffect(5.0, 0.5));
     }
@@ -133,7 +128,7 @@ public class Player {
             this.spellLoadout.addAll(spellLoadout);
         }
     }
-    
+
     public synchronized void clearSpellLoadout() {
         this.spellLoadout.clear();
     }

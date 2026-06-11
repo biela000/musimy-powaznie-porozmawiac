@@ -7,12 +7,12 @@ import com.jtjmpm.messages.CombatEventMessage;
 import com.jtjmpm.messages.CombatEventType;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CombatEngine {
 
-    // processing status buffs, debuffs, blocks etc. will go in these methods
-
-    public void applyDamage(GameState gameState, String casterId, String targetId, double rawDamage, java.util.List<CombatEventMessage> outEvents) {
+    public void applyDamage(GameState gameState, String casterId, String targetId, double rawDamage, List<CombatEventMessage> outEvents) {
         Player caster = gameState.getPlayer(casterId);
         Player target = gameState.getPlayer(targetId);
 
@@ -42,29 +42,23 @@ public class CombatEngine {
     }
 
     public CombatEventMessage applyStatusDamage(GameState gameState, String targetId, double rawDamage) {
-        //some potential damage calculations here
-        double finalDamage = rawDamage;
         Player target = gameState.getPlayer(targetId);
-        target.modifyHp(-finalDamage);
-        System.out.println("Player: " + targetId + " took some damage: " + finalDamage);
+        target.modifyHp(-rawDamage);
+        System.out.println("Player: " + targetId + " took some damage: " + rawDamage);
 
-        return new CombatEventMessage(targetId, CombatEventType.HIT, finalDamage);
+        return new CombatEventMessage(targetId, CombatEventType.HIT, rawDamage);
     }
 
     public void applyManaRegen(GameState gameState, String targetId, double rawValue) {
-        //some potential damage calculations here
-        double finalValue = rawValue;
         Player target = gameState.getPlayer(targetId);
-        target.modifyMana(finalValue);
-        System.out.println("Player: " + targetId + " regenerated some mana: " + finalValue);
+        target.modifyMana(rawValue);
+        System.out.println("Player: " + targetId + " regenerated some mana: " + rawValue);
     }
 
-    public void applyManaUsage(GameState gameState, String targetId, double rawValue){
-        //some potential damage calculations here
-        double finalValue = rawValue;
+    public void applyManaUsage(GameState gameState, String targetId, double rawValue) {
         Player target = gameState.getPlayer(targetId);
-        target.modifyMana(-finalValue);
-        System.out.println("Player: " + targetId + " used " + finalValue + " mana");
+        target.modifyMana(-rawValue);
+        System.out.println("Player: " + targetId + " used " + rawValue + " mana");
     }
 
     public CombatEventMessage applyHeal(GameState gameState, String targetId, double rawHeal) {

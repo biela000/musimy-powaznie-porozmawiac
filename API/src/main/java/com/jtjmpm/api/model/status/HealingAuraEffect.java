@@ -1,6 +1,5 @@
 package com.jtjmpm.api.model.status;
 
-
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.service.CombatEngine;
 import com.jtjmpm.messages.CombatEventMessage;

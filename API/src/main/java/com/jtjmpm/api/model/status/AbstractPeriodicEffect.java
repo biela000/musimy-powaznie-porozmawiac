@@ -25,6 +25,5 @@ public abstract class AbstractPeriodicEffect implements StatusEffect {
         }
     }
 
-    // this method should implement logic that happens every tick for a specific effect
     protected abstract void applyEffectLogic(GameState state, String targetId, CombatEngine engine, List<CombatEventMessage> outEvents);
 }

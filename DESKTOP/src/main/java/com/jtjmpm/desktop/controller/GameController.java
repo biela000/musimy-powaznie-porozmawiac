@@ -12,11 +12,15 @@ import com.jtjmpm.desktop.model.GameStateManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
@@ -61,8 +65,7 @@ public class GameController {
     private double hostHp = -1.0;
     private double enemyHp = -1.0;
 
-    private boolean isGameOver = false;
-    private javafx.scene.layout.VBox gameOverBox;
+    private VBox gameOverBox;
 
     @FXML
     public void initialize() {
@@ -91,10 +94,6 @@ public class GameController {
             GameStateManager.getInstance().clearPendingPattern();
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Message routing
-    // -------------------------------------------------------------------------
 
     private void handleApiMessage(String message) {
         WsMessage base = gson.fromJson(message, WsMessage.class);
@@ -129,10 +128,6 @@ public class GameController {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Spell cast result
-    // -------------------------------------------------------------------------
-
     private void handleMoveResult(MoveResultMessage message) {
         String hostId = GameStateManager.getInstance().getHostId();
         if (hostId == null) {
@@ -142,7 +137,6 @@ public class GameController {
 
         boolean isHost = message.playerId.equals(hostId);
 
-        // Draw the gesture for the local player's cast.
         if (isHost && message.result != null
                 && message.result.points != null
                 && !message.result.points.isEmpty()) {
@@ -165,7 +159,6 @@ public class GameController {
             return;
         }
 
-        // Accuracy rating for successful host cast.
         if (isHost) {
             String rating = message.accuracyRating != null
                     ? message.accuracyRating
@@ -206,31 +199,13 @@ public class GameController {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Pattern updates
-    // -------------------------------------------------------------------------
-
     private void handleShapeDrawn(ShapeMessage message) {
         ShapeDrawer.drawMove(patternCanvas, message.points, Color.GOLD);
     }
 
-    // -------------------------------------------------------------------------
-    // Game state / HP updates
-    // -------------------------------------------------------------------------
-
     private void handleGameStateUpdate(GameStateUpdateMessage message) {
-        if (message.gameState.status() == com.jtjmpm.messages.MatchStatus.LOBBY) {
-            javafx.application.Platform.runLater(() -> {
-                try {
-                    ApiSocketClient.getInstance().setOnMessageCallback(null);
-                    javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/jtjmpm/desktop/ready-view.fxml"));
-                    javafx.scene.Scene scene = com.jtjmpm.desktop.utils.ViewLoader.loadScaledScene(loader);
-                    javafx.stage.Stage stage = (javafx.stage.Stage) mainPane.getScene().getWindow();
-                    stage.setScene(scene);
-                } catch (java.io.IOException e) {
-                    e.printStackTrace();
-                }
-            });
+        if (message.gameState.status() == MatchStatus.LOBBY) {
+            navigateTo("/com/jtjmpm/desktop/ready-view.fxml");
             return;
         }
 
@@ -286,10 +261,6 @@ public class GameController {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Round system
-    // -------------------------------------------------------------------------
-
     private void handleRoundOver(RoundOverMessage message) {
         String hostId = GameStateManager.getInstance().getHostId();
         if (message.roundWinnerId != null) {
@@ -298,8 +269,7 @@ public class GameController {
                     hostWon ? "Round Won!" : "Round Lost!",
                     hostWon ? Color.GOLD : Color.web("#FF6B6B"));
         }
-        // Death animation was already triggered by the GAME_STATE_UPDATE that preceded this.
-        // The wins panel update is also reflected in that GAME_STATE_UPDATE.
+
     }
 
     private void handleCountdown(CountdownMessage message) {
@@ -315,12 +285,9 @@ public class GameController {
             mainPane.getChildren().remove(gameOverBox);
             gameOverBox = null;
         }
-        isGameOver = false;
 
-        // Restore wizards to idle (they were "dead" last round).
         animationEngine.resetForNewRound();
 
-        // Clear gesture canvas; draw the new round's pattern.
         ShapeDrawer.clearCanvas(gestureCanvas);
         ShapeDrawer.clearCanvas(patternCanvas);
         if (message.initialPattern != null) {
@@ -328,13 +295,7 @@ public class GameController {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Game over (match end)
-    // -------------------------------------------------------------------------
-
     private void handleGameOver(GameOverMessage message) {
-        isGameOver = true;
-
         String hostId = GameStateManager.getInstance().getHostId();
         String text;
         if (message.reason == GameOverReason.DRAW) {
@@ -347,27 +308,23 @@ public class GameController {
 
         Label gameOverLabel = new Label(text);
         gameOverLabel.getStyleClass().add("game-over-label");
-        
-        javafx.scene.control.Button restartButton = new javafx.scene.control.Button("Return to lobby");
+
+        Button restartButton = new Button("Return to lobby");
         restartButton.setStyle("-fx-font-size: 24px; -fx-padding: 10px 20px;");
-        restartButton.setOnAction(e -> {
-            ApiSocketClient.getInstance().send(new com.jtjmpm.messages.RestartMatchMessage());
-        });
+        restartButton.setOnAction(e -> ApiSocketClient.getInstance().send(new RestartMatchMessage()));
 
-        javafx.scene.control.Button returnToMenuButton = new javafx.scene.control.Button("Return to menu");
+        Button returnToMenuButton = new Button("Return to menu");
         returnToMenuButton.setStyle("-fx-font-size: 24px; -fx-padding: 10px 20px; -fx-text-fill: #ff4c4c;");
-        returnToMenuButton.setOnAction(e -> {
-            ApiSocketClient.getInstance().send(new WsMessage(MessageType.DESTROY_LOBBY));
-        });
+        returnToMenuButton.setOnAction(e -> ApiSocketClient.getInstance().send(new WsMessage(MessageType.DESTROY_LOBBY)));
 
-        javafx.scene.layout.HBox buttonsBox = new javafx.scene.layout.HBox(20);
-        buttonsBox.setAlignment(javafx.geometry.Pos.CENTER);
+        HBox buttonsBox = new HBox(20);
+        buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(restartButton, returnToMenuButton);
 
-        gameOverBox = new javafx.scene.layout.VBox(20);
-        gameOverBox.setAlignment(javafx.geometry.Pos.CENTER);
+        gameOverBox = new VBox(20);
+        gameOverBox.setAlignment(Pos.CENTER);
         gameOverBox.getChildren().addAll(gameOverLabel, buttonsBox);
-        // User requested no background for the Game Over label/vbox
+
         gameOverBox.setStyle("-fx-background-color: transparent;");
 
         AnchorPane.setTopAnchor(gameOverBox, 0.0);
@@ -378,20 +335,20 @@ public class GameController {
         mainPane.getChildren().add(gameOverBox);
     }
 
-    // -------------------------------------------------------------------------
-    // Navigation
-    // -------------------------------------------------------------------------
-
     @FXML
     private void onBackToMenu() {
         ApiSocketClient.getInstance().send(new WsMessage(MessageType.DESTROY_LOBBY));
     }
 
     private void navigateToMenu() {
+        navigateTo(LOBBY_VIEW);
+    }
+
+    private void navigateTo(String viewPath) {
         try {
             ApiSocketClient.getInstance().setOnMessageCallback(null);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(LOBBY_VIEW));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(viewPath));
             Scene scene = ViewLoader.loadScaledScene(loader);
             Stage stage = (Stage) mainPane.getScene().getWindow();
             stage.setScene(scene);

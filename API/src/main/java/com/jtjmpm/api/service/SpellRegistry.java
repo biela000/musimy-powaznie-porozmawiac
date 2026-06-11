@@ -1,6 +1,5 @@
 package com.jtjmpm.api.service;
 
-
 import com.jtjmpm.api.model.spell.Element;
 import com.jtjmpm.api.model.spell.Spell;
 
@@ -23,9 +22,7 @@ public class SpellRegistry {
 
     @PostConstruct
     public void initSpells() {
-        //TODO
-        //export to json
-        //make this cleaner with the dmg and mana maybe
+
         addSpell(new Spell("Fireball", "Shoots a fireball that deals medium damage.", SpellType.OFFENSE, Element.FIRE,
                 40, 60, 1800,
                 new FlatDamageEffect(40, 1800)));
@@ -84,7 +81,6 @@ public class SpellRegistry {
                 0, 25, 2500,
                 new DarkMagicSpellEffect(3.0, 2500)));
 
-        // NEW SPELLS
         addSpell(new Spell("Lightning Bolt", "A lightning strike dealing high damage.", SpellType.OFFENSE, Element.AIR,
                 35, 20, 1500,
                 new FlatDamageEffect(35, 1500)));

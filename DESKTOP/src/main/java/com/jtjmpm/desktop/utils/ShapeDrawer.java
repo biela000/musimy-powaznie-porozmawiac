@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 
 public class ShapeDrawer {
     public static final int PADDING = 30;
@@ -45,8 +47,8 @@ public class ShapeDrawer {
 
         gc.setStroke(paintColor);
         gc.setLineWidth(5.0);
-        gc.setLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
-        gc.setLineJoin(javafx.scene.shape.StrokeLineJoin.ROUND);
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setLineJoin(StrokeLineJoin.ROUND);
 
         gc.beginPath();
         double firstX = (points.getFirst().getX() - minX) * scale + offsetX;
@@ -60,7 +62,6 @@ public class ShapeDrawer {
         }
         gc.stroke();
 
-        // Draw a bright dot on the starting point so the user can see where to begin.
         final double DOT_RADIUS = 7.0;
         gc.setFill(Color.LIMEGREEN);
         gc.fillOval(firstX - DOT_RADIUS, firstY - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2);
@@ -69,4 +70,3 @@ public class ShapeDrawer {
         gc.strokeOval(firstX - DOT_RADIUS, firstY - DOT_RADIUS, DOT_RADIUS * 2, DOT_RADIUS * 2);
     }
 }
-
