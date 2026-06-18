@@ -11,30 +11,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameState {
-    public static final int LOBBY_SIZE = 2;
+    public static final int LOBBY_SIZE = GameConstants.LOBBY_SIZE;
+
+    private static final double PLAYER_MAX_HP = GameConstants.PLAYER_MAX_HP;
+    private static final double PLAYER_MAX_MANA = GameConstants.PLAYER_MAX_MANA;
 
     private String hostId;
     private final Map<String, Player> players = new ConcurrentHashMap<>();
-
 
     private volatile MatchStatus status = MatchStatus.LOBBY;
 
     private final String name;
 
-    public GameState() {
-        this.name = "unknown";
-    }
-
     public GameState(String name, String hostId) {
         this.name = name;
         this.hostId = hostId;
-        players.put(hostId, new Player(hostId, 200, 100));
+        players.put(hostId, new Player(hostId, PLAYER_MAX_HP, PLAYER_MAX_MANA));
     }
 
-    // SYNCHRONIZED LOGIC
     public synchronized boolean addPlayer(String guestId) {
         if (players.size() < LOBBY_SIZE) {
-            players.put(guestId, new Player(guestId, 200, 100));
+            players.put(guestId, new Player(guestId, PLAYER_MAX_HP, PLAYER_MAX_MANA));
             return true;
         }
         return false;
@@ -80,19 +77,14 @@ public class GameState {
         return true;
     }
 
-    //GETTERS
-
-    /** True when at least one player's HP has reached 0, ending the current round. */
     public boolean isRoundOver() {
         return players.values().stream().anyMatch(player -> player.getHp() <= 0);
     }
 
-    /** True when all players died simultaneously (draw round). */
     public boolean isRoundDraw() {
         return players.values().stream().allMatch(player -> player.getHp() <= 0);
     }
 
-    /** ID of the surviving player when the round ends, or null on a draw. */
     public String getRoundWinnerId() {
         if (isRoundDraw()) return null;
         return players.values().stream()
@@ -102,28 +94,16 @@ public class GameState {
                 .orElse(null);
     }
 
-    /** Resets all players to full HP/mana for the next round. Wins are preserved. */
     public synchronized void resetRound() {
         for (Player player : players.values()) {
             player.resetForNewRound();
         }
     }
 
-    // Legacy helpers kept for compatibility — semantics now refer to rounds, not the match.
-    /** @deprecated Use {@link #isRoundOver()} instead. */
-    public boolean isGameOver() { return isRoundOver(); }
-
-    /** @deprecated Use {@link #isRoundDraw()} instead. */
-    public boolean isDraw() { return isRoundDraw(); }
-
-    /** @deprecated Use {@link #getRoundWinnerId()} instead. */
-    public String getWinnerId() { return getRoundWinnerId(); }
-
     public synchronized MatchStatus getStatus() {
         return status;
     }
 
-    // SETTER
     public synchronized void setStatus(MatchStatus status) {
         this.status = status;
     }
@@ -132,7 +112,6 @@ public class GameState {
         return name;
     }
 
-    //SIMPLE GETTERS
     public String getHostId() { return hostId; }
 
     public synchronized GameStateDTO toDTO() {

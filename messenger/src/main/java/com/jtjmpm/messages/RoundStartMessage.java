@@ -5,10 +5,6 @@ import com.jtjmpm.MessageType;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-/**
- * Sent per-player when the round resets and gameplay resumes.
- * Contains this player's first pattern for the new round.
- */
 public class RoundStartMessage extends WsMessage {
     public List<Point2D.Double> initialPattern;
     public String initialPatternName;

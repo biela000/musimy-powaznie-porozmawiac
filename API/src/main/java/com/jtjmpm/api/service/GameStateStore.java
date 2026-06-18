@@ -1,10 +1,11 @@
 package com.jtjmpm.api.service;
 
-
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.model.core.Player;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,10 +14,7 @@ public class GameStateStore {
     private final ConcurrentHashMap<String, String> sessionToLobby = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, GameState> lobbies = new ConcurrentHashMap<>();
 
-    public GameStateStore() {
-    }
-
-    public boolean createLobby(String lobbyName, String sessionId){
+    public boolean createLobby(String lobbyName, String sessionId) {
         GameState newState = new GameState(lobbyName, sessionId);
 
         if (lobbies.putIfAbsent(lobbyName, newState) != null) return false;
@@ -36,11 +34,6 @@ public class GameStateStore {
         return false;
     }
 
-    /**
-     * Removes the session from its lobby. If the lobby still has players, resets all their
-     * ready states and returns the lobby GameState so the caller can broadcast the update.
-     * Returns null if the lobby is now empty or the session wasn't in one.
-     */
     public GameState removeSession(String sessionId) {
         String lobbyId = sessionToLobby.remove(sessionId);
         if (lobbyId == null) return null;
@@ -61,12 +54,12 @@ public class GameStateStore {
 
     public List<String> destroyLobbyAndGetPlayers(String sessionId) {
         String lobbyId = sessionToLobby.get(sessionId);
-        if (lobbyId == null) return java.util.Collections.emptyList();
+        if (lobbyId == null) return Collections.emptyList();
 
         GameState state = lobbies.remove(lobbyId);
-        if (state == null) return java.util.Collections.emptyList();
+        if (state == null) return Collections.emptyList();
 
-        List<String> playerIds = new java.util.ArrayList<>();
+        List<String> playerIds = new ArrayList<>();
         synchronized (state) {
             for (Player player : state.getPlayers()) {
                 String id = player.getId();
@@ -77,13 +70,11 @@ public class GameStateStore {
         return playerIds;
     }
 
-    //GETTERS
-
     public String getLobbyIdForPlayer(String sessionID) {
         return sessionToLobby.get(sessionID);
     }
 
-    public GameState getPlayersLobby(String sessionID){
+    public GameState getPlayersLobby(String sessionID) {
         return lobbies.get(getLobbyIdForPlayer(sessionID));
     }
 

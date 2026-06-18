@@ -3,6 +3,7 @@ package com.jtjmpm.api.service;
 import com.google.gson.Gson;
 import com.jtjmpm.PlayerMoveResult;
 import com.jtjmpm.api.model.PatternEngine.PatternGenerator;
+import com.jtjmpm.api.model.core.GameConstants;
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.model.core.Player;
 import com.jtjmpm.api.model.spell.Spell;
@@ -23,11 +24,9 @@ import java.util.function.Consumer;
 @Component
 public class MatchSupervisor {
 
-    /** Rounds a player must win to win the match (best-of-3 → first to 2). */
-    private static final int WINS_TO_WIN = 2;
+    private static final int WINS_TO_WIN = GameConstants.WINS_TO_WIN;
 
-    /** Delay after all-ready before the navigation message is sent (gives clients time to settle). */
-    private final static int START_GAME_DELAY_SECONDS = 1;
+    private static final int START_GAME_DELAY_SECONDS = GameConstants.START_GAME_DELAY_SECONDS;
 
     private final SessionRegistry registry;
     private final Gson gson;
@@ -45,10 +44,6 @@ public class MatchSupervisor {
     public void shutdown() {
         scheduler.shutdownNow();
     }
-
-    // -------------------------------------------------------------------------
-    // Spell cast handling
-    // -------------------------------------------------------------------------
 
     public void handlePlayerSpellCast(GameState gameState, String casterId, String targetId, Spell spell,
                                       double accuracy, PlayerMoveResult moveResult, List<String> playerIds) {
@@ -94,10 +89,6 @@ public class MatchSupervisor {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // Ready / game start
-    // -------------------------------------------------------------------------
-
     public void handlePlayerReadyToggle(GameState gameState, String playerId, List<String> validSpells,
                                         List<String> playerIds) {
         synchronized (gameState) {
@@ -121,22 +112,14 @@ public class MatchSupervisor {
                 scheduler.schedule(() -> {
                     synchronized (gameState) {
                         if (gameState.isReady() && gameState.getStatus() == MatchStatus.LOBBY) {
-                            // Status = BETWEEN_ROUNDS blocks spell casts during the countdown.
+
                             gameState.setStatus(MatchStatus.BETWEEN_ROUNDS);
                             System.out.println("Game navigating — countdown starting");
 
-                            // Pattern-less StartGameMessage triggers navigation on the desktop.
                             registry.broadcast(playerIds, gson.toJson(new StartGameMessage()));
 
-                            // Countdown ticks (delayed to give the game view time to load).
-                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(3))),
-                                    2, TimeUnit.SECONDS);
-                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(2))),
-                                    3, TimeUnit.SECONDS);
-                            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(1))),
-                                    4, TimeUnit.SECONDS);
+                            scheduleCountdown(playerIds, 2);
 
-                            // At t+5s: flip to IN_PROGRESS, send "Battle!" + per-player patterns.
                             scheduler.schedule(() -> {
                                 synchronized (gameState) {
                                     if (gameState.getStatus() != MatchStatus.BETWEEN_ROUNDS) return;
@@ -145,15 +128,7 @@ public class MatchSupervisor {
 
                                     registry.broadcast(playerIds, gson.toJson(new CountdownMessage(0)));
 
-                                    List<PatternGenerator.NamedShape> pool =
-                                            PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, 64);
-                                    List<Player> players = gameState.getPlayers();
-                                    for (int i = 0; i < players.size(); i++) {
-                                        PatternGenerator.NamedShape shape = pool.get(i % pool.size());
-                                        players.get(i).setCurrentPattern(shape.points(), shape.name());
-                                        registry.sendToSession(players.get(i).getId(),
-                                                gson.toJson(new RoundStartMessage(shape.points(), shape.name())));
-                                    }
+                                    assignNewPatterns(gameState);
                                 }
                             }, 5, TimeUnit.SECONDS);
                         } else {
@@ -165,15 +140,6 @@ public class MatchSupervisor {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Core evaluation loop
-    // -------------------------------------------------------------------------
-
-    /**
-     * All events that affect the game state must go through this method.
-     * It runs the action, then checks whether the current round has ended.
-     * If so it either starts the next round (best-of-3) or ends the match.
-     */
     public void executeAndEvaluate(GameState gameState, List<String> playerIds,
                                    Consumer<List<CombatEventMessage>> gameAction) {
         synchronized (gameState) {
@@ -183,29 +149,24 @@ public class MatchSupervisor {
             if (gameState.getStatus() != MatchStatus.IN_PROGRESS) return;
 
             if (!gameState.isRoundOver()) {
-                // Normal tick — just broadcast the updated state.
+
                 registry.broadcast(playerIds,
                         gson.toJson(new GameStateUpdateMessage(gameState.toDTO(), outEvents)));
                 return;
             }
 
-            // ---- Round ended ----
             gameState.setStatus(MatchStatus.BETWEEN_ROUNDS);
 
-            // Award win to the surviving player (null means simultaneous death → draw round).
             String roundWinnerId = gameState.getRoundWinnerId();
             if (roundWinnerId != null) {
                 gameState.getPlayer(roundWinnerId).addWin();
             }
 
-            // Broadcast the final state of this round (updated wins, 0 HP on loser).
             registry.broadcast(playerIds,
                     gson.toJson(new GameStateUpdateMessage(gameState.toDTO(), outEvents)));
 
-            // Tell clients the round is over.
             registry.broadcast(playerIds, gson.toJson(new RoundOverMessage(roundWinnerId)));
 
-            // Check if the match is won.
             boolean matchOver = roundWinnerId != null
                     && gameState.getPlayer(roundWinnerId).getWins() >= WINS_TO_WIN;
 
@@ -214,49 +175,33 @@ public class MatchSupervisor {
                 System.out.println("MATCH OVER — winner: " + roundWinnerId);
                 registry.broadcast(playerIds, gson.toJson(new GameOverMessage(roundWinnerId, GameOverReason.WIN)));
             } else {
-                // Start the next round after a short inter-round break.
+
                 System.out.println("Round over — scheduling next round. Winner of round: " + roundWinnerId);
                 scheduleRoundStart(gameState, playerIds);
             }
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Restart Match sequence
-    // -------------------------------------------------------------------------
-
     public void restartMatch(GameState gameState, List<String> playerIds) {
         synchronized (gameState) {
             System.out.println("Match returning to lobby: " + gameState.getName());
-            
-            // Reset players' wins and match state
+
             for (Player player : gameState.getPlayers()) {
                 player.setWins(0);
                 player.clearSpellLoadout();
             }
-            
+
             gameState.resetAllPlayersReady();
             gameState.setStatus(MatchStatus.LOBBY);
             gameState.resetRound();
-            
+
             registry.broadcast(playerIds, gson.toJson(new GameStateUpdateMessage(gameState.toDTO(), Collections.emptyList())));
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Round start sequence (called after a non-final round ends)
-    // -------------------------------------------------------------------------
-
     private void scheduleRoundStart(GameState gameState, List<String> playerIds) {
-        // 3-second silent pause after round ends, then countdown ticks: 3 at t+3s, 2 at t+4s, 1 at t+5s.
-        scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(3))),
-                3, TimeUnit.SECONDS);
-        scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(2))),
-                4, TimeUnit.SECONDS);
-        scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(1))),
-                5, TimeUnit.SECONDS);
+        scheduleCountdown(playerIds, 3);
 
-        // At t+6s: reset state, send "Battle!" signal, broadcast reset state, send per-player patterns.
         scheduler.schedule(() -> {
             synchronized (gameState) {
                 if (gameState.getStatus() != MatchStatus.BETWEEN_ROUNDS) {
@@ -269,30 +214,35 @@ public class MatchSupervisor {
 
                 System.out.println("New round started");
 
-                // "Battle!" signal
                 registry.broadcast(playerIds, gson.toJson(new CountdownMessage(0)));
 
-                // Reset state broadcast
                 registry.broadcast(playerIds,
                         gson.toJson(new GameStateUpdateMessage(gameState.toDTO(), Collections.emptyList())));
 
-                // Per-player new patterns via RoundStartMessage
-                List<PatternGenerator.NamedShape> pool =
-                        PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, 64);
-                List<Player> players = gameState.getPlayers();
-                for (int i = 0; i < players.size(); i++) {
-                    PatternGenerator.NamedShape shape = pool.get(i % pool.size());
-                    players.get(i).setCurrentPattern(shape.points(), shape.name());
-                    registry.sendToSession(players.get(i).getId(),
-                            gson.toJson(new RoundStartMessage(shape.points(), shape.name())));
-                }
+                assignNewPatterns(gameState);
             }
         }, 6, TimeUnit.SECONDS);
     }
 
-    // -------------------------------------------------------------------------
-    // Delayed impact scheduling
-    // -------------------------------------------------------------------------
+    private void scheduleCountdown(List<String> playerIds, long firstDelaySeconds) {
+        for (int i = 0; i < 3; i++) {
+            int value = 3 - i;
+            scheduler.schedule(() -> registry.broadcast(playerIds, gson.toJson(new CountdownMessage(value))),
+                    firstDelaySeconds + i, TimeUnit.SECONDS);
+        }
+    }
+
+    private void assignNewPatterns(GameState gameState) {
+        List<PatternGenerator.NamedShape> pool =
+                PatternGenerator.shuffledPool(PatternGenerator.Difficulty.EASY, 64);
+        List<Player> players = gameState.getPlayers();
+        for (int i = 0; i < players.size(); i++) {
+            PatternGenerator.NamedShape shape = pool.get(i % pool.size());
+            players.get(i).setCurrentPattern(shape.points(), shape.name());
+            registry.sendToSession(players.get(i).getId(),
+                    gson.toJson(new RoundStartMessage(shape.points(), shape.name())));
+        }
+    }
 
     public void scheduleImpact(GameState gameState, List<String> playerIds, long delayMs,
                                Consumer<List<CombatEventMessage>> impactAction) {

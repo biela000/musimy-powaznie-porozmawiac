@@ -105,7 +105,6 @@ public class GameActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
-    /** Short buzz at the moment the gesture is released — confirms the spell was thrown. */
     private void vibrateOnCast() {
         if (vibrator == null || !vibrator.hasVibrator()) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -45,7 +45,7 @@ public class LobbyController {
     }
 
     private void handleLobbyJoined() {
-        Stage stage = (Stage) lobbyNameInput.getScene().getWindow(); // Needs to be here because in Platform.runLater might be too late
+        Stage stage = (Stage) lobbyNameInput.getScene().getWindow();
         Platform.runLater(() -> {
             navigateToReady(lobbyNameInput.getText().trim(), stage);
         });

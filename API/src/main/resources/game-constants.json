@@ -1,0 +1,19 @@
+{
+  "ticksPerSecond": 10,
+  "lobbySize": 2,
+  "playerMaxHp": 200,
+  "playerMaxMana": 100,
+  "startingMana": 20,
+  "winsToWin": 2,
+  "startGameDelaySeconds": 1,
+  "normalizedShapePointCount": 64,
+  "normalizedShapeTrimCount": 3,
+  "patternPreview": {
+    "points": 64,
+    "canvasSize": 420,
+    "padding": 40,
+    "easyColor": [55, 155, 75],
+    "mediumColor": [210, 140, 20],
+    "hardColor": [195, 45, 45]
+  }
+}

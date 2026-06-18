@@ -66,4 +66,3 @@ public class GestureEvaluator {
         return dtw[n][m];
     }
 }
-

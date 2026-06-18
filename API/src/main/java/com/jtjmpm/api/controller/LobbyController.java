@@ -13,13 +13,9 @@ import org.java_websocket.WebSocket;
 import org.springframework.stereotype.Component;
 
 import com.jtjmpm.MessageType;
-import com.jtjmpm.api.model.core.GameState;
-import jakarta.annotation.PreDestroy;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 @Component
 public class LobbyController implements MessageController {
@@ -29,8 +25,6 @@ public class LobbyController implements MessageController {
     private final SpellRegistry spellRegistry;
     private final Gson gson;
     private final MatchSupervisor matchSupervisor;
-
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public LobbyController(GameStateStore store, SessionRegistry registry, Gson gson, SpellRegistry spellRegistry, MatchSupervisor matchSupervisor) {
         this.store = store;
@@ -140,11 +134,6 @@ public class LobbyController implements MessageController {
         }
     }
 
-    @PreDestroy
-    public void shutdown() {
-        scheduler.shutdownNow();
-    }
-
     private void handleToggleReady(WebSocket conn, String rawJson) {
         String sessionId = SocketUtils.getSessionId(conn);
         System.out.println("Toggling ready state of session: " + sessionId + " ...");
@@ -188,14 +177,15 @@ public class LobbyController implements MessageController {
             e.printStackTrace();
         }
     }
+
     private void handleRestartMatch(WebSocket conn, String rawJson) {
         String sessionId = SocketUtils.getSessionId(conn);
         try {
             GameState lobby = store.getPlayersLobby(sessionId);
             if (lobby == null) return;
-            
+
             synchronized (lobby) {
-                if (lobby.getStatus() == com.jtjmpm.messages.MatchStatus.GAME_OVER) {
+                if (lobby.getStatus() == MatchStatus.GAME_OVER) {
                     List<String> playerIds = store.getPlayerIdsFromLobby(lobby.getName());
                     matchSupervisor.restartMatch(lobby, playerIds);
                 } else {

@@ -38,8 +38,7 @@ public class GameHandler {
 
                 @Override
                 public void onMessage(String message) {
-                    // The mobile session is not associated with any lobby on the server,
-                    // so incoming messages (e.g. WELCOME) require no action here.
+
                     Log.d("GameHandler", "Message: " + message);
                 }
 

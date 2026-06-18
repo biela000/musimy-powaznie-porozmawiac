@@ -22,7 +22,7 @@ public class PlayerPanelController {
         manaBar.setProgress(player.mana() / player.maxMana());
         manaLabel.setText("Mana: " + (int) player.mana() + "/" + (int) player.maxMana());
         winsLabel.setText(winsIndicator(player.wins()));
-        
+
         javafx.application.Platform.runLater(() -> {
             activeEffectsContainer.getChildren().clear();
             for (com.jtjmpm.messages.StatusEffectDTO effect : player.activeEffects()) {

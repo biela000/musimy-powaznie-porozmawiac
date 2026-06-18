@@ -1,6 +1,5 @@
 package com.jtjmpm.api.model.status;
 
-
 import com.jtjmpm.api.model.core.GameConstants;
 
 public class WeaknessEffect implements StatusEffect {

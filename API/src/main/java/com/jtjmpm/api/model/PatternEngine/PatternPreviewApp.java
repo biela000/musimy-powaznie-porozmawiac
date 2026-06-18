@@ -1,5 +1,9 @@
 package com.jtjmpm.api.model.PatternEngine;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.jtjmpm.api.model.core.GameConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -7,20 +11,24 @@ import java.util.List;
 
 public class PatternPreviewApp extends JFrame {
 
-    private static final int POINTS      = 64;
-    private static final int CANVAS_SIZE = 420;
-    private static final int PADDING     = 40;
+    private static final JsonObject CONFIG = GameConstants.PATTERN_PREVIEW;
 
-    private static final Color EASY_COLOR   = new Color(55, 155, 75);
-    private static final Color MEDIUM_COLOR = new Color(210, 140, 20);
-    private static final Color HARD_COLOR   = new Color(195, 45, 45);
+    private static final int POINTS      = CONFIG.get("points").getAsInt();
+    private static final int CANVAS_SIZE = CONFIG.get("canvasSize").getAsInt();
+    private static final int PADDING     = CONFIG.get("padding").getAsInt();
 
-    // permutation state
+    private static final Color EASY_COLOR   = colorFromJson(CONFIG.getAsJsonArray("easyColor"));
+    private static final Color MEDIUM_COLOR = colorFromJson(CONFIG.getAsJsonArray("mediumColor"));
+    private static final Color HARD_COLOR   = colorFromJson(CONFIG.getAsJsonArray("hardColor"));
+
+    private static Color colorFromJson(JsonArray rgb) {
+        return new Color(rgb.get(0).getAsInt(), rgb.get(1).getAsInt(), rgb.get(2).getAsInt());
+    }
+
     private PatternGenerator.Difficulty currentDifficulty = PatternGenerator.Difficulty.EASY;
     private List<PatternGenerator.NamedShape> pool        = List.of();
     private int poolIndex = 0;
 
-    // current shape
     private List<Point2D.Double> currentPoints = List.of();
     private String currentName = "";
 
@@ -35,13 +43,10 @@ public class PatternPreviewApp extends JFrame {
         resetPool();
     }
 
-    // ── UI ───────────────────────────────────────────────────────────────────
-
     private void buildUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(8, 8));
 
-        // difficulty buttons
         JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 8));
         diffPanel.add(new JLabel("Poziom:"));
         for (PatternGenerator.Difficulty d : PatternGenerator.Difficulty.values()) {
@@ -74,12 +79,10 @@ public class PatternPreviewApp extends JFrame {
             diffPanel.add(btn);
         }
 
-        // canvas
         canvas.setPreferredSize(new Dimension(CANVAS_SIZE, CANVAS_SIZE));
         canvas.setBackground(Color.WHITE);
         canvas.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-        // bottom panel
         nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD, 15f));
         diffLabel.setFont(diffLabel.getFont().deriveFont(Font.PLAIN, 11f));
         progressLabel.setFont(progressLabel.getFont().deriveFont(Font.PLAIN, 11f));
@@ -139,16 +142,12 @@ public class PatternPreviewApp extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // ── permutation logic ────────────────────────────────────────────────────
-
-    /** Start a fresh shuffled permutation for the current difficulty. */
     private void resetPool() {
         pool      = PatternGenerator.shuffledPool(currentDifficulty, POINTS);
         poolIndex = 0;
         showCurrent();
     }
 
-    /** Move to the next shape; reshuffle when the permutation is exhausted. */
     private void advance() {
         poolIndex++;
         if (poolIndex >= pool.size()) {
@@ -169,8 +168,6 @@ public class PatternPreviewApp extends JFrame {
         progressLabel.setText((poolIndex + 1) + " / " + pool.size());
         canvas.repaint();
     }
-
-    // ── canvas ───────────────────────────────────────────────────────────────
 
     private class ShapeCanvas extends JPanel {
 
@@ -200,7 +197,6 @@ public class PatternPreviewApp extends JFrame {
             double cx    = w / 2.0;
             double cy    = h / 2.0;
 
-            // Catmull-Rom spline, gradient blue → red
             int n = pts.size();
             g2.setStroke(new BasicStroke(2.8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             for (int i = 0; i < n - 1; i++) {
@@ -227,7 +223,6 @@ public class PatternPreviewApp extends JFrame {
                 g2.draw(seg);
             }
 
-            // start dot
             int startX = sx(pts.get(0).x, midX, scale, cx);
             int startY = sy(pts.get(0).y, midY, scale, cy);
             g2.setColor(Color.ORANGE);
@@ -236,7 +231,6 @@ public class PatternPreviewApp extends JFrame {
             g2.setStroke(new BasicStroke(1.5f));
             g2.drawOval(startX - 7, startY - 7, 14, 14);
 
-            // direction arrow
             if (n > 4) {
                 int ax = sx(pts.get(4).x, midX, scale, cx);
                 int ay = sy(pts.get(4).y, midY, scale, cy);
@@ -275,8 +269,6 @@ public class PatternPreviewApp extends JFrame {
             );
         }
     }
-
-    // ── helpers ──────────────────────────────────────────────────────────────
 
     private static Color colorFor(PatternGenerator.Difficulty d) {
         return switch (d) {

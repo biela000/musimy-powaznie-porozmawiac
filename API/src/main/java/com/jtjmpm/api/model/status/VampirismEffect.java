@@ -1,5 +1,7 @@
 package com.jtjmpm.api.model.status;
 
+import com.jtjmpm.api.model.core.GameConstants;
+
 import com.jtjmpm.api.model.core.GameState;
 import com.jtjmpm.api.service.CombatEngine;
 import com.jtjmpm.messages.CombatEventMessage;
@@ -12,7 +14,7 @@ public class VampirismEffect implements StatusEffect {
 
     public VampirismEffect(double durationInSeconds, double accuracy) {
         this.accuracy = accuracy;
-        this.remainingDurationTicks = (int) (durationInSeconds * com.jtjmpm.api.model.core.GameConstants.TICKS_PER_SECOND);
+        this.remainingDurationTicks = (int) (durationInSeconds * GameConstants.TICKS_PER_SECOND);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class VampirismEffect implements StatusEffect {
 
     @Override
     public int getRemainingDuration() {
-        return remainingDurationTicks / com.jtjmpm.api.model.core.GameConstants.TICKS_PER_SECOND;
+        return remainingDurationTicks / GameConstants.TICKS_PER_SECOND;
     }
 
     @Override

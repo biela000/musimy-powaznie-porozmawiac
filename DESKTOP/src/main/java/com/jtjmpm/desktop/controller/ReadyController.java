@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 import com.jtjmpm.desktop.utils.ViewLoader;
+import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
 
 public class ReadyController {
     private final static String GAME_VIEW = "/com/jtjmpm/desktop/game-view.fxml";
@@ -109,10 +111,10 @@ public class ReadyController {
 
             card.getChildren().addAll(nameLabel, typeLabel, dmgLabel);
 
-            javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(spell.description());
-            tooltip.setShowDelay(javafx.util.Duration.millis(200));
+            Tooltip tooltip = new Tooltip(spell.description());
+            tooltip.setShowDelay(Duration.millis(200));
             tooltip.setStyle("-fx-font-family: 'Courier New'; -fx-font-size: 14px; -fx-background-color: #2b2b45; -fx-text-fill: #f0e68c; -fx-border-color: #f0e68c; -fx-border-width: 1px;");
-            javafx.scene.control.Tooltip.install(card, tooltip);
+            Tooltip.install(card, tooltip);
 
             card.setOnMouseClicked(event -> {
                 String spellId = spell.name();

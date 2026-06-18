@@ -65,12 +65,10 @@ public class StartController {
         updateUI();
     }
 
-
     private void updateUI() {
         phoneStatusLabel.setText(isPhoneConnected ? "Phone: Connected" : "Phone: Waiting...");
         apiStatusLabel.setText(isApiConnected ? "API: Connected" : "API: Waiting...");
 
-        // Only enable if both are successfully connected
         startButton.setDisable(!(isPhoneConnected && isApiConnected));
     }
 
